@@ -10,7 +10,8 @@
     "start:dev": "concurrently --handle-input \"wait-on bin/main.js && nodemon\" \"tsc -w -p tsconfig.build.json\" ",
     "start:debug": "nodemon --config nodemon-debug.json",
     "test": "jest",
-    "test:watch": "jest --watch --coverage:false"
+    "lint": "tslint",
+    "test:watch": "jest --watch --coverage:false --config ./config/jest.dev.config.js"
   },
   "repository": {
     "type": "git",
@@ -38,6 +39,7 @@
     "@nestjs/platform-express": "^6.2.0",
     "@types/node": "^12.0.2",
     "class-validator": "^0.9.1",
+    "nodegit": "^0.24.3",
     "reflect-metadata": "^0.1.13",
     "rxjs": "^6.5.2"
   }

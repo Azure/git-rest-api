@@ -16,7 +16,7 @@ const config = {
       tsConfig: "tsconfig.json",
     },
   },
-  testMatch: ["**/*Test.ts"],
+  testMatch: ["**/*.test.ts"],
   verbose: true,
   testEnvironment: "node",
 };

@@ -16,12 +16,8 @@ steps:
   inputs:
     verbose: false
 
-- task: Npm@1
+- script: npm run test
   displayName: 'npm test'
-  inputs:
-    command: custom
-    verbose: false
-    customCommand: test
 
 - task: PublishTestResults@2
   inputs:
@@ -33,3 +29,6 @@ steps:
     codeCoverageTool: Cobertura
     summaryFileLocation: '$(System.DefaultWorkingDirectory)/**/*coverage.xml'
     reportDirectory: '$(System.DefaultWorkingDirectory)/**/coverage'
+
+- script: npm run lint
+  displayName: 'npm test'
