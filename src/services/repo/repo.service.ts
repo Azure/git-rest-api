@@ -1,5 +1,5 @@
 import { Injectable } from "@nestjs/common";
-import { Clone, Repository } from "nodegit";
+import { Clone, Repository, Fetch, Remote } from "nodegit";
 import path from "path";
 
 import { FSService } from "../fs";
@@ -20,7 +20,11 @@ export class RepoService {
     const repoPath = getRepoMainPath(remote);
     // tslint:disable-next-line: no-empty
     if (await this.fs.exists(repoPath)) {
-      return Repository.open(repoPath);
+      const repo = await Repository.open(repoPath);
+      await repo.fetchAll({
+        prune: Fetch.PRUNE.GIT_FETCH_PRUNE,
+      });
+      return repo;
     } else {
       return this.clone(remote, repoPath);
     }

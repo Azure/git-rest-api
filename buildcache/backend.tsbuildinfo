@@ -1498,7 +1498,7 @@
         "signature": "775d4d5e07cbcb57c109079affff900838ff6105237637a8c0083b1fd599a4b2"
       },
       "c:/dev/openapi/git-rest-api/src/services/repo/repo.service.ts": {
-        "version": "cb9035958a1b4d749461015a610d42e0c814219e11b2e822b9976f3451b7df93",
+        "version": "9988767a95484efe00a76dd74ceab15219315fc2ed77072bc2b08f1729b8f669",
         "signature": "116cf86d5e0664119352c6f68b724299c80b826be01fcfa9a70b0319e8d99327"
       },
       "c:/dev/openapi/git-rest-api/src/services/repo/index.ts": {
@@ -1506,7 +1506,7 @@
         "signature": "62ed92977b87f35e3da05dd67a447c031ad24ff56d3dd03cab4672997844d4b7"
       },
       "c:/dev/openapi/git-rest-api/src/services/branch/branch.service.ts": {
-        "version": "50387dd97daa7269416c9ff62a9b6c2a7b5891db947edb9f33778dc8de3c756e",
+        "version": "d6495089dcc56182d8515f4acf306483092a51aa9b9ce57ef371c0671ce3a999",
         "signature": "94c7b91ed42c244d5ea4054ca1231ea4d915126a381d77c6f4c035ded88fd2e7"
       },
       "c:/dev/openapi/git-rest-api/src/services/branch/index.ts": {
@@ -7830,9 +7830,21 @@
       "c:/dev/openapi/git-rest-api/node_modules/@types/nodegit/submodule.d.ts",
       "c:/dev/openapi/git-rest-api/node_modules/@types/nodegit/transport.d.ts",
       "c:/dev/openapi/git-rest-api/node_modules/@types/nodegit/index.d.ts",
-      "c:/dev/openapi/git-rest-api/src/services/repo/repo.service.ts",
+      [
+        "c:/dev/openapi/git-rest-api/src/services/repo/repo.service.ts",
+        [
+          {
+            "file": "c:/dev/openapi/git-rest-api/src/services/repo/repo.service.ts",
+            "start": 81,
+            "length": 6,
+            "messageText": "'Remote' is declared but its value is never read.",
+            "category": 1,
+            "code": 6133,
+            "reportsUnnecessary": true
+          }
+        ]
+      ],
       "c:/dev/openapi/git-rest-api/src/services/repo/index.ts",
-      "c:/dev/openapi/git-rest-api/src/services/branch/branch.service.ts",
       "c:/dev/openapi/git-rest-api/src/services/branch/index.ts",
       "c:/dev/openapi/git-rest-api/src/services/index.ts",
       "c:/dev/openapi/git-rest-api/src/controllers/app.controller.ts",
@@ -7911,7 +7923,8 @@
       "c:/dev/openapi/git-rest-api/node_modules/jest-diff/build/index.d.ts",
       "c:/dev/openapi/git-rest-api/node_modules/@types/jest/index.d.ts",
       "c:/dev/openapi/git-rest-api/node_modules/@types/stack-utils/index.d.ts",
-      "c:/dev/openapi/git-rest-api/node_modules/@types/yargs/index.d.ts"
+      "c:/dev/openapi/git-rest-api/node_modules/@types/yargs/index.d.ts",
+      "c:/dev/openapi/git-rest-api/src/services/branch/branch.service.ts"
     ]
   },
   "version": "3.4.5"
