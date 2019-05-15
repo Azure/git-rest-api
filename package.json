@@ -5,8 +5,8 @@
   "main": "bin/main.js",
   "scripts": {
     "build": "tsc -p config/tsconfig.build.json",
-    "start": "npm run build && node ./dist/main.js",
-    "start:dev": "concurrently --handle-input \"wait-on dist/main.js && nodemon\" \"tsc -w -p tsconfig.build.json\" ",
+    "start": "npm run build && node ./bin/main.js",
+    "start:dev": "concurrently --handle-input \"wait-on bin/main.js && nodemon\" \"tsc -w -p tsconfig.build.json\" ",
     "start:debug": "nodemon --config nodemon-debug.json",
     "test": "jest",
     "test:watch": "jest --watch --coverage:false"
@@ -22,6 +22,7 @@
   },
   "homepage": "https://github.com/Azure/git-rest-api#readme",
   "devDependencies": {
+    "@types/jest": "^24.0.13",
     "concurrently": "^4.1.0",
     "jest": "^24.8.0",
     "ts-jest": "^24.0.2",
@@ -33,6 +34,7 @@
   "dependencies": {
     "@nestjs/common": "^6.2.0",
     "@nestjs/core": "^6.2.0",
+    "@types/node": "^12.0.2",
     "class-validator": "^0.9.1",
     "reflect-metadata": "^0.1.13",
     "rxjs": "^6.5.2"

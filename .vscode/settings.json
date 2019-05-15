@@ -2,7 +2,7 @@
   "typescript.tsdk": "node_modules/typescript/lib",
   "search.exclude": {
     "**/node_modules": true,
-    "dist": true,
+    "bin": true,
     "buildcache": true,
     "coverage": true
   },
