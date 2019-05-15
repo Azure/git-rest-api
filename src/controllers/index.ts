@@ -1,1 +1,1 @@
-export * from "./AppController";
+export * from "./app.controller";

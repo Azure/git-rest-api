@@ -4,7 +4,9 @@
   "description": "This project welcomes contributions and suggestions.  Most contributions require you to agree to a\r Contributor License Agreement (CLA) declaring that you have the right to, and actually do, grant us\r the rights to use your contribution. For details, visit https://cla.microsoft.com.",
   "main": "bin/main.js",
   "scripts": {
-    "build": "tsc --project tsconfig.json",
+    "build": "tsc -p config/tsconfig.build.json",
+    "start:dev": "concurrently --handle-input \"wait-on dist/main.js && nodemon\" \"tsc -w -p tsconfig.build.json\" ",
+    "start:debug": "nodemon --config nodemon-debug.json",
     "test": "jest"
   },
   "repository": {
@@ -21,11 +23,14 @@
     "jest": "^24.8.0",
     "ts-jest": "^24.0.2",
     "tslint": "^5.16.0",
+    "tslint-config-prettier": "^1.18.0",
+    "tslint-plugin-prettier": "^2.0.1",
     "typescript": "^3.4.5"
   },
   "dependencies": {
     "@nestjs/common": "^6.2.0",
     "@nestjs/core": "^6.2.0",
+    "class-validator": "^0.9.1",
     "reflect-metadata": "^0.1.13",
     "rxjs": "^6.5.2"
   }
