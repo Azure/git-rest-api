@@ -21,7 +21,7 @@ export class BranchService {
       branches.map(async ref => {
         const target = await ref.target();
         return new GitBranch({
-          name: getBranchName(ref.name()),
+          name: getRemoteBranchName(ref.name()),
           commit: {
             sha: target.toString(),
           },
@@ -31,7 +31,7 @@ export class BranchService {
   }
 }
 
-export function getBranchName(refName: string) {
+export function getRemoteBranchName(refName: string) {
   const prefix = "refs/remotes/origin/";
   return refName.slice(prefix.length);
 }
