@@ -1,3 +1,19 @@
+# Start
+
+1. Install dependencies
+```bash
+npm install
+```
+
+2. Run
+```bash
+npm start           # To run once
+npm start:watch     # To run and restart when there is a change
+```
+
+Run in vscode
+
+Instead of `npm start` run `npm build:watch` and in vscode press `F5`
 
 # Contributing
 
