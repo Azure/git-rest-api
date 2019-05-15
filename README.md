@@ -1,3 +1,5 @@
+[![Build Status](https://dev.azure.com/azure-public/azsdk/_apis/build/status/Azure.git-rest-api?branchName=master)](https://dev.azure.com/azure-public/azsdk/_build/latest?definitionId=33&branchName=master)
+
 # Start
 
 1. Install dependencies
