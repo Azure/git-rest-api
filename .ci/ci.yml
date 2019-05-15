@@ -11,7 +11,7 @@ steps:
   inputs:
     versionSpec: '10.x'
 
-- script: npm run ci
+- script: npm ci
   displayName: 'npm install'
 
 - script: npm run test
