@@ -18,7 +18,6 @@ export class RepoService {
 
   public async get(remote: string): Promise<Repository> {
     const repoPath = getRepoMainPath(remote);
-    // tslint:disable-next-line: no-empty
     if (await this.fs.exists(repoPath)) {
       const repo = await Repository.open(repoPath);
       await repo.fetchAll({
