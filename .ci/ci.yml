@@ -12,10 +12,10 @@ steps:
     versionSpec: '10.x'
 
 - script: npm ci
-  displayName: 'npm install'
+  displayName: 'Install dependencies'
 
 - script: npm run test
-  displayName: 'npm test'
+  displayName: 'Test'
 
 - task: PublishTestResults@2
   inputs:
@@ -29,4 +29,4 @@ steps:
     reportDirectory: '$(System.DefaultWorkingDirectory)/**/coverage'
 
 - script: npm run lint
-  displayName: 'npm test'
+  displayName: 'Lint'

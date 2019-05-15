@@ -10,7 +10,7 @@
     "start:dev": "concurrently --handle-input \"wait-on bin/main.js && nodemon\" \"tsc -w -p tsconfig.build.json\" ",
     "start:debug": "nodemon --config nodemon-debug.json",
     "test": "jest",
-    "lint": "tslint",
+    "lint": "tslint -p tsconfig.json",
     "test:watch": "jest --watch --coverage:false --config ./config/jest.dev.config.js"
   },
   "repository": {
@@ -27,6 +27,7 @@
     "@types/jest": "^24.0.13",
     "concurrently": "^4.1.0",
     "jest": "^24.8.0",
+    "prettier": "^1.17.1",
     "ts-jest": "^24.0.2",
     "tslint": "^5.16.0",
     "tslint-config-prettier": "^1.18.0",
