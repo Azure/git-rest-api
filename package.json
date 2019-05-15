@@ -5,6 +5,7 @@
   "main": "bin/main.js",
   "scripts": {
     "build": "tsc -p config/tsconfig.build.json",
+    "build:watch": "npm run -s build -- --watch",
     "start": "npm run build && node ./bin/main.js",
     "start:dev": "concurrently --handle-input \"wait-on bin/main.js && nodemon\" \"tsc -w -p tsconfig.build.json\" ",
     "start:debug": "nodemon --config nodemon-debug.json",
@@ -34,6 +35,7 @@
   "dependencies": {
     "@nestjs/common": "^6.2.0",
     "@nestjs/core": "^6.2.0",
+    "@nestjs/platform-express": "^6.2.0",
     "@types/node": "^12.0.2",
     "class-validator": "^0.9.1",
     "reflect-metadata": "^0.1.13",
