@@ -1,14 +1,8 @@
 import { Injectable } from "@nestjs/common";
 import { Reference } from "nodegit";
 
+import { GitBranch } from "../../dtos";
 import { RepoService } from "../repo";
-
-export interface GitBranch {
-  name: string;
-  commit: {
-    sha: string;
-  };
-}
 
 @Injectable()
 export class BranchService {
@@ -26,12 +20,12 @@ export class BranchService {
     return Promise.all(
       branches.map(async ref => {
         const target = await ref.target();
-        return {
+        return new GitBranch({
           name: getBranchName(ref.name()),
           commit: {
             sha: target.toString(),
           },
-        } as any;
+        });
       }),
     );
   }
