@@ -1,5 +1,5 @@
 import { Injectable } from "@nestjs/common";
-import { Clone, Repository, Fetch, Remote } from "nodegit";
+import { Clone, Fetch, Repository } from "nodegit";
 import path from "path";
 
 import { FSService } from "../fs";

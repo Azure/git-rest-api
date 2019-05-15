@@ -1498,7 +1498,7 @@
         "signature": "775d4d5e07cbcb57c109079affff900838ff6105237637a8c0083b1fd599a4b2"
       },
       "c:/dev/openapi/git-rest-api/src/services/repo/repo.service.ts": {
-        "version": "9988767a95484efe00a76dd74ceab15219315fc2ed77072bc2b08f1729b8f669",
+        "version": "8d6b8e8262fed806de55c9504c7d7e0a1cb20493cddf2486fa5d33f11fc8cd7b",
         "signature": "116cf86d5e0664119352c6f68b724299c80b826be01fcfa9a70b0319e8d99327"
       },
       "c:/dev/openapi/git-rest-api/src/services/repo/index.ts": {
@@ -7830,21 +7830,8 @@
       "c:/dev/openapi/git-rest-api/node_modules/@types/nodegit/submodule.d.ts",
       "c:/dev/openapi/git-rest-api/node_modules/@types/nodegit/transport.d.ts",
       "c:/dev/openapi/git-rest-api/node_modules/@types/nodegit/index.d.ts",
-      [
-        "c:/dev/openapi/git-rest-api/src/services/repo/repo.service.ts",
-        [
-          {
-            "file": "c:/dev/openapi/git-rest-api/src/services/repo/repo.service.ts",
-            "start": 81,
-            "length": 6,
-            "messageText": "'Remote' is declared but its value is never read.",
-            "category": 1,
-            "code": 6133,
-            "reportsUnnecessary": true
-          }
-        ]
-      ],
       "c:/dev/openapi/git-rest-api/src/services/repo/index.ts",
+      "c:/dev/openapi/git-rest-api/src/services/branch/branch.service.ts",
       "c:/dev/openapi/git-rest-api/src/services/branch/index.ts",
       "c:/dev/openapi/git-rest-api/src/services/index.ts",
       "c:/dev/openapi/git-rest-api/src/controllers/app.controller.ts",
@@ -7924,7 +7911,7 @@
       "c:/dev/openapi/git-rest-api/node_modules/@types/jest/index.d.ts",
       "c:/dev/openapi/git-rest-api/node_modules/@types/stack-utils/index.d.ts",
       "c:/dev/openapi/git-rest-api/node_modules/@types/yargs/index.d.ts",
-      "c:/dev/openapi/git-rest-api/src/services/branch/branch.service.ts"
+      "c:/dev/openapi/git-rest-api/src/services/repo/repo.service.ts"
     ]
   },
   "version": "3.4.5"
