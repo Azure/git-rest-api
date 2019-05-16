@@ -12,7 +12,7 @@
     "start:debug": "nodemon --config nodemon-debug.json",
     "test": "jest",
     "lint": "tslint -p tsconfig.json",
-    "test:watch": "jest --watch --coverage:false --config ./config/jest.dev.config.js",
+    "test:watch": "jest --watch --coverage=false --config ./config/jest.dev.config.js",
     "swagger:gen": "node ./bin/scripts/generate-swagger-specs.js"
   },
   "repository": {

@@ -1,1 +1,1 @@
-export * from "./repo-auth-params";
+export * from "./decorators";
