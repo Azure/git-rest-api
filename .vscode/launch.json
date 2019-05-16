@@ -6,8 +6,9 @@
       "request": "launch",
       "name": "Run server",
       "program": "${workspaceFolder}/src/main.ts",
-      "outFiles": ["${workspaceFolder}/bin/main.js"],
+      "outFiles": ["${workspaceFolder}/bin/**/*.js"],
       "console": "integratedTerminal",
+      "sourceMaps": true,
       "cwd": "${workspaceFolder}"
     }
   ]
