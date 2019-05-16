@@ -9,7 +9,6 @@
       "outFiles": ["${workspaceFolder}/bin/**/*.js"],
       "console": "integratedTerminal",
       "sourceMaps": true,
-      "trace": "sm",
       "cwd": "${workspaceFolder}"
     }
   ]
