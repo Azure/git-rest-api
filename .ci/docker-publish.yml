@@ -7,23 +7,7 @@ trigger:
 pr: none
 
 stages:
-  - stage: Build_Project
-    jobs:
-      - job: Build_Project
-        pool:
-          vmImage: "Ubuntu-16.04"
-        steps:
-          - task: NodeTool@0
-            inputs:
-              versionSpec: "10.x"
-
-          - script: npm ci
-            displayName: "Install Dependencies"
-
-          - script: npm run build
-            displayName: "Build Project"
   - stage: Build_Docker
-    dependsOn: Build_Project
     jobs:
       - job: Build_Docker
         pool:
@@ -34,6 +18,9 @@ stages:
             inputs:
               containerRegistry: "git-rest-api docker"
               repository: "azuredevx/git-rest-api"
+              tags: |
+                $(Build.BuildId)
+                latest
   - stage: Publish_Docker
     dependsOn: Build_Docker
     jobs:
