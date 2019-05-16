@@ -13,11 +13,11 @@ export class RepoAuth {
     this.token = obj.token;
   }
 
-  public toCreds() {
+  public toCreds(): Cred | undefined {
     if (this.token) {
       return Cred.userpassPlaintextNew(this.token, "x-oauth-basic");
     } else {
-      return null;
+      return undefined;
     }
   }
 }
