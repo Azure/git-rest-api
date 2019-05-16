@@ -16,6 +16,7 @@ const config = {
       tsConfig: "tsconfig.json",
     },
   },
+  setupFiles: ["<rootDir>/test/jest-setup.ts"],
   testMatch: ["**/*.test.ts"],
   verbose: true,
   testEnvironment: "node",

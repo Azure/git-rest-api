@@ -1,0 +1,112 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "description": "Rest api to run operation on git repositories",
+    "version": "1.0",
+    "title": "GIT Rest API"
+  },
+  "basePath": "/",
+  "tags": [],
+  "schemes": [
+    "http",
+    "https"
+  ],
+  "paths": {
+    "/": {
+      "get": {
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "produces": [
+          "application/json"
+        ],
+        "consumes": [
+          "application/json"
+        ]
+      }
+    },
+    "/health/alive": {
+      "get": {
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "produces": [
+          "application/json"
+        ],
+        "consumes": [
+          "application/json"
+        ]
+      }
+    },
+    "/repos/{remote}/branches": {
+      "get": {
+        "parameters": [
+          {
+            "type": "string",
+            "name": "remote",
+            "required": true,
+            "in": "path"
+          },
+          {
+            "name": "x-oauth-basic",
+            "required": false,
+            "in": "header",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/GitBranch"
+              }
+            }
+          },
+          "404": {
+            "description": ""
+          }
+        },
+        "produces": [
+          "application/json"
+        ],
+        "consumes": [
+          "application/json"
+        ]
+      }
+    }
+  },
+  "definitions": {
+    "GitCommit": {
+      "type": "object",
+      "properties": {
+        "sha": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "sha"
+      ]
+    },
+    "GitBranch": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "commit": {
+          "$ref": "#/definitions/GitCommit"
+        }
+      },
+      "required": [
+        "name",
+        "commit"
+      ]
+    }
+  }
+}
