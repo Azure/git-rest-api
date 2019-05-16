@@ -1,5 +1,5 @@
-import { Controller, Get, Param } from "@nestjs/common";
-import { ApiOkResponse } from "@nestjs/swagger";
+import { Controller, Get, Headers, Param } from "@nestjs/common";
+import { ApiNotFoundResponse, ApiOkResponse } from "@nestjs/swagger";
 
 import { GitBranch } from "../../dtos";
 import { BranchService } from "../../services";
@@ -10,7 +10,11 @@ export class BranchesController {
 
   @Get()
   @ApiOkResponse({ type: GitBranch, isArray: true })
-  public async list(@Param("remote") remote: string): Promise<GitBranch[]> {
+  @ApiNotFoundResponse({})
+  public async list(
+    @Param("remote") remote: string,
+    @Headers("x-oauth-basic") oAuthToken: string,
+  ): Promise<GitBranch[]> {
     const branches = await this.branchService.list(remote);
     return branches;
   }

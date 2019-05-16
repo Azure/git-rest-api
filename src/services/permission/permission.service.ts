@@ -14,6 +14,7 @@ const TOKEN_INVALIDATE_TIMEOUT = 60_000; // 60s
 export class PermissionService {
   private tokenPermissions = new Map<string, TokenPermission>();
   private timeouts = new Map<string, NodeJS.Timeout>();
+
   public getTokenPermission(token: string, remote: string): TokenPermission | undefined {
     return this.tokenPermissions.get(this.getMapKey(token, remote));
   }
