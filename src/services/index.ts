@@ -1,4 +1,5 @@
 export * from "./app.service";
-export * from "./fs";
-export * from "./repo";
 export * from "./branch";
+export * from "./fs";
+export * from "./permission";
+export * from "./repo";

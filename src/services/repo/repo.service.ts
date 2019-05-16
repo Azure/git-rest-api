@@ -1,5 +1,5 @@
-import { Injectable } from "@nestjs/common";
-import { Clone, Fetch, Repository } from "nodegit";
+import { Injectable, NotFoundException } from "@nestjs/common";
+import { Clone, Fetch, Repository, FetchOptions, Cred } from "nodegit";
 import path from "path";
 
 import { FSService } from "../fs";
@@ -8,6 +8,11 @@ const repoCacheFolder = path.join("./tmp", "repos");
 export function getRepoMainPath(remote: string) {
   return path.join(repoCacheFolder, encodeURIComponent(remote));
 }
+
+const defaultFetchOptions: FetchOptions = {
+  downloadTags: 0,
+  prune: Fetch.PRUNE.GIT_FETCH_PRUNE,
+};
 
 @Injectable()
 export class RepoService {
@@ -20,17 +25,36 @@ export class RepoService {
     const repoPath = getRepoMainPath(remote);
     if (await this.fs.exists(repoPath)) {
       const repo = await Repository.open(repoPath);
-      await repo.fetchAll({
-        prune: Fetch.PRUNE.GIT_FETCH_PRUNE,
-      });
       return repo;
     } else {
       return this.clone(remote, repoPath);
     }
   }
 
+  public async fetchAll(repo: Repository) {
+    try {
+      await repo.fetchAll(defaultFetchOptions);
+    } catch {
+      throw new NotFoundException();
+    }
+  }
+
   public async clone(remote: string, repoPath: string): Promise<Repository> {
     await this.cacheReady;
-    return Clone.clone(`https://${remote}`, repoPath);
+    try {
+      return await Clone.clone(`https://${remote}`, repoPath, {
+        fetchOpts: {
+          ...defaultFetchOptions,
+          callbacks: {
+            credentials: (...args: unknown[]) => {
+              console.log("Creds?", args);
+              return Cred.userpassPlaintextNew(process.env.GH_TOKEN || "", "x-oauth-basic");
+            },
+          },
+        },
+      });
+    } catch {
+      throw new NotFoundException();
+    }
   }
 }
