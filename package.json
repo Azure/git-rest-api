@@ -7,6 +7,7 @@
     "build": "tsc -p config/tsconfig.build.json",
     "build:watch": "npm run -s build -- --watch",
     "start": "npm run build && node ./bin/main.js",
+    "start:prod": "node ./bin/main.js",
     "start:dev": "concurrently --handle-input \"wait-on bin/main.js && nodemon\" \"tsc -w -p tsconfig.build.json\" ",
     "start:debug": "nodemon --config nodemon-debug.json",
     "test": "jest",
