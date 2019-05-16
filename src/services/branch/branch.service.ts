@@ -2,7 +2,7 @@ import { Injectable } from "@nestjs/common";
 import { Reference } from "nodegit";
 
 import { GitBranch } from "../../dtos";
-import { RepoService } from "../repo";
+import { GitBaseOptions, RepoService } from "../repo";
 
 @Injectable()
 export class BranchService {
@@ -12,8 +12,8 @@ export class BranchService {
    * List the branches
    * @param remote
    */
-  public async list(remote: string): Promise<GitBranch[]> {
-    const repo = await this.repoService.get(remote);
+  public async list(remote: string, options: GitBaseOptions = {}): Promise<GitBranch[]> {
+    const repo = await this.repoService.get(remote, options);
     const refs = await repo.getReferences(Reference.TYPE.LISTALL);
     const branches = refs.filter(x => x.isRemote());
 
