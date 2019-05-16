@@ -8,7 +8,8 @@
   "basePath": "/",
   "tags": [],
   "schemes": [
-    "http"
+    "http",
+    "https"
   ],
   "paths": {
     "/": {
@@ -49,6 +50,12 @@
             "name": "remote",
             "required": true,
             "in": "path"
+          },
+          {
+            "name": "x-oauth-basic",
+            "required": false,
+            "in": "header",
+            "type": "string"
           }
         ],
         "responses": {
@@ -60,6 +67,9 @@
                 "$ref": "#/definitions/GitBranch"
               }
             }
+          },
+          "404": {
+            "description": ""
           }
         },
         "produces": [

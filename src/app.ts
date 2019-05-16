@@ -10,6 +10,7 @@ export async function createApp() {
     .setTitle("GIT Rest API")
     .setDescription("Rest api to run operation on git repositories")
     .setVersion("1.0")
+    .setSchemes("http", "https")
     .build();
   const document = SwaggerModule.createDocument(app, options);
   SwaggerModule.setup("swagger", app, document);
