@@ -29,9 +29,10 @@ export class PermissionCacheService {
     return cache.permission;
   }
 
-  public setPermission(auth: RepoAuth, remote: string, permission: GitRemotePermission) {
+  public setPermission(auth: RepoAuth, remote: string, permission: GitRemotePermission): GitRemotePermission {
     const key = this.getMapKey(auth, remote);
     this.tokenPermissions.set(key, { permission, lastSync: new Date().getTime() });
+    return permission;
   }
 
   private getMapKey(auth: RepoAuth, remote: string) {
