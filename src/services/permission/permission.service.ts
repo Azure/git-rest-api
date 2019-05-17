@@ -8,6 +8,10 @@ import { GitRemotePermission } from "./permissions";
 export class PermissionService {
   constructor(private cache: PermissionCacheService) {}
   public async getPermission(auth: RepoAuth, remote: string): Promise<GitRemotePermission | undefined> {
+    const cached = this.cache.getPermission(auth, remote);
+    if (cached) {
+      return cached;
+    }
     return Promise.resolve(undefined);
   }
 
