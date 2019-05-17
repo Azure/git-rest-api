@@ -30,7 +30,7 @@ export class GitFetchService {
   private cacheReady: Promise<string>;
 
   constructor(fs: FSService) {
-    this.cacheReady = fs.makeDir(repoCacheFolder);
+    this.cacheReady = fs.mkdir(repoCacheFolder);
   }
 
   public async fetch(remote: string, repo: Repository, options: GitBaseOptions): Promise<Repository> {
