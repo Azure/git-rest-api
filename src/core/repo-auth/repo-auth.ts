@@ -29,16 +29,11 @@ export class RepoAuth {
     }
   }
 
-  public async toCreds(): Promise<Cred | undefined> {
-    if (!this.username) {
-      return undefined;
-    }
-    if (this.password) {
+  public toCreds(): Cred | undefined {
+    if (this.username && this.password) {
       return Cred.userpassPlaintextNew(this.username, this.password);
-    } else {
-      const cred = await Cred.userpassPlaintextNew("", this.username);
-      return cred;
     }
+    return undefined;
   }
 }
 
