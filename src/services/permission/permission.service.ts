@@ -2,7 +2,7 @@ import { Injectable } from "@nestjs/common";
 
 import { SecureUtils } from "../../utils";
 
-export enum TokenPermission {
+export enum GitRemotePermission {
   None,
   Read,
   Write,
@@ -12,14 +12,14 @@ const TOKEN_INVALIDATE_TIMEOUT = 60_000; // 60s
 
 @Injectable()
 export class PermissionService {
-  private tokenPermissions = new Map<string, TokenPermission>();
+  private tokenPermissions = new Map<string, GitRemotePermission>();
   private timeouts = new Map<string, NodeJS.Timeout>();
 
-  public getTokenPermission(token: string, remote: string): TokenPermission | undefined {
+  public getTokenPermission(token: string, remote: string): GitRemotePermission | undefined {
     return this.tokenPermissions.get(this.getMapKey(token, remote));
   }
 
-  public setTokenPermission(token: string, remote: string, permission: TokenPermission) {
+  public setTokenPermission(token: string, remote: string, permission: GitRemotePermission) {
     const key = this.getMapKey(token, remote);
     this.tokenPermissions.set(key, permission);
     this.timeoutPermission(key);

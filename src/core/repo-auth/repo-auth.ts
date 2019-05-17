@@ -1,45 +1,56 @@
-import { createParamDecorator } from "@nestjs/common";
-import { ApiImplicitHeaders } from "@nestjs/swagger";
+import basicAuth from "basic-auth";
 import { Cred } from "nodegit";
 
-export interface IRepoAuth {
-  token?: string;
-}
+export const AUTH_HEADERS = {
+  generic: "x-authorization",
+  github: "x-github-token",
+};
 
+/**
+ * Class that handle repository authentication
+ * Support generic server auth using the `x-authentication` header which is just a pass thru to the repo
+ * Supoort a few helper
+ * - `x-github-token`: Pass a github token to authenticate
+ */
 export class RepoAuth {
-  private token: string | undefined;
+  private username?: string;
+  private password?: string;
 
-  constructor(obj: IRepoAuth) {
-    this.token = obj.token;
+  constructor(headers: { [key: string]: string }) {
+    if (headers[AUTH_HEADERS.generic]) {
+      const auth = parseAuthorizationHeader(headers[AUTH_HEADERS.generic]);
+      if (auth) {
+        this.username = auth.username;
+        this.password = auth.password;
+      }
+    } else if (headers[AUTH_HEADERS.github]) {
+      this.username = headers[AUTH_HEADERS.github];
+      this.password = "x-oauth-basic";
+    }
   }
 
-  public toCreds(): Cred | undefined {
-    if (this.token) {
-      return Cred.userpassPlaintextNew(this.token, "x-oauth-basic");
-    } else {
+  public async toCreds(): Promise<Cred | undefined> {
+    if (!this.username) {
       return undefined;
+    }
+    if (this.password) {
+      return Cred.userpassPlaintextNew(this.username, this.password);
+    } else {
+      const cred = await Cred.userpassPlaintextNew("", this.username);
+      return cred;
     }
   }
 }
 
-const TOKEN_HEADER = "x-oauth-basic";
-
-export const Auth = createParamDecorator(
-  (_, req): RepoAuth => {
-    return new RepoAuth({
-      token: req.headers[TOKEN_HEADER],
-    });
-  },
-);
-
 /**
- * Helper to add on methods using the Auth parameter for the swagger specs to be generated correctly
+ * Parse the authorization header into username and password.
+ * Needs to be in this format for now
+ * `Basic [base64Encoded(username:password)`
  */
-export function ApiHasPassThruAuth() {
-  return ApiImplicitHeaders([
-    {
-      name: TOKEN_HEADER,
-      required: false,
-    },
-  ]);
+function parseAuthorizationHeader(header: string) {
+  const result = basicAuth.parse(header);
+  if (!result) {
+    return;
+  }
+  return { username: result.name, password: result.pass };
 }
