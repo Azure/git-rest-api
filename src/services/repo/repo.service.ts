@@ -4,7 +4,7 @@ import path from "path";
 
 import { RepoAuth } from "../../core";
 import { FSService } from "../fs";
-import { GitFetchService, repoCacheFolder} from "../git-fetch";
+import { GitFetchService, repoCacheFolder } from "../git-fetch";
 
 export function getRepoMainPath(remote: string) {
   return path.join(repoCacheFolder, encodeURIComponent(remote));
