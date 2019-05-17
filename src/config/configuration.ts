@@ -1,14 +1,19 @@
+import { Injectable } from "@nestjs/common";
+
 import { developmentConfig } from "./development";
 import { productionConfig } from "./production";
 import { configSchema } from "./schema";
+import { testConfig } from "./test";
 
-export type Env = "production" | "development";
+export type Env = "production" | "development" | "test";
 
+@Injectable()
 export class Configuration {
   constructor() {
     const environmentOverrides: Record<Env, Partial<Configuration>> = {
       production: developmentConfig,
       development: productionConfig,
+      test: testConfig,
     };
 
     const env: Env = configSchema.get("env");
