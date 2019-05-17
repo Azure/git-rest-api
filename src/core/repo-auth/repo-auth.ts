@@ -21,7 +21,7 @@ export class RepoAuth {
   constructor(obj?: { username: string; password: string }) {
     if (obj) {
       this.username = obj.username;
-      this.username = obj.password;
+      this.password = obj.password;
     }
   }
 
@@ -35,7 +35,7 @@ export class RepoAuth {
   public static fromHeaders(headers: { [key: string]: string }): RepoAuth | undefined {
     if (headers[AUTH_HEADERS.generic]) {
       const auth = parseAuthorizationHeader(headers[AUTH_HEADERS.generic]);
-      if (auth) {
+      if (!auth) {
         return undefined;
       }
       return new RepoAuth(auth);
@@ -78,7 +78,7 @@ export class RepoAuth {
 function parseAuthorizationHeader(header: string) {
   const result = basicAuth.parse(header);
   if (!result) {
-    return;
+    return undefined;
   }
   return { username: result.name, password: result.pass };
 }
