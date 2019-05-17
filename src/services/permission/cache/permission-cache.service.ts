@@ -17,7 +17,7 @@ export class PermissionCacheService {
   public get(auth: RepoAuth, remote: string): GitRemotePermission | undefined {
     const key = this.getMapKey(auth, remote);
     const cache = this.tokenPermissions.get(key);
-    if (!cache) {
+    if (cache === undefined) {
       return undefined;
     }
     const now = Date.now();

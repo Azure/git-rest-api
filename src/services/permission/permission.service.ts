@@ -12,7 +12,7 @@ export class PermissionService {
 
   public async get(auth: RepoAuth, remote: string): Promise<GitRemotePermission> {
     const cached = this.cache.get(auth, remote);
-    if (cached) {
+    if (cached !== undefined) {
       return cached;
     }
     return this.retrievePermissions(auth, remote);

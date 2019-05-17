@@ -57,7 +57,7 @@ export class RepoAuth {
 
   public toAuthorizationHeader(): string | undefined {
     if (this.username && this.password) {
-      const header = `${process.env.GH_TOKEN}:x-oauth-basic`;
+      const header = `${this.username}:${this.password}`;
       return `Basic ${Buffer.from(header).toString("base64")}`;
     }
     return undefined;

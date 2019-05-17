@@ -18,6 +18,11 @@ describe("PermissionService", () => {
     expect(service.get(auth, remote)).toBeUndefined();
   });
 
+  it("returns none when permission is set to none", () => {
+    service.set(auth, remote, GitRemotePermission.None);
+    expect(service.get(auth, remote)).toBe(GitRemotePermission.None);
+  });
+
   it("set a permission", () => {
     service.set(auth, remote, GitRemotePermission.Read);
     expect(service.get(auth, remote)).toBe(GitRemotePermission.Read);
@@ -34,6 +39,13 @@ describe("PermissionService", () => {
 
     mockDate(now + 60_010);
     expect(service.get(auth, remote)).toBeUndefined();
+  });
+
+  it("doesn't get permission from another key", () => {
+    service.set(auth, remote, GitRemotePermission.Read);
+    expect(service.get(new RepoAuth(), remote)).toBeUndefined();
+    expect(service.get(new RepoAuth({ username: "foo", password: "x-oauth-token" }), remote)).toBeUndefined();
+    expect(service.get(new RepoAuth({ username: "token-1", password: "x-other-token" }), remote)).toBeUndefined();
   });
 });
 
