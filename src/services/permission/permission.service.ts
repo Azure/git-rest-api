@@ -11,7 +11,7 @@ export class PermissionService {
   constructor(private cache: PermissionCacheService, private http: HttpService) {}
 
   public async get(auth: RepoAuth, remote: string): Promise<GitRemotePermission> {
-    const cached = this.cache.getPermission(auth, remote);
+    const cached = this.cache.get(auth, remote);
     if (cached) {
       return cached;
     }
@@ -19,7 +19,7 @@ export class PermissionService {
   }
 
   public set(auth: RepoAuth, remote: string, permission: GitRemotePermission) {
-    return this.cache.setPermission(auth, remote, permission);
+    return this.cache.set(auth, remote, permission);
   }
 
   private async retrievePermissions(auth: RepoAuth, remote: string) {

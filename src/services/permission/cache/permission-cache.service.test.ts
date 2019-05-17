@@ -15,25 +15,25 @@ describe("PermissionService", () => {
   });
 
   it("returns undefined when permission has not been set", () => {
-    expect(service.getPermission(auth, remote)).toBeUndefined();
+    expect(service.get(auth, remote)).toBeUndefined();
   });
 
   it("set a permission", () => {
-    service.setPermission(auth, remote, GitRemotePermission.Read);
-    expect(service.getPermission(auth, remote)).toBe(GitRemotePermission.Read);
+    service.set(auth, remote, GitRemotePermission.Read);
+    expect(service.get(auth, remote)).toBe(GitRemotePermission.Read);
   });
 
   it("clear permission after a timeout", () => {
     const now = Date.now();
 
-    service.setPermission(auth, remote, GitRemotePermission.Read);
-    expect(service.getPermission(auth, remote)).toBe(GitRemotePermission.Read);
+    service.set(auth, remote, GitRemotePermission.Read);
+    expect(service.get(auth, remote)).toBe(GitRemotePermission.Read);
     mockDate(now + 50_000);
     // Should still be cached
-    expect(service.getPermission(auth, remote)).toBe(GitRemotePermission.Read);
+    expect(service.get(auth, remote)).toBe(GitRemotePermission.Read);
 
-    mockDate(now + 61_000);
-    expect(service.getPermission(auth, remote)).toBeUndefined();
+    mockDate(now + 60_010);
+    expect(service.get(auth, remote)).toBeUndefined();
   });
 });
 

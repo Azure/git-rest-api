@@ -14,7 +14,7 @@ export interface CachedPermission {
 export class PermissionCacheService {
   private tokenPermissions = new Map<string, CachedPermission>();
 
-  public getPermission(auth: RepoAuth, remote: string): GitRemotePermission | undefined {
+  public get(auth: RepoAuth, remote: string): GitRemotePermission | undefined {
     const key = this.getMapKey(auth, remote);
     const cache = this.tokenPermissions.get(key);
     if (!cache) {
@@ -29,7 +29,7 @@ export class PermissionCacheService {
     return cache.permission;
   }
 
-  public setPermission(auth: RepoAuth, remote: string, permission: GitRemotePermission): GitRemotePermission {
+  public set(auth: RepoAuth, remote: string, permission: GitRemotePermission): GitRemotePermission {
     const key = this.getMapKey(auth, remote);
     this.tokenPermissions.set(key, { permission, lastSync: Date.now() });
     return permission;
