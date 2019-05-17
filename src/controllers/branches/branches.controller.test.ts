@@ -27,7 +27,7 @@ describe("BranchController", () => {
   });
 
   it("list the branches", async () => {
-    const auth = new RepoAuth({});
+    const auth = new RepoAuth();
     const branches = await controller.list("github.com/Azure/git-rest-api", auth);
 
     expect(branches).toEqual([b1, b2]);

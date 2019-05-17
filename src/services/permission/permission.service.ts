@@ -24,12 +24,12 @@ export class PermissionService {
 
   private async retrievePermissions(auth: RepoAuth, remote: string) {
     const gitUrl = RepoUtils.getUrl(remote);
-    const canRead = await this.checkReadPermission(auth, gitUrl);
     const canWrite = await this.checkWritePermission(auth, gitUrl);
     if (canWrite) {
       return this.set(auth, remote, GitRemotePermission.Write);
     }
 
+    const canRead = await this.checkReadPermission(auth, gitUrl);
     if (canRead) {
       return this.set(auth, remote, GitRemotePermission.Read);
     }
