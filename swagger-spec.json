@@ -74,6 +74,9 @@
               }
             }
           },
+          "400": {
+            "description": "When the api request header is malformed"
+          },
           "404": {
             "description": ""
           }
