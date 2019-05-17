@@ -5,11 +5,12 @@ import {
   AppService,
   BranchService,
   FSService,
+  GitFetchService,
+  HttpService,
+  PermissionCacheService,
   PermissionService,
   RepoService,
-  PermissionCacheService,
 } from "./services";
-import { GitFetchService } from "./services/git-fetch";
 
 @Module({
   imports: [],
@@ -22,6 +23,7 @@ import { GitFetchService } from "./services/git-fetch";
     PermissionService,
     GitFetchService,
     PermissionCacheService,
+    HttpService,
   ],
 })
 export class AppModule {}

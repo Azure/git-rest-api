@@ -10,7 +10,7 @@ import { GitRemotePermission } from "./permissions";
 export class PermissionService {
   constructor(private cache: PermissionCacheService, private http: HttpService) {}
 
-  public async getPermission(auth: RepoAuth, remote: string): Promise<GitRemotePermission> {
+  public async get(auth: RepoAuth, remote: string): Promise<GitRemotePermission> {
     const cached = this.cache.getPermission(auth, remote);
     if (cached) {
       return cached;
@@ -18,7 +18,7 @@ export class PermissionService {
     return this.retrievePermissions(auth, remote);
   }
 
-  public setPermission(auth: RepoAuth, remote: string, permission: GitRemotePermission) {
+  public set(auth: RepoAuth, remote: string, permission: GitRemotePermission) {
     return this.cache.setPermission(auth, remote, permission);
   }
 
@@ -27,13 +27,13 @@ export class PermissionService {
     const canRead = await this.checkReadPermission(auth, gitUrl);
     const canWrite = await this.checkWritePermission(auth, gitUrl);
     if (canWrite) {
-      return this.setPermission(auth, remote, GitRemotePermission.Write);
+      return this.set(auth, remote, GitRemotePermission.Write);
     }
 
     if (canRead) {
-      return this.setPermission(auth, remote, GitRemotePermission.Read);
+      return this.set(auth, remote, GitRemotePermission.Read);
     }
-    return this.setPermission(auth, remote, GitRemotePermission.None);
+    return this.set(auth, remote, GitRemotePermission.None);
   }
 
   private async checkWritePermission(auth: RepoAuth, gitUrl: string): Promise<boolean> {
