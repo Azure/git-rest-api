@@ -1,5 +1,5 @@
-import { createParamDecorator } from "@nestjs/common";
-import { ApiImplicitHeaders } from "@nestjs/swagger";
+import { BadRequestException, createParamDecorator } from "@nestjs/common";
+import { ApiBadRequestResponse, ApiImplicitHeaders } from "@nestjs/swagger";
 
 import { AUTH_HEADERS, RepoAuth } from "./repo-auth";
 
@@ -8,15 +8,20 @@ import { AUTH_HEADERS, RepoAuth } from "./repo-auth";
  */
 export const Auth = createParamDecorator(
   (_, req): RepoAuth => {
-    return new RepoAuth(req.headers);
+    const repoAuth = RepoAuth.fromHeaders(req.headers);
+    if (repoAuth) {
+      return repoAuth;
+    } else {
+      throw new BadRequestException("Repository authorization is malformed");
+    }
   },
 );
 
 /**
  * Helper to add on methods using the Auth parameter for the swagger specs to be generated correctly
  */
-export function ApiHasPassThruAuth() {
-  return ApiImplicitHeaders(
+export function ApiHasPassThruAuth(): MethodDecorator {
+  const implicitHeaders = ApiImplicitHeaders(
     Object.values(AUTH_HEADERS).map(header => {
       return {
         name: header,
@@ -24,4 +29,12 @@ export function ApiHasPassThruAuth() {
       };
     }),
   );
+  const badRequestResponse = ApiBadRequestResponse({
+    description: "When the api request header is malformed",
+  });
+
+  return (...args) => {
+    implicitHeaders(...args);
+    badRequestResponse(...args);
+  };
 }

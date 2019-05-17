@@ -1,12 +1,9 @@
 import { Injectable } from "@nestjs/common";
 
 import { SecureUtils } from "../../utils";
-
-export enum GitRemotePermission {
-  None,
-  Read,
-  Write,
-}
+import { GitRemotePermission } from "./permissions";
+import { RepoAuth } from "../../core";
+import { PermissionCacheService } from "./cache";
 
 const TOKEN_INVALIDATE_TIMEOUT = 60_000; // 60s
 
@@ -15,40 +12,10 @@ export class PermissionService {
   private tokenPermissions = new Map<string, GitRemotePermission>();
   private timeouts = new Map<string, NodeJS.Timeout>();
 
-  public getTokenPermission(token: string, remote: string): GitRemotePermission | undefined {
-    return this.tokenPermissions.get(this.getMapKey(token, remote));
+  constructor(private cache: PermissionCacheService) {}
+  public async getPermission(auth: RepoAuth, remote: string): Promise<GitRemotePermission | undefined> {
+    return Promise.resolve(undefined);
   }
 
-  public setTokenPermission(token: string, remote: string, permission: GitRemotePermission) {
-    const key = this.getMapKey(token, remote);
-    this.tokenPermissions.set(key, permission);
-    this.timeoutPermission(key);
-  }
-
-  /**
-   * Remove the cached permission after a timeout
-   */
-  private timeoutPermission(key: string) {
-    const existingTimeout = this.timeouts.get(key);
-    if (existingTimeout) {
-      clearTimeout(existingTimeout);
-      this.timeouts.delete(key);
-    }
-
-    this.timeouts.set(
-      key,
-      setTimeout(() => {
-        this.tokenPermissions.delete(key);
-        this.timeouts.delete(key);
-      }, TOKEN_INVALIDATE_TIMEOUT),
-    );
-  }
-
-  private getMapKey(token: string, remote: string) {
-    return `${this.hashToken(token)}/${remote}`;
-  }
-
-  private hashToken(token: string): string {
-    return SecureUtils.sha512(token);
-  }
+  public setPermission(token: RepoAuth, remote: string, permission: GitRemotePermission) {}
 }

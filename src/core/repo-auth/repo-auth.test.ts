@@ -9,7 +9,7 @@ describe("RepoAuth", () => {
     });
 
     it("doesn't generate some basic password creds when using oath token", () => {
-      expect(new RepoAuth({ token: "token-1" }).toCreds()).toEqual(
+      expect(new RepoAuth({ "x-github-token": "token-1" }).toCreds()).toEqual(
         Cred.userpassPlaintextNew("token-1", "x-oauth-basic"),
       );
     });
