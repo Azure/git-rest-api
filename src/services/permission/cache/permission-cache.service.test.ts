@@ -24,9 +24,19 @@ describe("PermissionService", () => {
   });
 
   it("clear permission after a timeout", () => {
+    const now = Date.now();
+
     service.setPermission(auth, remote, GitRemotePermission.Read);
     expect(service.getPermission(auth, remote)).toBe(GitRemotePermission.Read);
-    jest.runTimersToTime(60_000);
+    mockDate(now + 50_000);
+    // Should still be cached
+    expect(service.getPermission(auth, remote)).toBe(GitRemotePermission.Read);
+
+    mockDate(now + 61_000);
     expect(service.getPermission(auth, remote)).toBeUndefined();
   });
 });
+
+function mockDate(now: number) {
+  jest.spyOn(global.Date, "now").mockImplementation(() => now);
+}

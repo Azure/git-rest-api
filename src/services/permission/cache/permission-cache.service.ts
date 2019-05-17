@@ -20,7 +20,7 @@ export class PermissionCacheService {
     if (!cache) {
       return undefined;
     }
-    const now = new Date().getTime();
+    const now = Date.now();
 
     if (now - cache.lastSync > TOKEN_INVALIDATE_TIMEOUT) {
       this.tokenPermissions.delete(key);
@@ -31,7 +31,7 @@ export class PermissionCacheService {
 
   public setPermission(auth: RepoAuth, remote: string, permission: GitRemotePermission): GitRemotePermission {
     const key = this.getMapKey(auth, remote);
-    this.tokenPermissions.set(key, { permission, lastSync: new Date().getTime() });
+    this.tokenPermissions.set(key, { permission, lastSync: Date.now() });
     return permission;
   }
 
