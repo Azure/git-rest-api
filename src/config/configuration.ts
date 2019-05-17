@@ -9,6 +9,8 @@ export type Env = "production" | "development" | "test";
 
 @Injectable()
 export class Configuration {
+  public readonly env: Env;
+
   constructor() {
     const environmentOverrides: Record<Env, Partial<Configuration>> = {
       production: developmentConfig,
@@ -26,6 +28,4 @@ export class Configuration {
 
     this.env = configSchema.get("env");
   }
-
-  public readonly env: Env;
 }
