@@ -11,10 +11,10 @@ steps:
     inputs:
       versionSpec: "10.x"
 
-  - script: npm ci
+  - script: npm -s ci
     displayName: "Install dependencies"
 
-  - script: npm run test
+  - script: npm run -s test
     displayName: "Test"
 
   - task: PublishTestResults@2
@@ -28,5 +28,5 @@ steps:
       summaryFileLocation: "$(System.DefaultWorkingDirectory)/**/*coverage.xml"
       reportDirectory: "$(System.DefaultWorkingDirectory)/**/coverage"
 
-  - script: npm run lint
+  - script: npm run -s lint
     displayName: "Lint"
