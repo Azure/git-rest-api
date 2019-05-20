@@ -141,6 +141,65 @@
           "application/json"
         ]
       }
+    },
+    "/repos/{remote}/compare/{base}...{head}": {
+      "get": {
+        "parameters": [
+          {
+            "type": "string",
+            "name": "head",
+            "required": true,
+            "in": "path"
+          },
+          {
+            "type": "string",
+            "name": "base",
+            "required": true,
+            "in": "path"
+          },
+          {
+            "type": "string",
+            "name": "remote",
+            "required": true,
+            "in": "path"
+          },
+          {
+            "name": "x-authorization",
+            "required": false,
+            "in": "header",
+            "type": "string"
+          },
+          {
+            "name": "x-github-token",
+            "required": false,
+            "in": "header",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/GitDiff"
+              }
+            }
+          },
+          "400": {
+            "description": "When the x-authorization header is malformed"
+          },
+          "404": {
+            "description": ""
+          }
+        },
+        "produces": [
+          "application/json"
+        ],
+        "consumes": [
+          "application/json"
+        ]
+      }
     }
   },
   "definitions": {
@@ -218,6 +277,73 @@
         "author",
         "committer",
         "parents"
+      ]
+    },
+    "GitFileDiff": {
+      "type": "object",
+      "properties": {
+        "filename": {
+          "type": "string"
+        },
+        "sha": {
+          "type": "string"
+        },
+        "status": {
+          "type": "string",
+          "enum": [
+            "unmodified",
+            "modified",
+            "added",
+            "deleted",
+            "renamed"
+          ]
+        },
+        "additions": {
+          "type": "number"
+        },
+        "deletions": {
+          "type": "number"
+        },
+        "changes": {
+          "type": "number"
+        },
+        "previousFilename": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "filename",
+        "sha",
+        "status",
+        "additions",
+        "deletions",
+        "changes"
+      ]
+    },
+    "GitDiff": {
+      "type": "object",
+      "properties": {
+        "headCommit": {
+          "$ref": "#/definitions/GitCommit"
+        },
+        "baseCommit": {
+          "$ref": "#/definitions/GitCommit"
+        },
+        "mergeBaseCommit": {
+          "$ref": "#/definitions/GitCommit"
+        },
+        "files": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/GitFileDiff"
+          }
+        }
+      },
+      "required": [
+        "headCommit",
+        "baseCommit",
+        "mergeBaseCommit",
+        "files"
       ]
     }
   }

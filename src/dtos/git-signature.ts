@@ -1,12 +1,6 @@
 import { ApiModelProperty } from "@nestjs/swagger";
 
-export interface IGitSignature {
-  name: string;
-  email: string;
-  date: Date;
-}
-
-export class GitSignature implements IGitSignature {
+export class GitSignature {
   @ApiModelProperty({ type: String })
   public name: string;
   @ApiModelProperty({ type: String })
@@ -14,7 +8,7 @@ export class GitSignature implements IGitSignature {
   @ApiModelProperty({ type: String, format: "date-time" })
   public date: Date;
 
-  constructor(sig: IGitSignature) {
+  constructor(sig: GitSignature) {
     this.name = sig.name;
     this.email = sig.email;
     this.date = sig.date;
