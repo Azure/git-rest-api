@@ -15,7 +15,7 @@ const b2 = {
   },
 };
 
-describe("BranchController", () => {
+describe("BranchesController", () => {
   let controller: BranchesController;
   const branchServiceSpy = {
     list: jest.fn(() => [b1, b2]),

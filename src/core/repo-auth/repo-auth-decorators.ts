@@ -30,7 +30,7 @@ export function ApiHasPassThruAuth(): MethodDecorator {
     }),
   );
   const badRequestResponse = ApiBadRequestResponse({
-    description: "When then x-authorization header is malformed",
+    description: "When the x-authorization header is malformed",
   });
 
   return (...args) => {

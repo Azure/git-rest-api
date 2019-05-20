@@ -75,7 +75,60 @@
             }
           },
           "400": {
-            "description": "When the api request header is malformed"
+            "description": "When the x-authorization header is malformed"
+          },
+          "404": {
+            "description": ""
+          }
+        },
+        "produces": [
+          "application/json"
+        ],
+        "consumes": [
+          "application/json"
+        ]
+      }
+    },
+    "/repos/{remote}/commits/{commitSha}": {
+      "get": {
+        "parameters": [
+          {
+            "type": "string",
+            "name": "commitSha",
+            "required": true,
+            "in": "path"
+          },
+          {
+            "type": "string",
+            "name": "remote",
+            "required": true,
+            "in": "path"
+          },
+          {
+            "name": "x-authorization",
+            "required": false,
+            "in": "header",
+            "type": "string"
+          },
+          {
+            "name": "x-github-token",
+            "required": false,
+            "in": "header",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/GitCommit"
+              }
+            }
+          },
+          "400": {
+            "description": "When the x-authorization header is malformed"
           },
           "404": {
             "description": ""
@@ -91,7 +144,7 @@
     }
   },
   "definitions": {
-    "GitCommit": {
+    "GitCommitRef": {
       "type": "object",
       "properties": {
         "sha": {
@@ -109,12 +162,62 @@
           "type": "string"
         },
         "commit": {
-          "$ref": "#/definitions/GitCommit"
+          "$ref": "#/definitions/GitCommitRef"
         }
       },
       "required": [
         "name",
         "commit"
+      ]
+    },
+    "GitSignature": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "email": {
+          "type": "string"
+        },
+        "date": {
+          "type": "string",
+          "format": "date-time"
+        }
+      },
+      "required": [
+        "name",
+        "email",
+        "date"
+      ]
+    },
+    "GitCommit": {
+      "type": "object",
+      "properties": {
+        "sha": {
+          "type": "string"
+        },
+        "message": {
+          "type": "string"
+        },
+        "author": {
+          "$ref": "#/definitions/GitSignature"
+        },
+        "committer": {
+          "$ref": "#/definitions/GitSignature"
+        },
+        "parents": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/GitCommit"
+          }
+        }
+      },
+      "required": [
+        "sha",
+        "message",
+        "author",
+        "committer",
+        "parents"
       ]
     }
   }
