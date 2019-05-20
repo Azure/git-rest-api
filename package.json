@@ -11,6 +11,7 @@
     "start:dev": "concurrently --handle-input \"wait-on bin/main.js && nodemon\" \"tsc -w -p tsconfig.build.json\" ",
     "start:debug": "nodemon --config nodemon-debug.json",
     "test": "jest",
+    "test:ci": "jest --ci --reporters=default --reporters=jest-junit",
     "lint": "tslint -p tsconfig.json",
     "test:watch": "jest --watch --coverage=false --config ./config/jest.dev.config.js",
     "swagger:gen": "node ./bin/scripts/generate-swagger-specs.js"
@@ -33,6 +34,7 @@
     "@types/nodegit": "^0.24.6",
     "concurrently": "^4.1.0",
     "jest": "^24.8.0",
+    "jest-junit": "^6.4.0",
     "prettier": "^1.17.1",
     "swagger-ui-express": "^4.0.3",
     "ts-jest": "^24.0.2",
@@ -54,5 +56,9 @@
     "nodegit": "^0.24.3",
     "reflect-metadata": "^0.1.13",
     "rxjs": "^6.5.2"
+  },
+  "jest-junit": {
+    "outputDirectory": ".",
+    "outputName": "test-results.xml"
   }
 }
