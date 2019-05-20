@@ -1,17 +1,9 @@
 import { ApiModelProperty } from "@nestjs/swagger";
 
-import { GitCommitRef, IGitCommitRef } from "./git-commit-ref";
-import { GitSignature, IGitSignature } from "./git-signature";
+import { GitCommitRef } from "./git-commit-ref";
+import { GitSignature } from "./git-signature";
 
-export interface IGitCommit extends IGitCommitRef {
-  sha: string;
-  message: string;
-  author: IGitSignature;
-  committer: IGitSignature;
-  parents: IGitCommitRef[];
-}
-
-export class GitCommit extends GitCommitRef implements IGitCommit {
+export class GitCommit extends GitCommitRef {
   @ApiModelProperty({ type: String })
   public message: string;
 
@@ -24,7 +16,7 @@ export class GitCommit extends GitCommitRef implements IGitCommit {
   @ApiModelProperty({ type: GitCommitRef, isArray: true })
   public parents: GitCommitRef[];
 
-  constructor(commit: IGitCommit) {
+  constructor(commit: GitCommit) {
     super(commit);
     this.message = commit.message;
     this.author = commit.author;

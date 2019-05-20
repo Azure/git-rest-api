@@ -8,17 +8,7 @@ export enum PatchStatus {
   Renamed = "renamed",
 }
 
-export interface IGitFileDiff {
-  filename: string;
-  sha: string;
-  status: PatchStatus;
-  additions: number;
-  deletions: number;
-  changes: number;
-  previousFilename?: string;
-}
-
-export class GitFileDiff implements IGitFileDiff {
+export class GitFileDiff {
   @ApiModelProperty()
   public filename: string;
   @ApiModelProperty()
@@ -34,7 +24,7 @@ export class GitFileDiff implements IGitFileDiff {
   @ApiModelPropertyOptional()
   public previousFilename?: string;
 
-  constructor(obj: IGitFileDiff) {
+  constructor(obj: GitFileDiff) {
     this.filename = obj.filename;
     this.sha = obj.sha;
     this.status = obj.status;

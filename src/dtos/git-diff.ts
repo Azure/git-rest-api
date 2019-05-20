@@ -1,16 +1,9 @@
 import { ApiModelProperty } from "@nestjs/swagger";
 
-import { GitCommit, IGitCommit } from "./git-commit";
-import { GitFileDiff, IGitFileDiff } from "./git-file-diff";
+import { GitCommit } from "./git-commit";
+import { GitFileDiff } from "./git-file-diff";
 
-export interface IGitDiff {
-  headCommit: IGitCommit;
-  baseCommit: IGitCommit;
-  mergeBaseCommit: IGitCommit;
-  files: IGitFileDiff[];
-}
-
-export class GitDiff implements IGitDiff {
+export class GitDiff {
   @ApiModelProperty()
   public headCommit: GitCommit;
   @ApiModelProperty()
@@ -20,7 +13,7 @@ export class GitDiff implements IGitDiff {
   @ApiModelProperty({ type: GitFileDiff, isArray: true })
   public files: GitFileDiff[];
 
-  constructor(obj: IGitDiff) {
+  constructor(obj: GitDiff) {
     this.headCommit = obj.headCommit;
     this.baseCommit = obj.baseCommit;
     this.mergeBaseCommit = obj.mergeBaseCommit;
