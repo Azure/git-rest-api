@@ -1,19 +1,19 @@
 import { Injectable } from "@nestjs/common";
 import fs from "fs";
-import makeDir from "make-dir";
-import util from "util";
-
-const fsPromises = {
-  exists: util.promisify(fs.exists),
-};
 
 @Injectable()
 export class FSService {
   public async exists(path: string): Promise<boolean> {
-    return fsPromises.exists(path);
+    try {
+      await fs.promises.access(path);
+      return true;
+    } catch {
+      return false;
+    }
   }
 
-  public async makeDir(path: string): Promise<string> {
-    return makeDir(path);
+  public async mkdir(path: string): Promise<string> {
+    await fs.promises.mkdir(path, { recursive: true });
+    return path;
   }
 }

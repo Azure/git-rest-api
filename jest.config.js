@@ -17,7 +17,7 @@ const config = {
     },
   },
   setupFiles: ["<rootDir>/test/jest-setup.ts"],
-  testMatch: ["**/*.test.ts"],
+  testMatch: ["<rootDir>/src/**/*.test.ts"],
   verbose: true,
   testEnvironment: "node",
 };

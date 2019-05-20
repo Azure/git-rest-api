@@ -52,7 +52,13 @@
             "in": "path"
           },
           {
-            "name": "x-oauth-basic",
+            "name": "x-authorization",
+            "required": false,
+            "in": "header",
+            "type": "string"
+          },
+          {
+            "name": "x-github-token",
             "required": false,
             "in": "header",
             "type": "string"
@@ -67,6 +73,9 @@
                 "$ref": "#/definitions/GitBranch"
               }
             }
+          },
+          "400": {
+            "description": "When the api request header is malformed"
           },
           "404": {
             "description": ""

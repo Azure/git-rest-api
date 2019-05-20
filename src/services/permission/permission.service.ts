@@ -1,54 +1,67 @@
 import { Injectable } from "@nestjs/common";
 
-import { SecureUtils } from "../../utils";
-
-export enum TokenPermission {
-  None,
-  Read,
-  Write,
-}
-
-const TOKEN_INVALIDATE_TIMEOUT = 60_000; // 60s
+import { RepoAuth } from "../../core";
+import { RepoUtils } from "../../utils";
+import { HttpService } from "../http";
+import { PermissionCacheService } from "./cache";
+import { GitRemotePermission } from "./permissions";
 
 @Injectable()
 export class PermissionService {
-  private tokenPermissions = new Map<string, TokenPermission>();
-  private timeouts = new Map<string, NodeJS.Timeout>();
+  constructor(private cache: PermissionCacheService, private http: HttpService) {}
 
-  public getTokenPermission(token: string, remote: string): TokenPermission | undefined {
-    return this.tokenPermissions.get(this.getMapKey(token, remote));
+  public async get(auth: RepoAuth, remote: string): Promise<GitRemotePermission> {
+    const cached = this.cache.get(auth, remote);
+    if (cached !== undefined) {
+      return cached;
+    }
+    return this.retrievePermissions(auth, remote);
   }
 
-  public setTokenPermission(token: string, remote: string, permission: TokenPermission) {
-    const key = this.getMapKey(token, remote);
-    this.tokenPermissions.set(key, permission);
-    this.timeoutPermission(key);
+  public set(auth: RepoAuth, remote: string, permission: GitRemotePermission) {
+    return this.cache.set(auth, remote, permission);
   }
 
-  /**
-   * Remove the cached permission after a timeout
-   */
-  private timeoutPermission(key: string) {
-    const existingTimeout = this.timeouts.get(key);
-    if (existingTimeout) {
-      clearTimeout(existingTimeout);
-      this.timeouts.delete(key);
+  private async retrievePermissions(auth: RepoAuth, remote: string) {
+    const gitUrl = RepoUtils.getUrl(remote);
+    const canWrite = await this.checkWritePermission(auth, gitUrl);
+    if (canWrite) {
+      return this.set(auth, remote, GitRemotePermission.Write);
     }
 
-    this.timeouts.set(
-      key,
-      setTimeout(() => {
-        this.tokenPermissions.delete(key);
-        this.timeouts.delete(key);
-      }, TOKEN_INVALIDATE_TIMEOUT),
-    );
+    const canRead = await this.checkReadPermission(auth, gitUrl);
+    if (canRead) {
+      return this.set(auth, remote, GitRemotePermission.Read);
+    }
+    return this.set(auth, remote, GitRemotePermission.None);
   }
 
-  private getMapKey(token: string, remote: string) {
-    return `${this.hashToken(token)}/${remote}`;
+  private async checkWritePermission(auth: RepoAuth, gitUrl: string): Promise<boolean> {
+    const response = await this.http.fetch(`${gitUrl}/${GitServices.Push}`, {
+      headers: this.getHeaders(auth),
+    });
+    return response.status === 200;
   }
 
-  private hashToken(token: string): string {
-    return SecureUtils.sha512(token);
+  private async checkReadPermission(auth: RepoAuth, gitUrl: string): Promise<boolean> {
+    const response = await this.http.fetch(`${gitUrl}/${GitServices.Pull}`, {
+      headers: this.getHeaders(auth),
+    });
+    return response.status === 200;
   }
+
+  private getHeaders(auth: RepoAuth): StringMap<string> {
+    const header = auth.toAuthorizationHeader();
+    if (!header) {
+      return {};
+    }
+    return {
+      Authorization: header,
+    };
+  }
+}
+
+enum GitServices {
+  Push = "git-receive-pack",
+  Pull = "git-upload-pack",
 }
