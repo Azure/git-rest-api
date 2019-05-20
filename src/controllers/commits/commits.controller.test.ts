@@ -10,7 +10,7 @@ const c1 = {
 describe("CommitsController", () => {
   let controller: CommitsController;
   const commitServiceSpy = {
-    get: jest.fn(sha => (sha === "sha1" ? c1 : undefined)),
+    get: jest.fn((_, sha) => (sha === "sha1" ? c1 : undefined)),
   };
 
   beforeEach(() => {
@@ -21,6 +21,8 @@ describe("CommitsController", () => {
   it("get a commit", async () => {
     const auth = new RepoAuth();
     const commit = await controller.get("github.com/Azure/git-rest-api", "sha1", auth);
+    expect(commitServiceSpy.get).toHaveBeenCalledTimes(1);
+    expect(commitServiceSpy.get).toHaveBeenCalledWith("github.com/Azure/git-rest-api", "sha1", { auth });
     expect(commit).toEqual(c1);
   });
 
