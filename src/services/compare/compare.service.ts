@@ -1,5 +1,5 @@
 import { Injectable } from "@nestjs/common";
-import { Commit, ConvenientPatch, Diff } from "nodegit";
+import { Commit, ConvenientPatch, Diff, Merge, Oid, Repository } from "nodegit";
 
 import { GitFileDiff, PatchStatus } from "../../dtos";
 import { GitDiff } from "../../dtos/git-diff";
@@ -25,26 +25,41 @@ export class CompareService {
       return undefined;
     }
 
-    return this.getComparison(baseCommit, headCommit);
+    return this.getComparison(repo, baseCommit, headCommit);
   }
 
-  public async getComparison(nativeBaseCommit: Commit, nativeHeadCommit: Commit) {
+  public async getMergeBase(repo: Repository, base: Oid, head: Oid): Promise<Commit | undefined> {
+    const mergeBaseSha = await Merge.base(repo, base, head);
+    return this.commitService.getCommit(repo, mergeBaseSha.toString());
+  }
+
+  public async getComparison(repo: Repository, nativeBaseCommit: Commit, nativeHeadCommit: Commit) {
     const [baseCommit, headCommit] = await Promise.all([toGitCommit(nativeBaseCommit), toGitCommit(nativeHeadCommit)]);
 
-    const baseTree = await nativeBaseCommit.getTree();
-    const headTree = await nativeHeadCommit.getTree();
+    const mergeBase = await this.getMergeBase(repo, nativeBaseCommit.id(), nativeHeadCommit.id());
+    if (!mergeBase) {
+      return undefined;
+    }
+
+    const mergeBaseCommit = await toGitCommit(mergeBase);
+    const files = await this.getFileDiffs(nativeBaseCommit, nativeHeadCommit);
+    return new GitDiff({
+      baseCommit,
+      headCommit,
+      mergeBaseCommit,
+      files,
+    });
+  }
+
+  public async getFileDiffs(nativeBaseCommit: Commit, nativeHeadCommit: Commit): Promise<GitFileDiff[]> {
+    const [baseTree, headTree] = await Promise.all([nativeBaseCommit.getTree(), nativeHeadCommit.getTree()]);
     const diff = ((await headTree.diff(baseTree)) as unknown) as Diff;
     await diff.findSimilar({
       flags: Diff.FIND.RENAMES,
     });
     const patches = await diff.patches();
 
-    const files = patches.map(x => toFileDiff(x));
-    return new GitDiff({
-      baseCommit,
-      headCommit,
-      files,
-    });
+    return patches.map(x => toFileDiff(x));
   }
 }
 
