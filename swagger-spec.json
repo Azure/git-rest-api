@@ -208,7 +208,7 @@
         "parents": {
           "type": "array",
           "items": {
-            "$ref": "#/definitions/GitCommit"
+            "$ref": "#/definitions/GitCommitRef"
           }
         }
       },

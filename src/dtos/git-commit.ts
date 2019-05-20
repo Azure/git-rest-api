@@ -21,7 +21,7 @@ export class GitCommit extends GitCommitRef implements IGitCommit {
   @ApiModelProperty({ type: GitSignature })
   public committer: GitSignature;
 
-  @ApiModelProperty({ type: GitCommit, isArray: true })
+  @ApiModelProperty({ type: GitCommitRef, isArray: true })
   public parents: GitCommitRef[];
 
   constructor(commit: IGitCommit) {
