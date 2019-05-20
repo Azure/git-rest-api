@@ -3,7 +3,7 @@ import { Commit, ConvenientPatch, Diff } from "nodegit";
 
 import { GitFileDiff, PatchStatus } from "../../dtos";
 import { GitDiff } from "../../dtos/git-diff";
-import { CommitService, getCommit } from "../commit";
+import { CommitService, toGitCommit } from "../commit";
 import { GitBaseOptions, RepoService } from "../repo";
 
 @Injectable()
@@ -29,7 +29,7 @@ export class CompareService {
   }
 
   public async getComparison(nativeBaseCommit: Commit, nativeHeadCommit: Commit) {
-    const [baseCommit, headCommit] = await Promise.all([getCommit(nativeBaseCommit), getCommit(nativeHeadCommit)]);
+    const [baseCommit, headCommit] = await Promise.all([toGitCommit(nativeBaseCommit), toGitCommit(nativeHeadCommit)]);
 
     const baseTree = await nativeBaseCommit.getTree();
     const headTree = await nativeHeadCommit.getTree();
@@ -39,7 +39,7 @@ export class CompareService {
     });
     const patches = await diff.patches();
 
-    const files = patches.map(x => getFileDiff(x));
+    const files = patches.map(x => toFileDiff(x));
     return new GitDiff({
       baseCommit,
       headCommit,
@@ -48,7 +48,7 @@ export class CompareService {
   }
 }
 
-export function getFileDiff(patch: ConvenientPatch): GitFileDiff {
+export function toFileDiff(patch: ConvenientPatch): GitFileDiff {
   const filename = patch.newFile().path();
   const previousFilename = patch.oldFile().path();
   const stats = patch.lineStats();

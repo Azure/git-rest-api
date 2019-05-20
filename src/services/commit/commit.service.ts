@@ -15,7 +15,7 @@ export class CommitService {
     if (!commit) {
       return undefined;
     }
-    return getCommit(commit);
+    return toGitCommit(commit);
   }
 
   public async getCommit(repo: Repository, commitSha: string): Promise<Commit | undefined> {
@@ -27,7 +27,7 @@ export class CommitService {
   }
 }
 
-export async function getCommit(commit: Commit): Promise<GitCommit> {
+export async function toGitCommit(commit: Commit): Promise<GitCommit> {
   const [author, committer, parents] = await Promise.all([getAuthor(commit), getCommitter(commit), getParents(commit)]);
   return new GitCommit({
     sha: commit.sha(),
