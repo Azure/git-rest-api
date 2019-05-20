@@ -46,6 +46,10 @@ export class CompareService {
       const stats = patch.lineStats();
       files.push({
         filename,
+        sha: patch
+          .newFile()
+          .id()
+          .toString(),
         status: getPatchStatus(patch),
         additions: stats.total_additions,
         deletions: stats.total_deletions,

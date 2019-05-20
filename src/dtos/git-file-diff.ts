@@ -10,6 +10,7 @@ export enum PatchStatus {
 
 export interface IGitFileDiff {
   filename: string;
+  sha: string;
   status: PatchStatus;
   additions: number;
   deletions: number;
@@ -20,6 +21,8 @@ export interface IGitFileDiff {
 export class GitFileDiff implements IGitFileDiff {
   @ApiModelProperty()
   public filename: string;
+  @ApiModelProperty()
+  public sha: string;
   @ApiModelProperty({ enum: PatchStatus })
   public status: PatchStatus;
   @ApiModelProperty()
@@ -33,6 +36,7 @@ export class GitFileDiff implements IGitFileDiff {
 
   constructor(obj: IGitFileDiff) {
     this.filename = obj.filename;
+    this.sha = obj.sha;
     this.status = obj.status;
     this.additions = obj.additions;
     this.deletions = obj.deletions;
