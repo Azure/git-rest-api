@@ -1,6 +1,8 @@
-import { Controller, Get, Param } from "@nestjs/common";
+import { Controller, Get, NotFoundException, Param } from "@nestjs/common";
+import { ApiNotFoundResponse, ApiOkResponse } from "@nestjs/swagger";
 
-import { Auth, RepoAuth } from "../../core";
+import { ApiHasPassThruAuth, Auth, RepoAuth } from "../../core";
+import { GitCommit } from "../../dtos";
 import { CommitService } from "../../services";
 
 @Controller("/repos/:remote/commits")
@@ -8,7 +10,15 @@ export class CommitsController {
   constructor(private commitService: CommitService) {}
 
   @Get(":commitSha")
-  public get(@Param("remote") remote: string, @Param("commitSha") commitSha: string, @Auth() auth: RepoAuth) {
-    return this.commitService.get(remote, commitSha, { auth });
+  @ApiHasPassThruAuth()
+  @ApiOkResponse({ type: GitCommit, isArray: true })
+  @ApiNotFoundResponse({})
+  public async get(@Param("remote") remote: string, @Param("commitSha") commitSha: string, @Auth() auth: RepoAuth) {
+    const commit = await this.commitService.get(remote, commitSha, { auth });
+
+    if (!commit) {
+      throw new NotFoundException(`Commit with sha ${commitSha} was not found`);
+    }
+    return commit;
   }
 }

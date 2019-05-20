@@ -11,7 +11,7 @@ export class GitSignature implements IGitSignature {
   public name: string;
   @ApiModelProperty({ type: String })
   public email: string;
-  @ApiModelProperty({ type: Date })
+  @ApiModelProperty({ type: Date, format: "date-time" })
   public date: Date;
 
   constructor(sig: IGitSignature) {

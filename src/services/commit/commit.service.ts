@@ -1,5 +1,5 @@
 import { Injectable } from "@nestjs/common";
-import { Commit, Signature, Time } from "nodegit";
+import { Commit, Repository, Signature, Time } from "nodegit";
 
 import { GitCommit, GitCommitRef } from "../../dtos";
 import { GitSignature } from "../../dtos/git-signature";
@@ -9,10 +9,12 @@ import { GitBaseOptions, RepoService } from "../repo";
 export class CommitService {
   constructor(private repoService: RepoService) {}
 
-  public async get(remote: string, commitSha: string, options: GitBaseOptions = {}) {
+  public async get(remote: string, commitSha: string, options: GitBaseOptions = {}): Promise<GitCommit | undefined> {
     const repo = await this.repoService.get(remote, options);
-    const commit = await repo.getCommit(commitSha);
-
+    const commit = await this.getCommit(repo, commitSha);
+    if (!commit) {
+      return undefined;
+    }
     const [author, committer, parents] = await Promise.all([
       getAuthor(commit),
       getCommitter(commit),
@@ -25,6 +27,14 @@ export class CommitService {
       committer,
       parents,
     });
+  }
+
+  public async getCommit(repo: Repository, commitSha: string): Promise<Commit | undefined> {
+    try {
+      return await repo.getCommit(commitSha);
+    } catch {
+      return undefined;
+    }
   }
 }
 
