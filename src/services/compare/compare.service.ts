@@ -1,4 +1,4 @@
-import { Injectable } from "@nestjs/common";
+import { Injectable, NotFoundException } from "@nestjs/common";
 import { Commit, ConvenientPatch, Diff, Merge, Oid, Repository } from "nodegit";
 
 import { GitFileDiff, PatchStatus } from "../../dtos";
@@ -15,14 +15,17 @@ export class CompareService {
     baseSha: string,
     headSha: string,
     options: GitBaseOptions = {},
-  ): Promise<any | undefined> {
+  ): Promise<GitDiff | NotFoundException> {
     const repo = await this.repoService.get(remote, options);
     const [baseCommit, headCommit] = await Promise.all([
       this.commitService.getCommit(repo, baseSha),
       this.commitService.getCommit(repo, headSha),
     ]);
-    if (!baseCommit || !headCommit) {
-      return undefined;
+    if (!baseCommit) {
+      return new NotFoundException(`Base commit ${baseSha} was not found`);
+    }
+    if (!headCommit) {
+      return new NotFoundException(`Head commit ${baseSha} was not found`);
     }
 
     return this.getComparison(repo, baseCommit, headCommit);
@@ -33,12 +36,16 @@ export class CompareService {
     return this.commitService.getCommit(repo, mergeBaseSha.toString());
   }
 
-  public async getComparison(repo: Repository, nativeBaseCommit: Commit, nativeHeadCommit: Commit) {
+  public async getComparison(
+    repo: Repository,
+    nativeBaseCommit: Commit,
+    nativeHeadCommit: Commit,
+  ): Promise<GitDiff | NotFoundException> {
     const [baseCommit, headCommit] = await Promise.all([toGitCommit(nativeBaseCommit), toGitCommit(nativeHeadCommit)]);
 
     const mergeBase = await this.getMergeBase(repo, nativeBaseCommit.id(), nativeHeadCommit.id());
     if (!mergeBase) {
-      return undefined;
+      return new NotFoundException(`Couldn't find a common ancestor for commits`);
     }
 
     const mergeBaseCommit = await toGitCommit(mergeBase);

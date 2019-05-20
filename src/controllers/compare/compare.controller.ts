@@ -1,4 +1,4 @@
-import { Controller, Get, Param } from "@nestjs/common";
+import { Controller, Get, HttpException, Param } from "@nestjs/common";
 import { ApiNotFoundResponse, ApiOkResponse } from "@nestjs/swagger";
 
 import { ApiHasPassThruAuth, Auth, RepoAuth } from "../../core";
@@ -13,12 +13,16 @@ export class CompareController {
   @ApiHasPassThruAuth()
   @ApiOkResponse({ type: GitDiff, isArray: true })
   @ApiNotFoundResponse({})
-  public compare(
+  public async compare(
     @Param("remote") remote: string,
     @Param("base") base: string,
     @Param("head") head: string,
     @Auth() auth: RepoAuth,
   ) {
-    return this.compareService.compare(remote, base, head, { auth });
+    const diff = await this.compareService.compare(remote, base, head, { auth });
+    if (diff instanceof HttpException) {
+      throw diff;
+    }
+    return diff;
   }
 }
