@@ -1,10 +1,18 @@
 import { Module } from "@nestjs/common";
 
 import { Configuration } from "./config";
-import { AppController, BranchesController, CompareController, HealthCheckController } from "./controllers";
+import {
+  AppController,
+  BranchesController,
+  CommitsController,
+  CompareController,
+  HealthCheckController,
+} from "./controllers";
 import {
   AppService,
   BranchService,
+  CommitService,
+  CompareService,
   FSService,
   GitFetchService,
   HttpService,
@@ -15,9 +23,10 @@ import {
 
 @Module({
   imports: [],
-  controllers: [AppController, HealthCheckController, BranchesController, CompareController],
+  controllers: [AppController, HealthCheckController, BranchesController, CommitsController, CompareController],
   providers: [
     AppService,
+    CompareService,
     RepoService,
     FSService,
     BranchService,
@@ -26,6 +35,7 @@ import {
     PermissionCacheService,
     HttpService,
     Configuration,
+    CommitService,
   ],
 })
 export class AppModule {}

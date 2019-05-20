@@ -1,17 +1,24 @@
 import { Controller, Get, Param } from "@nestjs/common";
+import { ApiNotFoundResponse, ApiOkResponse } from "@nestjs/swagger";
 
-import { Auth, RepoAuth } from "../../core";
+import { ApiHasPassThruAuth, Auth, RepoAuth } from "../../core";
+import { GitDiff } from "../../dtos/git-diff";
+import { CompareService } from "../../services";
 
-console.log("Dis4");
 @Controller("/repos/:remote/compare")
 export class CompareController {
+  constructor(private compareService: CompareService) {}
+
   @Get(":base...:head")
+  @ApiHasPassThruAuth()
+  @ApiOkResponse({ type: GitDiff, isArray: true })
+  @ApiNotFoundResponse({})
   public compare(
     @Param("remote") remote: string,
     @Param("base") base: string,
     @Param("head") head: string,
     @Auth() auth: RepoAuth,
   ) {
-    return `${remote}.${base}.${head}`;
+    return this.compareService.compare(remote, base, head, { auth });
   }
 }

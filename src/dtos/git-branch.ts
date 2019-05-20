@@ -1,21 +1,21 @@
 import { ApiModelProperty } from "@nestjs/swagger";
 
-import { GitCommit, IGitCommit } from "./git-commit";
+import { GitCommitRef, IGitCommitRef } from "./git-commit-ref";
 
 export interface IGitBranch {
   name: string;
-  commit: IGitCommit;
+  commit: IGitCommitRef;
 }
 
 export class GitBranch implements IGitBranch {
   @ApiModelProperty({ type: String })
   public name: string;
 
-  @ApiModelProperty({ type: GitCommit })
-  public commit: GitCommit;
+  @ApiModelProperty({ type: GitCommitRef })
+  public commit: GitCommitRef;
 
   constructor(branch: IGitBranch) {
     this.name = branch.name;
-    this.commit = new GitCommit(branch.commit);
+    this.commit = new GitCommitRef(branch.commit);
   }
 }
