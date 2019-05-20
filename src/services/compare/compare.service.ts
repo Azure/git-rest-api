@@ -1,7 +1,7 @@
 import { Injectable } from "@nestjs/common";
 import { Commit, ConvenientPatch, Diff } from "nodegit";
 
-import { IGitFileDiff, PatchStatus } from "../../dtos";
+import { GitFileDiff, PatchStatus } from "../../dtos";
 import { GitDiff } from "../../dtos/git-diff";
 import { CommitService, getCommit } from "../commit";
 import { GitBaseOptions, RepoService } from "../repo";
@@ -39,30 +39,31 @@ export class CompareService {
     });
     const patches = await diff.patches();
 
-    const files: IGitFileDiff[] = [];
-    for (const patch of patches) {
-      const filename = patch.newFile().path();
-      const previousFilename = patch.oldFile().path();
-      const stats = patch.lineStats();
-      files.push({
-        filename,
-        sha: patch
-          .newFile()
-          .id()
-          .toString(),
-        status: getPatchStatus(patch),
-        additions: stats.total_additions,
-        deletions: stats.total_deletions,
-        changes: stats.total_additions + stats.total_deletions,
-        previousFilename: previousFilename !== filename ? previousFilename : undefined,
-      });
-    }
+    const files = patches.map(x => getFileDiff(x));
     return new GitDiff({
       baseCommit,
       headCommit,
       files,
     });
   }
+}
+
+export function getFileDiff(patch: ConvenientPatch): GitFileDiff {
+  const filename = patch.newFile().path();
+  const previousFilename = patch.oldFile().path();
+  const stats = patch.lineStats();
+  return new GitFileDiff({
+    filename,
+    sha: patch
+      .newFile()
+      .id()
+      .toString(),
+    status: getPatchStatus(patch),
+    additions: stats.total_additions,
+    deletions: stats.total_deletions,
+    changes: stats.total_additions + stats.total_deletions,
+    previousFilename: previousFilename !== filename ? previousFilename : undefined,
+  });
 }
 
 export function getPatchStatus(patch: ConvenientPatch): PatchStatus {
