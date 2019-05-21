@@ -52,7 +52,7 @@ stages:
               sourceFolder: ./sdk/out/typescript
               contents: '*.tgz'
               targetFolder: drop
-          - task: PublishBuildArtifacts@1
+          - task: PublishPipelineArtifact@0
             inputs:
               pathtoPublish: $(Build.SourcesDirectory)/drop
   - stage: publish_sdks
