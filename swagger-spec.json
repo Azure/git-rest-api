@@ -14,6 +14,8 @@
   "paths": {
     "/": {
       "get": {
+        "summary": "home",
+        "operationId": "home",
         "responses": {
           "200": {
             "description": ""
@@ -29,6 +31,8 @@
     },
     "/health/alive": {
       "get": {
+        "summary": "Check alive",
+        "operationId": "checkAlive",
         "responses": {
           "200": {
             "description": ""
@@ -44,6 +48,8 @@
     },
     "/repos/{remote}/branches": {
       "get": {
+        "summary": "List branches",
+        "operationId": "listBranches",
         "parameters": [
           {
             "type": "string",
@@ -91,6 +97,8 @@
     },
     "/repos/{remote}/commits/{commitSha}": {
       "get": {
+        "summary": "Get a commit",
+        "operationId": "getCommit",
         "parameters": [
           {
             "type": "string",
@@ -144,6 +152,8 @@
     },
     "/repos/{remote}/compare/{base}...{head}": {
       "get": {
+        "summary": "Compare two commits",
+        "operationId": "compareCommits",
         "parameters": [
           {
             "type": "string",

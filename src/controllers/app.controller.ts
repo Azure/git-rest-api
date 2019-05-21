@@ -1,4 +1,5 @@
 import { Controller, Get } from "@nestjs/common";
+import { ApiOperation } from "@nestjs/swagger";
 
 import { AppService } from "../services";
 
@@ -9,6 +10,7 @@ export class AppController {
   }
 
   @Get()
+  @ApiOperation({ title: "home", operationId: "home" })
   public getHello(): string {
     return this.appService.getHello();
   }

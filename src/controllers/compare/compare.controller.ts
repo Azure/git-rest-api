@@ -1,5 +1,5 @@
 import { Controller, Get, HttpException, Param } from "@nestjs/common";
-import { ApiNotFoundResponse, ApiOkResponse } from "@nestjs/swagger";
+import { ApiNotFoundResponse, ApiOkResponse, ApiOperation } from "@nestjs/swagger";
 
 import { ApiHasPassThruAuth, Auth, RepoAuth } from "../../core";
 import { GitDiff } from "../../dtos/git-diff";
@@ -13,6 +13,7 @@ export class CompareController {
   @ApiHasPassThruAuth()
   @ApiOkResponse({ type: GitDiff, isArray: true })
   @ApiNotFoundResponse({})
+  @ApiOperation({ title: "Compare two commits", operationId: "compareCommits" })
   public async compare(
     @Param("remote") remote: string,
     @Param("base") base: string,
