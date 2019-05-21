@@ -12,23 +12,6 @@
     "https"
   ],
   "paths": {
-    "/": {
-      "get": {
-        "summary": "home",
-        "operationId": "home",
-        "responses": {
-          "200": {
-            "description": ""
-          }
-        },
-        "produces": [
-          "application/json"
-        ],
-        "consumes": [
-          "application/json"
-        ]
-      }
-    },
     "/health/alive": {
       "get": {
         "summary": "Check alive",
