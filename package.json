@@ -17,7 +17,7 @@
     "swagger:gen": "node ./bin/scripts/generate-swagger-specs.js",
     "sdk:gen": "npm run sdk:gen:ts",
     "autorest": "cross-var autorest --input-file='./swagger-spec.json' --package-version=$npm_package_version --generate-metadata",
-    "sdk:gen:ts": "rimraf ./sdk/out/typescript && copyfiles -u 3 ./sdk/src/typescript/**/* ./sdk/out/typescript && npm run autorest -- --typescript --output-folder='./sdk/out/typescript' && npm run prepack --prefix ./sdk/out/typescript"
+    "sdk:gen:ts": "rimraf ./sdk/out/typescript && copyfiles -u 3 ./sdk/src/typescript/**/* ./sdk/out/typescript && npm run autorest -- --typescript --output-folder='./sdk/out/typescript' git-rest-api-sdk && npm run prepack --prefix ./sdk/out/typescript"
   },
   "repository": {
     "type": "git",
