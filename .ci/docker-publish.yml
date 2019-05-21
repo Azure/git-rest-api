@@ -44,35 +44,32 @@ stages:
         steps:
           - script: npm -s ci
           - script: npm -s run sdk:gen
-          - script: npm -s pack
-            workingDirectory: ./sdk/out/typescript/
-          - task: CopyFiles@2
-            displayName: 'Copy Files to: drop'
-            inputs:
-              sourceFolder: ./sdk/out/typescript
-              contents: '*.tgz'
-              targetFolder: drop
-          - task: PublishPipelineArtifact@0
-            inputs:
-              pathtoPublish: $(Build.SourcesDirectory)/drop
-  - stage: publish_sdks
-    displayName: Publish SDKs
-    dependsOn: build_sdks
-    jobs:
-      - job: publish
-        pool:
-          vmImage: "Ubuntu-16.04"
-        steps:
-          - task: NodeTool@0
-            displayName: 'Use Node 10.x'
-            inputs:
-              versionSpec: 10.x
-          - script: git clone https://github.com/ts-common/publish
           - task: Npm@1
-            displayName: 'npm run publishall'
+            displayName: 'npm run publish'
             inputs:
-              command: custom
-              workingDir: publish/
+              command: publish
+              workingDir: sdk/out/typescript
               verbose: false
-              customCommand: 'run publishall'
               customEndpoint: 'azure-sdk NPM'
+
+  # - stage: publish_sdks
+  #   displayName: Publish SDKs
+  #   dependsOn: build_sdks
+  #   jobs:
+  #     - job: publish
+  #       pool:
+  #         vmImage: "Ubuntu-16.04"
+  #       steps:
+  #         - task: NodeTool@0
+  #           displayName: 'Use Node 10.x'
+  #           inputs:
+  #             versionSpec: 10.x
+  #         - script: git clone https://github.com/ts-common/publish
+  #         - task: Npm@1
+  #           displayName: 'npm run publishall'
+  #           inputs:
+  #             command: custom
+  #             workingDir: publish/
+  #             verbose: false
+  #             customCommand: 'run publishall'
+  #             customEndpoint: 'azure-sdk NPM'
