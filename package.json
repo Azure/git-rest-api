@@ -1,6 +1,6 @@
 {
   "name": "git-rest-api",
-  "version": "1.0.0",
+  "version": "0.1.0",
   "description": "This project welcomes contributions and suggestions.  Most contributions require you to agree to a\r Contributor License Agreement (CLA) declaring that you have the right to, and actually do, grant us\r the rights to use your contribution. For details, visit https://cla.microsoft.com.",
   "main": "bin/main.js",
   "scripts": {
@@ -15,7 +15,9 @@
     "lint": "tslint -p tsconfig.json",
     "test:watch": "jest --watch --coverage=false --config ./config/jest.dev.config.js",
     "swagger:gen": "node ./bin/scripts/generate-swagger-specs.js",
-    "sdk:gen": "autorest --input-file='.swagger-spec.json' --typescript --output-folder='./out/sdk' gitrestapi"
+    "sdk:gen": "npm run sdk:gen:ts",
+    "autorest": "cross-var autorest --input-file='./swagger-spec.json' --package-version=$npm_package_version --generate-metadata",
+    "sdk:gen:ts": "rimraf ./sdk/out/typescript && copyfiles -u 3 ./sdk/src/typescript/**/* ./sdk/out/typescript && npm run autorest -- --typescript --output-folder='./sdk/out/typescript' && npm run prepack --prefix ./sdk/out/typescript"
   },
   "repository": {
     "type": "git",
@@ -34,6 +36,8 @@
     "@types/node-fetch": "^2.3.4",
     "@types/nodegit": "^0.24.6",
     "concurrently": "^4.1.0",
+    "copyfiles": "^2.1.0",
+    "cross-var": "^1.1.0",
     "jest": "^24.8.0",
     "jest-junit": "^6.4.0",
     "prettier": "^1.17.1",

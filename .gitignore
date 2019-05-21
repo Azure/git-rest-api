@@ -62,3 +62,6 @@ buildcache/
 tmp/
 # Junit 
 test-results* 
+
+# Generated sdk folder
+sdk/out/
