@@ -37,7 +37,7 @@ stages:
   - stage: build_sdks
     displayName: Build SDKs
     jobs:
-      - job: Build SDKs
+      - job: build
         pool:
           vmImage: "Ubuntu-16.04"
         steps:
@@ -57,7 +57,7 @@ stages:
     displayName: Publish SDKs
     dependsOn: build_sdks
     jobs:
-      - job: Publish SDKs
+      - job: publish
         pool:
           vmImage: "Ubuntu-16.04"
         steps:
