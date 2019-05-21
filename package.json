@@ -14,7 +14,8 @@
     "test:ci": "jest --ci --reporters=default --reporters=jest-junit",
     "lint": "tslint -p tsconfig.json",
     "test:watch": "jest --watch --coverage=false --config ./config/jest.dev.config.js",
-    "swagger:gen": "node ./bin/scripts/generate-swagger-specs.js"
+    "swagger:gen": "node ./bin/scripts/generate-swagger-specs.js",
+    "sdk:gen": "autorest --input-file='.swagger-spec.json' --typescript --output-folder='./out/sdk' gitrestapi"
   },
   "repository": {
     "type": "git",
