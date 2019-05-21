@@ -1,10 +1,10 @@
-import { GITRestAPI } from "git-rest-api-sdk";
+import { GITRestAPI, GitBranch } from "git-rest-api-sdk";
 // tslint:disable: no-console
 
 const sdk = new GITRestAPI({ baseUri: "http://localhost:3009" });
 
 async function run() {
-  const branches = await sdk.listBranches("github.com/Azure/BatchExplorer");
+  const branches: GitBranch[] = await sdk.listBranches("github.com/Azure/BatchExplorer");
   console.log("Branches:");
 
   for (const branch of branches) {
