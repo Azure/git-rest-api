@@ -36,6 +36,7 @@ stages:
 
   - stage: build_sdks
     displayName: Build SDKs
+    dependsOn: []
     jobs:
       - job: build
         pool:
