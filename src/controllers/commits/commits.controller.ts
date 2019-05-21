@@ -13,7 +13,7 @@ export class CommitsController {
   @ApiHasPassThruAuth()
   @ApiOkResponse({ type: GitCommit, isArray: true })
   @ApiNotFoundResponse({})
-  @ApiOperation({ title: "Get a commit", operationId: "getCommit" })
+  @ApiOperation({ title: "Get a commit", operationId: "commits_get" })
   public async get(@Param("remote") remote: string, @Param("commitSha") commitSha: string, @Auth() auth: RepoAuth) {
     const commit = await this.commitService.get(remote, commitSha, { auth });
 

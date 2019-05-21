@@ -15,7 +15,7 @@
     "/health/alive": {
       "get": {
         "summary": "Check alive",
-        "operationId": "checkAlive",
+        "operationId": "health_checkAlive",
         "responses": {
           "200": {
             "description": ""
@@ -32,7 +32,7 @@
     "/repos/{remote}/branches": {
       "get": {
         "summary": "List branches",
-        "operationId": "listBranches",
+        "operationId": "Branches_List",
         "parameters": [
           {
             "type": "string",
@@ -81,7 +81,7 @@
     "/repos/{remote}/commits/{commitSha}": {
       "get": {
         "summary": "Get a commit",
-        "operationId": "getCommit",
+        "operationId": "commits_get",
         "parameters": [
           {
             "type": "string",
@@ -136,7 +136,7 @@
     "/repos/{remote}/compare/{base}...{head}": {
       "get": {
         "summary": "Compare two commits",
-        "operationId": "compareCommits",
+        "operationId": "commits_compare",
         "parameters": [
           {
             "type": "string",

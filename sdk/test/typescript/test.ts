@@ -4,7 +4,7 @@ import { GITRestAPI, GitBranch } from "git-rest-api-sdk";
 const sdk = new GITRestAPI({ baseUri: "http://localhost:3009" });
 
 async function run() {
-  const branches: GitBranch[] = await sdk.listBranches("github.com/Azure/BatchExplorer");
+  const branches: GitBranch[] = await sdk.branches.list("github.com/Azure/BatchExplorer");
   console.log("Branches:");
 
   for (const branch of branches) {
