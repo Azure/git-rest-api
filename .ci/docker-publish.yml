@@ -33,3 +33,39 @@ stages:
             inputs:
               containerRegistry: "git-rest-api docker"
               repository: "azuredevx/git-rest-api"
+
+  - stage: build_sdks
+    displayName: Build SDKs
+    jobs:
+      - job: Build SDKs
+        pool:
+          vmImage: "Ubuntu-16.04"
+        steps:
+          - script: npm -s ci
+          - script: npm -s run sdk:gen
+          - script: npm -s pack
+            workingDirectory: ./sdk/out/typescript/
+          - task: CopyFiles@2
+            displayName: 'Copy Files to: drop'
+            inputs:
+              Contents: '*.tgz'
+              TargetFolder: drop
+          - task: PublishBuildArtifacts@1
+            inputs:
+              pathtoPublish: $(Build.SourcesDirectory)/drop
+  - stage: publish_sdks
+    displayName: Publish SDKs
+    dependsOn: build_sdks
+    jobs:
+      - job: Publish SDKs
+        pool:
+          vmImage: "Ubuntu-16.04"
+        steps:
+          - task: Npm@1
+            displayName: 'npm run publishall'
+            inputs:
+              command: custom
+              workingDir: publish/
+              verbose: false
+              customCommand: 'run publishall'
+              customEndpoint: 'azure-sdk NPM'
