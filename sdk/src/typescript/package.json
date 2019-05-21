@@ -1,5 +1,5 @@
 {
-  "name": "",
+  "name": "git-rest-api-sdk",
   "author": "Microsoft Corporation",
   "description": "GITRestAPI Library with typescript type definitions for node.js and browser.",
   "version": "0.1.0",
@@ -16,8 +16,8 @@
   ],
   "license": "MIT",
   "main": "./dist/bundle.js",
-  "module": "./esm/gITRestAPI.js",
-  "types": "./esm/gITRestAPI.d.ts",
+  "module": "./esm/index.js",
+  "types": "./esm/index.d.ts",
   "devDependencies": {
     "typescript": "^3.1.1",
     "rollup": "^0.66.2",
