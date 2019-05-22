@@ -11,7 +11,7 @@ export class CompareController {
 
   @Get(":base...:head")
   @ApiHasPassThruAuth()
-  @ApiOkResponse({ type: GitDiff, isArray: true })
+  @ApiOkResponse({ type: GitDiff })
   @ApiNotFoundResponse({})
   @ApiOperation({ title: "Compare two commits", operationId: "commits_compare" })
   public async compare(
