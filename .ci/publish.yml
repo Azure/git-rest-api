@@ -4,32 +4,32 @@ trigger:
 pr: none
 
 stages:
-  - stage: Build_Docker
-    jobs:
-      - job: Build_Docker
-        pool:
-          vmImage: "Ubuntu-16.04"
-        steps:
-          - task: Docker@2
-            displayName: "Build azuredevx/git-rest-api"
-            inputs:
-              containerRegistry: "git-rest-api docker"
-              repository: "azuredevx/git-rest-api"
-              tags: |
-                $(Build.BuildId)
-                latest
-  - stage: Publish_Docker
-    dependsOn: Build_Docker
-    jobs:
-      - job: Publish_Docker
-        pool:
-          vmImage: "Ubuntu-16.04"
-        steps:
-          - task: Docker@2
-            displayName: "Push azuredevx/git-rest-api"
-            inputs:
-              containerRegistry: "git-rest-api docker"
-              repository: "azuredevx/git-rest-api"
+  # - stage: Build_Docker
+  #   jobs:
+  #     - job: Build_Docker
+  #       pool:
+  #         vmImage: "Ubuntu-16.04"
+  #       steps:
+  #         - task: Docker@2
+  #           displayName: "Build azuredevx/git-rest-api"
+  #           inputs:
+  #             containerRegistry: "git-rest-api docker"
+  #             repository: "azuredevx/git-rest-api"
+  #             tags: |
+  #               $(Build.BuildId)
+  #               latest
+  # - stage: Publish_Docker
+  #   dependsOn: Build_Docker
+  #   jobs:
+  #     - job: Publish_Docker
+  #       pool:
+  #         vmImage: "Ubuntu-16.04"
+  #       steps:
+  #         - task: Docker@2
+  #           displayName: "Push azuredevx/git-rest-api"
+  #           inputs:
+  #             containerRegistry: "git-rest-api docker"
+  #             repository: "azuredevx/git-rest-api"
 
   - stage: build_sdks
     displayName: Build SDKs
