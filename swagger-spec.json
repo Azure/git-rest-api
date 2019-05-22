@@ -85,13 +85,13 @@
         "parameters": [
           {
             "type": "string",
-            "name": "commitSha",
+            "name": "remote",
             "required": true,
             "in": "path"
           },
           {
             "type": "string",
-            "name": "remote",
+            "name": "commitSha",
             "required": true,
             "in": "path"
           },
@@ -133,14 +133,14 @@
         ]
       }
     },
-    "/repos/{remote}/compare/{base}...{head}": {
+    "/repos/{remote}/compthaare/{base}...{head}": {
       "get": {
         "summary": "Compare two commits",
         "operationId": "commits_compare",
         "parameters": [
           {
             "type": "string",
-            "name": "head",
+            "name": "remote",
             "required": true,
             "in": "path"
           },
@@ -152,7 +152,7 @@
           },
           {
             "type": "string",
-            "name": "remote",
+            "name": "head",
             "required": true,
             "in": "path"
           },

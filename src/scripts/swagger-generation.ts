@@ -26,7 +26,8 @@ export async function getSavedSwagger(): Promise<string> {
 }
 
 /**
- * Because of how the nestjs generate the path they might not be in order
+ * Because of how the nestjs generate the path params they might not be in order which could lead to breaking changes without noticing.
+ * Force the params to be ordered how they are defined in the path
  */
 export function reorderPaths(paths: StringMap<StringMap<any>>) {
   for (const [path, methods] of Object.entries(paths)) {
@@ -49,7 +50,7 @@ export function getOrderedPathParams(path: string, parameters: SwaggerParam[]) {
   const pathParams = parameters.filter(x => x.in === "path");
   const otherParams = parameters.filter(x => x.in !== "path");
 
-  const sortedPathParams = pathParams.sort((a, b) => {
+  const sortedPathParams = [...pathParams].sort((a, b) => {
     return path.indexOf(`{${a.name}}`) - path.indexOf(`{${b.name}}`);
   });
   return [...sortedPathParams, ...otherParams];

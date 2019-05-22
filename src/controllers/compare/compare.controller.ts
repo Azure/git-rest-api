@@ -5,7 +5,7 @@ import { ApiHasPassThruAuth, Auth, RepoAuth } from "../../core";
 import { GitDiff } from "../../dtos/git-diff";
 import { CompareService } from "../../services";
 
-@Controller("/repos/:remote/compthaare")
+@Controller("/repos/:remote/compare")
 export class CompareController {
   constructor(private compareService: CompareService) {}
 
