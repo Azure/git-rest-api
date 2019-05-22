@@ -56,4 +56,5 @@ stages:
               targetFolder: $(Build.ArtifactStagingDirectory)/drop
           - task: PublishPipelineArtifact@0
             inputs:
-              pathtoPublish: $(Build.ArtifactStagingDirectory)/drop
+              artifactName: "drop"
+              targetPath: $(Build.ArtifactStagingDirectory)/drop
