@@ -133,7 +133,7 @@
         ]
       }
     },
-    "/repos/{remote}/compthaare/{base}...{head}": {
+    "/repos/{remote}/compare/{base}...{head}": {
       "get": {
         "summary": "Compare two commits",
         "operationId": "commits_compare",
