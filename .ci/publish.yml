@@ -68,18 +68,15 @@ stages:
               artifactName: 'drop'
               targetPath: $(agent.tempdirectory)
           - script: echo "Dir $(agent.tempdirectory)"
-            inputs:
-              workingDirectory: $(agent.tempdirectory)
+            workingDirectory: $(agent.tempdirectory)
           - script: ls
-            inputs:
-              workingDirectory: $(agent.tempdirectory)
+            workingDirectory: $(agent.tempdirectory)
           - task: NodeTool@0
             displayName: 'Use Node 10.x'
             inputs:
               versionSpec: 10.x
           - script: git clone https://github.com/ts-common/publish
-            inputs:
-              workingDirectory: $(agent.tempdirectory)
+            workingDirectory: $(agent.tempdirectory)
           - task: Npm@1
             displayName: 'npm run publishall'
             inputs:
