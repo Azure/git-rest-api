@@ -1,0 +1,16 @@
+{
+  "name": "git-rest-api-sdk-test",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "ts-node test.ts"
+  },
+  "dependencies": {
+    "git-rest-api-sdk": "../../out/typescript",
+    "ts-node": "^8.1.0",
+    "typescript": "^3.4.5"
+  },
+  "author": "",
+  "license": "ISC"
+}

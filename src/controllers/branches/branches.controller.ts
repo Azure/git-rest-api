@@ -1,5 +1,5 @@
 import { Controller, Get, Param } from "@nestjs/common";
-import { ApiNotFoundResponse, ApiOkResponse } from "@nestjs/swagger";
+import { ApiNotFoundResponse, ApiOkResponse, ApiOperation } from "@nestjs/swagger";
 
 import { ApiHasPassThruAuth, Auth, RepoAuth } from "../../core";
 import { GitBranch } from "../../dtos";
@@ -13,6 +13,7 @@ export class BranchesController {
   @ApiHasPassThruAuth()
   @ApiOkResponse({ type: GitBranch, isArray: true })
   @ApiNotFoundResponse({})
+  @ApiOperation({ title: "List branches", operationId: "Branches_List" })
   public async list(@Param("remote") remote: string, @Auth() auth: RepoAuth): Promise<GitBranch[]> {
     const branches = await this.branchService.list(remote, { auth });
     return branches;

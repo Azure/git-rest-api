@@ -12,23 +12,10 @@
     "https"
   ],
   "paths": {
-    "/": {
-      "get": {
-        "responses": {
-          "200": {
-            "description": ""
-          }
-        },
-        "produces": [
-          "application/json"
-        ],
-        "consumes": [
-          "application/json"
-        ]
-      }
-    },
     "/health/alive": {
       "get": {
+        "summary": "Check alive",
+        "operationId": "health_checkAlive",
         "responses": {
           "200": {
             "description": ""
@@ -44,6 +31,8 @@
     },
     "/repos/{remote}/branches": {
       "get": {
+        "summary": "List branches",
+        "operationId": "Branches_List",
         "parameters": [
           {
             "type": "string",
@@ -91,16 +80,18 @@
     },
     "/repos/{remote}/commits/{commitSha}": {
       "get": {
+        "summary": "Get a commit",
+        "operationId": "commits_get",
         "parameters": [
           {
             "type": "string",
-            "name": "commitSha",
+            "name": "remote",
             "required": true,
             "in": "path"
           },
           {
             "type": "string",
-            "name": "remote",
+            "name": "commitSha",
             "required": true,
             "in": "path"
           },
@@ -144,10 +135,12 @@
     },
     "/repos/{remote}/compare/{base}...{head}": {
       "get": {
+        "summary": "Compare two commits",
+        "operationId": "commits_compare",
         "parameters": [
           {
             "type": "string",
-            "name": "head",
+            "name": "remote",
             "required": true,
             "in": "path"
           },
@@ -159,7 +152,7 @@
           },
           {
             "type": "string",
-            "name": "remote",
+            "name": "head",
             "required": true,
             "in": "path"
           },
