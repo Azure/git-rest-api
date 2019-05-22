@@ -17,8 +17,7 @@
     "swagger:gen": "node ./bin/scripts/generate-swagger-specs.js",
     "autorest": "cross-var autorest sdk/config.yaml --package-version=$npm_package_version",
     "sdk:gen": "npm run sdk:gen:ts",
-    "sdk:gen:ts": "cross-var rimraf ./sdk/out/typescript/* && copyfiles -u 3 \"./sdk/src/typescript/**/*\" ./sdk/out/typescript && npm run autorest -- --typescript --enum-types=true && npm run prepack --prefix ./sdk/out/typescript"
-  },
+    "sdk:gen:ts": "rimraf ./sdk/out/typescript/* && copyfiles -u 3 \"./sdk/src/typescript/**/*\" ./sdk/out/typescript && npm run autorest -- --typescript && cross-var npm version --prefix ./sdk/out/typescript $npm_package_version  && npm run prepack --prefix ./sdk/out/typescript"  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/Azure/git-rest-api.git"

@@ -50,12 +50,30 @@ export class CompareService {
 
     const mergeBaseCommit = await toGitCommit(mergeBase);
     const files = await this.getFileDiffs(nativeBaseCommit, nativeHeadCommit);
+    const commits = await this.listCommitIdsBetween(repo, mergeBase.id(), nativeHeadCommit.id());
+
     return new GitDiff({
       baseCommit,
       headCommit,
       mergeBaseCommit,
+      totalCommits: commits.length,
       files,
     });
+  }
+
+  public async listCommitIdsBetween(repo: Repository, from: Oid, to: Oid): Promise<Oid[]> {
+    const walk = repo.createRevWalk();
+    walk.push(to);
+    let current: Oid = to;
+    const commits = [];
+    while (true) {
+      current = await walk.next();
+      if (current.equal(from)) {
+        break;
+      }
+      commits.push(current);
+    }
+    return commits;
   }
 
   public async getFileDiffs(nativeBaseCommit: Commit, nativeHeadCommit: Commit): Promise<GitFileDiff[]> {
