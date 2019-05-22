@@ -66,18 +66,20 @@ stages:
           - task: DownloadPipelineArtifact@0
             inputs:
               artifactName: 'drop'
-              targetPath: $(System.DefaultWorkingDirectory)
+              targetPath: $(Build.StagingDirectory)
           - script: ls
+            workingDirectory: $(Build.StagingDirectory)
           - task: NodeTool@0
             displayName: 'Use Node 10.x'
             inputs:
               versionSpec: 10.x
           - script: git clone https://github.com/ts-common/publish
+            workingDirectory: $(Build.StagingDirectory)
           - task: Npm@1
             displayName: 'npm run publishall'
             inputs:
               command: custom
-              workingDir: publish/
+              workingDir: $(Build.StagingDirectory)/publish/
               verbose: false
               customCommand: 'run publishall'
               customEndpoint: 'azure-sdk NPM'
