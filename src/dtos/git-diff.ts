@@ -10,6 +10,9 @@ export class GitDiff {
   public baseCommit: GitCommit;
   @ApiModelProperty()
   public mergeBaseCommit: GitCommit;
+  @ApiModelProperty()
+  public totalCommits: number;
+
   @ApiModelProperty({ type: GitFileDiff, isArray: true })
   public files: GitFileDiff[];
 
@@ -17,6 +20,7 @@ export class GitDiff {
     this.headCommit = obj.headCommit;
     this.baseCommit = obj.baseCommit;
     this.mergeBaseCommit = obj.mergeBaseCommit;
+    this.totalCommits = obj.totalCommits;
     this.files = obj.files.map(x => new GitFileDiff(x));
   }
 }
