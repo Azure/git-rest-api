@@ -40,8 +40,12 @@ stages:
           vmImage: "Ubuntu-16.04"
         steps:
           - script: npm -s ci
+            displayName: Install
           - script: npm -s run sdk:gen
+            displayName: Generate SDKs
           - script: npm -s pack
+            workingDirectory: sdk/out/typescript
+            displayName: Pack
           # - task: Npm@1	
           #   displayName: 'npm run publish'
           #   inputs:
