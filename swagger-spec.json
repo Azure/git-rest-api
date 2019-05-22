@@ -173,10 +173,7 @@
           "200": {
             "description": "",
             "schema": {
-              "type": "array",
-              "items": {
-                "$ref": "#/definitions/GitDiff"
-              }
+              "$ref": "#/definitions/GitDiff"
             }
           },
           "400": {
@@ -325,6 +322,9 @@
         "mergeBaseCommit": {
           "$ref": "#/definitions/GitCommit"
         },
+        "totalCommits": {
+          "type": "number"
+        },
         "files": {
           "type": "array",
           "items": {
@@ -336,6 +336,7 @@
         "headCommit",
         "baseCommit",
         "mergeBaseCommit",
+        "totalCommits",
         "files"
       ]
     }

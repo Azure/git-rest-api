@@ -72,7 +72,6 @@ export class CompareService {
         break;
       }
       commits.push(current);
-      console.log(` - ${current}`);
     }
     return commits;
   }
