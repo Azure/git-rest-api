@@ -63,6 +63,10 @@ stages:
         pool:
           vmImage: "Ubuntu-16.04"
         steps:
+          - task: DownloadPipelineArtifact@0
+            inputs:
+              artifactName: 'drop'
+              targetPath: $(System.DefaultWorkingDirectory)
           - script: ls
           - task: NodeTool@0
             displayName: 'Use Node 10.x'
