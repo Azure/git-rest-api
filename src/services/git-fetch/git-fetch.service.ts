@@ -64,7 +64,8 @@ export class GitFetchService {
           },
         },
       });
-    } catch {
+    } catch (e) {
+      console.error("E", e);
       throw new NotFoundException();
     }
   }
