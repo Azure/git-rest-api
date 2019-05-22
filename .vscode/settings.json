@@ -14,5 +14,6 @@
     "**/.DS_Store": true,
     "sdk/out/**/node_modules": true
   },
-  "editor.defaultFormatter": "esbenp.prettier-vscode"
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
+  "typescript.disableAutomaticTypeAcquisition": true // Cause issue with locking folder on windows. Types should be installed anyway in package.json
 }

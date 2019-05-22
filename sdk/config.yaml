@@ -1,0 +1,7 @@
+input-file: ../swagger-spec.json
+typescript:
+  package-name: "git-rest-api"
+  payload-flattening-threshold: 1
+  generate-package-json: false
+  output-folder: "out/typescript"
+  enum-types: true

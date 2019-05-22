@@ -15,9 +15,9 @@
     "lint": "tslint -p tsconfig.json",
     "test:watch": "jest --watch --coverage=false --config ./config/jest.dev.config.js",
     "swagger:gen": "node ./bin/scripts/generate-swagger-specs.js",
+    "autorest": "cross-var autorest sdk/config.yaml --package-version=$npm_package_version",
     "sdk:gen": "npm run sdk:gen:ts",
-    "autorest": "cross-var autorest --input-file='./swagger-spec.json' --package-version=$npm_package_version",
-    "sdk:gen:ts": "cross-var rimraf ./sdk/out/typescript/* && copyfiles -u 3 './sdk/src/typescript/**/*' ./sdk/out/typescript && npm run autorest -- --typescript --output-folder='./sdk/out/typescript' git-rest-api-sdk && npm version --prefix ./sdk/out/typescript $npm_package_version && npm run prepack --prefix ./sdk/out/typescript"
+    "sdk:gen:ts": "cross-var rimraf ./sdk/out/typescript/* && copyfiles -u 3 \"./sdk/src/typescript/**/*\" ./sdk/out/typescript && npm run autorest -- --typescript --enum-types=true && npm run prepack --prefix ./sdk/out/typescript"
   },
   "repository": {
     "type": "git",
