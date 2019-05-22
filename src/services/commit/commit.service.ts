@@ -18,11 +18,19 @@ export class CommitService {
     return toGitCommit(commit);
   }
 
-  public async getCommit(repo: Repository, commitSha: string): Promise<Commit | undefined> {
+  /**
+   * @param repo Repository instance
+   * @param ref Commit SHA, Branch name
+   */
+  public async getCommit(repo: Repository, ref: string): Promise<Commit | undefined> {
     try {
-      return await repo.getCommit(commitSha);
+      return await repo.getCommit(ref);
     } catch {
-      return undefined;
+      try {
+        return await repo.getReferenceCommit(`origin/${ref}`);
+      } catch {
+        return undefined;
+      }
     }
   }
 }
