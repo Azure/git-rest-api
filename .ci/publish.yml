@@ -66,15 +66,17 @@ stages:
           - task: DownloadPipelineArtifact@0
             inputs:
               artifactName: 'drop'
-              targetPath: $(Build.StagingDirectory)
+              targetPath: $(agent.tempdirectory)
+          - script: echo "Dir $(agent.tempdirectory)"
+            workingDirectory: $(agent.tempdirectory)
           - script: ls
-            workingDirectory: $(Build.StagingDirectory)
+            workingDirectory: $(agent.tempdirectory)
           - task: NodeTool@0
             displayName: 'Use Node 10.x'
             inputs:
               versionSpec: 10.x
           - script: git clone https://github.com/ts-common/publish
-            workingDirectory: $(Build.StagingDirectory)
+            workingDirectory: $(agent.tempdirectory)
           - task: Npm@1
             displayName: 'npm run publishall'
             inputs:
