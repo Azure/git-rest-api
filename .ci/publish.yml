@@ -6,7 +6,7 @@ trigger:
 
 pr: none
 
-# stages:
+stages:
 #   - stage: Build_Docker
 #     jobs:
 #       - job: Build_Docker
