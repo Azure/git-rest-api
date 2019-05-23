@@ -2,7 +2,9 @@
 |----|----|
 | [![Build Status](https://dev.azure.com/azure-sdk/public/_apis/build/status/tools/public.git-rest-api.ci?branchName=master)](https://dev.azure.com/azure-sdk/public/_build/latest?definitionId=444&branchName=master) |  [![Build Status](https://dev.azure.com/azure-sdk/public/_apis/build/status/tools/Azure.git-rest-api%20Build?branchName=master)](https://dev.azure.com/azure-sdk/public/_build/latest?definitionId=445&branchName=master) |
 
-# Start
+* Javascript SDK ![https://www.npmjs.com/package/git-rest-api-sdk](https://img.shields.io/npm/v/git-rest-api-sdk.svg)
+
+# Develop
 
 1. Install dependencies
 ```bash
