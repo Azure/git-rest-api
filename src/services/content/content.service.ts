@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException, InternalServerErrorException } from "@nestjs/common";
+import { Injectable, InternalServerErrorException, NotFoundException } from "@nestjs/common";
 import { Tree, TreeEntry } from "nodegit";
 
 import { GitDirObjectContent } from "../../dtos/git-dir-object-content";

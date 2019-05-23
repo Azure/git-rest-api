@@ -14,7 +14,7 @@ export class ContentController {
   @ApiOkResponse({ type: GitObjectContent, isArray: true })
   @ApiImplicitQuery({ name: "ref", required: false, type: "string" })
   @ApiNotFoundResponse({})
-  public async compare(
+  public async getContents(
     @Param("remote") remote: string,
     @Param("path") path: string | undefined,
     @Query("ref") ref: string | undefined,
