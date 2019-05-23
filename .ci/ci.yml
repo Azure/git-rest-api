@@ -12,12 +12,6 @@ steps:
   - script: npm -s ci
     displayName: "Install dependencies"
 
-  - script: npm run -s swagger:gen
-    displayName: "Swagger gen"
-
-  - script: npm run -s sdk:gen
-    displayName: "SDK gen"
-
   - script: npm run -s test:ci
     displayName: "Test"
 
@@ -31,6 +25,9 @@ steps:
       codeCoverageTool: Cobertura
       summaryFileLocation: "$(System.DefaultWorkingDirectory)/**/*coverage.xml"
       reportDirectory: "$(System.DefaultWorkingDirectory)/**/coverage"
+
+  - script: npm run -s sdk:gen
+    displayName: "SDK gen"
 
   - script: npm run -s lint
     displayName: "Lint"
