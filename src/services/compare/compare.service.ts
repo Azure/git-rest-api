@@ -3,9 +3,12 @@ import { Commit, ConvenientPatch, Diff, Merge, Oid, Repository } from "nodegit";
 
 import { GitFileDiff, PatchStatus } from "../../dtos";
 import { GitDiff } from "../../dtos/git-diff";
-import { GitUtils } from "../../utils";
+import { GitUtils, notUndefined } from "../../utils";
 import { CommitService, toGitCommit } from "../commit";
 import { GitBaseOptions, RepoService } from "../repo";
+
+const MAX_COMMIT_PER_DIFF = 250;
+const MAX_FILES_PER_DIFF = 300;
 
 @Injectable()
 export class CompareService {
@@ -53,13 +56,20 @@ export class CompareService {
 
     const mergeBaseCommit = await toGitCommit(mergeBase);
     const files = await this.getFileDiffs(nativeBaseCommit, nativeHeadCommit);
-    const commits = await this.listCommitIdsBetween(repo, mergeBase.id(), nativeHeadCommit.id());
+    const commitIds = await this.listCommitIdsBetween(repo, mergeBase.id(), nativeHeadCommit.id());
 
+    const commits = await Promise.all(
+      commitIds.slice(0, MAX_COMMIT_PER_DIFF).map(async x => {
+        const commit = await this.commitService.getCommit(repo, x);
+        return commit ? toGitCommit(commit) : undefined;
+      }),
+    );
     return new GitDiff({
       baseCommit,
       headCommit,
       mergeBaseCommit,
-      totalCommits: commits.length,
+      totalCommits: commitIds.length,
+      commits: commits.filter(notUndefined),
       files,
     });
   }
@@ -87,7 +97,7 @@ export class CompareService {
     });
     const patches = await diff.patches();
 
-    return patches.map(x => toFileDiff(x));
+    return patches.map(x => toFileDiff(x)).slice(0, MAX_FILES_PER_DIFF);
   }
 
   private async getCompareRepo(remote: string, base: string, head: string, options: GitBaseOptions) {
