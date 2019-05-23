@@ -27,9 +27,14 @@ export class CommitService {
       return await repo.getCommit(ref);
     } catch {
       try {
-        return await repo.getReferenceCommit(`origin/${ref}`);
-      } catch {
-        return undefined;
+        return await repo.getReferenceCommit(ref);
+      } catch (e) {
+        console.log("error", e);
+        try {
+          return await repo.getReferenceCommit(`origin/${ref}`);
+        } catch {
+          return undefined;
+        }
       }
     }
   }

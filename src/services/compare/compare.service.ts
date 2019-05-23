@@ -16,10 +16,22 @@ export class CompareService {
     head: string,
     options: GitBaseOptions = {},
   ): Promise<GitDiff | NotFoundException> {
-    const repo = await this.repoService.get(remote, options);
+    const compareRepo = await this.repoService.createForCompare(
+      {
+        name: "baser",
+        remote: "github.com/test-repo-billy/azure-rest-api-specs",
+      },
+      {
+        name: "headr",
+        remote,
+      },
+      options,
+    );
+    // const repo = await this.repoService.get(remote, options);
+
     const [baseCommit, headCommit] = await Promise.all([
-      this.commitService.getCommit(repo, base),
-      this.commitService.getCommit(repo, head),
+      this.commitService.getCommit(compareRepo, `refs/remotes/baser/${base}`),
+      this.commitService.getCommit(compareRepo, `refs/remotes/headr/${head}`),
     ]);
     if (!baseCommit) {
       return new NotFoundException(`Base ${base} was not found`);
@@ -28,7 +40,7 @@ export class CompareService {
       return new NotFoundException(`Head ${base} was not found`);
     }
 
-    return this.getComparison(repo, baseCommit, headCommit);
+    return this.getComparison(compareRepo, baseCommit, headCommit);
   }
 
   public async getMergeBase(repo: Repository, base: Oid, head: Oid): Promise<Commit | undefined> {
