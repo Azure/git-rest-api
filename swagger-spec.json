@@ -225,10 +225,7 @@
           "200": {
             "description": "",
             "schema": {
-              "type": "array",
-              "items": {
-                "$ref": "#/definitions/GitObjectContent"
-              }
+              "$ref": "#/definitions/GitContents"
             }
           },
           "400": {
@@ -395,11 +392,11 @@
         "files"
       ]
     },
-    "GitObjectContent": {
+    "GitDirObjectContent": {
       "type": "object",
       "properties": {
         "type": {
-          "type": "string"
+          "type": "dir"
         },
         "size": {
           "type": "number"
@@ -419,7 +416,100 @@
         "size",
         "name",
         "path",
-        "sha"
+        "sha",
+        "type"
+      ]
+    },
+    "GitFileObjectContent": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "type": "file"
+        },
+        "size": {
+          "type": "number"
+        },
+        "name": {
+          "type": "string"
+        },
+        "path": {
+          "type": "string"
+        },
+        "sha": {
+          "type": "string"
+        },
+        "content": {
+          "type": "string"
+        },
+        "encoding": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "type",
+        "size",
+        "name",
+        "path",
+        "sha",
+        "type",
+        "content",
+        "encoding"
+      ]
+    },
+    "GitSubmoduleObjectContent": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "type": "submodule"
+        },
+        "size": {
+          "type": "number"
+        },
+        "name": {
+          "type": "string"
+        },
+        "path": {
+          "type": "string"
+        },
+        "sha": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "type",
+        "size",
+        "name",
+        "path",
+        "sha",
+        "type"
+      ]
+    },
+    "GitContents": {
+      "type": "object",
+      "properties": {
+        "dirs": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/GitDirObjectContent"
+          }
+        },
+        "files": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/GitFileObjectContent"
+          }
+        },
+        "submodules": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/GitSubmoduleObjectContent"
+          }
+        }
+      },
+      "required": [
+        "dirs",
+        "files",
+        "submodules"
       ]
     }
   }

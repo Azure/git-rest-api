@@ -1,9 +1,9 @@
-import { Injectable, InternalServerErrorException, NotFoundException } from "@nestjs/common";
-import { Tree, TreeEntry } from "nodegit";
+import { Injectable, NotFoundException } from "@nestjs/common";
+import { TreeEntry } from "nodegit";
 
+import { GitContents } from "../../dtos/git-contents";
 import { GitDirObjectContent } from "../../dtos/git-dir-object-content";
 import { GitFileObjectContent } from "../../dtos/git-file-object-content";
-import { GitObjectContent } from "../../dtos/git-object-content";
 import { GitSubmoduleObjectContent } from "../../dtos/git-submodule-object-content";
 import { CommitService } from "../commit";
 import { GitBaseOptions, RepoService } from "../repo";
@@ -17,7 +17,7 @@ export class ContentService {
     path: string | undefined,
     ref: string | undefined = "master",
     options: GitBaseOptions = {},
-  ): Promise<GitObjectContent | GitObjectContent[] | NotFoundException | InternalServerErrorException> {
+  ): Promise<GitContents | NotFoundException> {
     const repo = await this.repoService.get(remote, options);
     const commit = await this.commitService.getCommit(repo, ref);
 
@@ -25,23 +25,20 @@ export class ContentService {
       return new NotFoundException(`Ref '${ref}' not found.`);
     }
 
+    let entries: TreeEntry[];
+
     if (path) {
       try {
-        const entry = await commit.getEntry(path);
-
-        if (entry.isDirectory()) {
-          const tree = await entry.getTree();
-          return this.getDirectory(tree);
-        }
-
-        return this.getFileEntryAsObject(entry);
+        entries = [await commit.getEntry(path)];
       } catch (e) {
         return new NotFoundException(`${path} not found.`);
       }
     } else {
       const tree = await commit.getTree();
-      return this.getDirectory(tree);
+      entries = await tree.entries();
     }
+
+    return this.getEntries(entries);
   }
 
   private async getFileEntryAsObject(entry: TreeEntry): Promise<GitFileObjectContent> {
@@ -77,20 +74,15 @@ export class ContentService {
     });
   }
 
-  private async getDirectory(dirTree: Tree): Promise<GitObjectContent[]> {
-    const entries = await dirTree.entries();
-    return Promise.all(
-      entries.map(async entry => {
-        if (entry.isDirectory()) {
-          return this.getDirEntryAsObject(entry);
-        } else if (entry.isFile()) {
-          return this.getFileEntryAsObject(entry);
-        } else if (entry.isSubmodule()) {
-          return this.getSubmoduleEntryAsObject(entry);
-        } else {
-          throw new NotFoundException();
-        }
-      }),
-    );
+  private async getEntries(entries: TreeEntry[]): Promise<GitContents> {
+    const [files, dirs, submodules] = await Promise.all([
+      Promise.all(entries.filter(entry => entry.isFile()).map(async entry => this.getFileEntryAsObject(entry))),
+      Promise.all(entries.filter(entry => entry.isDirectory()).map(async entry => this.getDirEntryAsObject(entry))),
+      Promise.all(
+        entries.filter(entry => entry.isSubmodule()).map(async entry => this.getSubmoduleEntryAsObject(entry)),
+      ),
+    ]);
+
+    return new GitContents({ files, dirs, submodules });
   }
 }
