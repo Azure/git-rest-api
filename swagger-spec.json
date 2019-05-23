@@ -201,6 +201,12 @@
             "in": "path"
           },
           {
+            "name": "ref",
+            "required": false,
+            "in": "query",
+            "type": "string"
+          },
+          {
             "name": "x-authorization",
             "required": false,
             "in": "header",
@@ -217,7 +223,10 @@
           "200": {
             "description": "",
             "schema": {
-              "$ref": "#/definitions/GitObjectContent"
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/GitObjectContent"
+              }
             }
           },
           "400": {
