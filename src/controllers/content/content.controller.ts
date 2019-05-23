@@ -2,7 +2,7 @@ import { Controller, Get, HttpException, Param, Query } from "@nestjs/common";
 import { ApiImplicitQuery, ApiNotFoundResponse, ApiOkResponse, ApiOperation } from "@nestjs/swagger";
 
 import { ApiHasPassThruAuth, Auth, RepoAuth } from "../../core";
-import { GitObjectContent } from "../../dtos/git-object-content";
+import { GitContents } from "../../dtos/git-contents";
 import { ContentService } from "../../services/content";
 
 @Controller("/repos/:remote/contents")
@@ -11,7 +11,7 @@ export class ContentController {
 
   @Get([":path([^/]*)", "*"])
   @ApiHasPassThruAuth()
-  @ApiOkResponse({ type: GitObjectContent, isArray: true })
+  @ApiOkResponse({ type: GitContents })
   @ApiImplicitQuery({ name: "ref", required: false, type: "string" })
   @ApiOperation({ title: "Get content", operationId: "contents_get" })
   @ApiNotFoundResponse({})
