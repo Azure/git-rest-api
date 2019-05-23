@@ -46,14 +46,18 @@ export class RepoService {
     await this.validatePermissions([base.remote, head.remote], options);
     const localName = `${base.remote}-${head.remote}`;
     const repoPath = getRepoMainPath(localName, "compare");
+    let repo: Repository;
+
     if (await this.fs.exists(repoPath)) {
-      return Repository.open(repoPath);
+      repo = await Repository.open(repoPath);
+    } else {
+      repo = await Repository.init(repoPath, 0);
+      await Promise.all([
+        Remote.create(repo, base.name, `https://${base.remote}`),
+        Remote.create(repo, head.name, `https://${head.remote}`),
+      ]);
     }
-    const repo = await Repository.init(repoPath, 0);
-    await Promise.all([
-      Remote.create(repo, base.name, `https://${base.remote}`),
-      Remote.create(repo, head.name, `https://${head.remote}`),
-    ]);
+
     await this.fetchService.fetch(localName, repo, options);
     return repo;
   }
