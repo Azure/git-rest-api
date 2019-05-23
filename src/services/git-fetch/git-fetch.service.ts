@@ -33,22 +33,22 @@ export class GitFetchService {
     this.cacheReady = fs.mkdir(repoCacheFolder);
   }
 
-  public async fetch(remote: string, repo: Repository, options: GitBaseOptions): Promise<Repository> {
-    if (await this.needToFetch(remote)) {
-      return this.ensureSingleFetch(remote, () => this.fetchAll(remote, repo, options).then(() => repo));
+  public async fetch(id: string, repo: Repository, options: GitBaseOptions): Promise<Repository> {
+    if (await this.needToFetch(id)) {
+      return this.ensureSingleFetch(id, () => this.fetchAll(id, repo, options).then(() => repo));
     }
     return repo;
   }
 
-  private ensureSingleFetch(remote: string, callback: () => Promise<Repository>): Promise<Repository> {
-    let promise = this.currentFetches.get(remote);
+  private ensureSingleFetch(id: string, callback: () => Promise<Repository>): Promise<Repository> {
+    let promise = this.currentFetches.get(id);
 
     if (!promise) {
       promise = callback().then(repo => {
-        this.currentFetches.delete(remote);
+        this.currentFetches.delete(id);
         return repo;
       });
-      this.currentFetches.set(remote, promise);
+      this.currentFetches.set(id, promise);
     }
     return promise;
   }

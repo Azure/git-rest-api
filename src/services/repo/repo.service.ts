@@ -44,8 +44,8 @@ export class RepoService {
 
   public async createForCompare(base: RemoteDef, head: RemoteDef, options: GitBaseOptions = {}): Promise<Repository> {
     await this.validatePermissions([base.remote, head.remote], options);
-
-    const repoPath = getRepoMainPath(`${base.remote}-${head.remote}`, "compare");
+    const localName = `${base.remote}-${head.remote}`;
+    const repoPath = getRepoMainPath(localName, "compare");
     if (await this.fs.exists(repoPath)) {
       return Repository.open(repoPath);
     }
@@ -54,7 +54,7 @@ export class RepoService {
       Remote.create(repo, base.name, `https://${base.remote}`),
       Remote.create(repo, head.name, `https://${head.remote}`),
     ]);
-    await repo.fetchAll();
+    await this.fetchService.fetch(localName, repo, options);
     return repo;
   }
 

@@ -3,54 +3,13 @@ import { Commit, ConvenientPatch, Diff, Merge, Oid, Repository } from "nodegit";
 
 import { GitFileDiff, PatchStatus } from "../../dtos";
 import { GitDiff } from "../../dtos/git-diff";
+import { GitUtils } from "../../utils";
 import { CommitService, toGitCommit } from "../commit";
 import { GitBaseOptions, RepoService } from "../repo";
 
 @Injectable()
 export class CompareService {
   constructor(private repoService: RepoService, private commitService: CommitService) {}
-
-  /**
-   * Parse a remote reference
-   * @param name Reference name
-   */
-  private parseRemoteReference(name: string) {
-    if (name.includes(":")) {
-      const [remote, ref] = name.split(":");
-      return {
-        remote,
-        ref,
-      };
-    } else {
-      return { ref: name };
-    }
-  }
-
-  private async getCompareRepo(remote: string, base: string, head: string, options: GitBaseOptions) {
-    const baseRef = this.parseRemoteReference(base);
-    const headRef = this.parseRemoteReference(head);
-
-    const baseRemote = baseRef.remote || remote;
-    const headRemote = headRef.remote || remote;
-
-    if (baseRemote !== headRemote) {
-      const repo = await this.repoService.createForCompare(
-        {
-          name: "baser",
-          remote: baseRemote,
-        },
-        {
-          name: "headr",
-          remote: headRemote,
-        },
-        options,
-      );
-      return { repo, baseRef: `refs/remotes/headr/${baseRef.ref}`, headRef: `refs/remotes/headr/${headRef.ref}` };
-    } else {
-      const repo = await this.repoService.get(headRemote);
-      return { repo, baseRef: baseRef.ref, headRef: headRef.ref };
-    }
-  }
 
   public async compare(
     remote: string,
@@ -129,6 +88,32 @@ export class CompareService {
     const patches = await diff.patches();
 
     return patches.map(x => toFileDiff(x));
+  }
+
+  private async getCompareRepo(remote: string, base: string, head: string, options: GitBaseOptions) {
+    const baseRef = GitUtils.parseRemoteReference(base, remote);
+    const headRef = GitUtils.parseRemoteReference(head, remote);
+
+    const baseRemote = baseRef.remote;
+    const headRemote = headRef.remote;
+
+    if (baseRemote !== headRemote) {
+      const repo = await this.repoService.createForCompare(
+        {
+          name: "baser",
+          remote: baseRemote,
+        },
+        {
+          name: "headr",
+          remote: headRemote,
+        },
+        options,
+      );
+      return { repo, baseRef: `refs/remotes/headr/${baseRef.ref}`, headRef: `refs/remotes/headr/${headRef.ref}` };
+    } else {
+      const repo = await this.repoService.get(headRemote);
+      return { repo, baseRef: baseRef.ref, headRef: headRef.ref };
+    }
   }
 }
 
