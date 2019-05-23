@@ -10,28 +10,60 @@ import { GitBaseOptions, RepoService } from "../repo";
 export class CompareService {
   constructor(private repoService: RepoService, private commitService: CommitService) {}
 
+  /**
+   * Parse a remote reference
+   * @param name Reference name
+   */
+  private parseRemoteReference(name: string) {
+    if (name.includes(":")) {
+      const [remote, ref] = name.split(":");
+      return {
+        remote,
+        ref,
+      };
+    } else {
+      return { ref: name };
+    }
+  }
+
+  private async getCompareRepo(remote: string, base: string, head: string, options: GitBaseOptions) {
+    const baseRef = this.parseRemoteReference(base);
+    const headRef = this.parseRemoteReference(head);
+
+    const baseRemote = baseRef.remote || remote;
+    const headRemote = headRef.remote || remote;
+
+    if (baseRemote !== headRemote) {
+      const repo = await this.repoService.createForCompare(
+        {
+          name: "baser",
+          remote: baseRemote,
+        },
+        {
+          name: "headr",
+          remote: headRemote,
+        },
+        options,
+      );
+      return { repo, baseRef: `refs/remotes/headr/${baseRef.ref}`, headRef: `refs/remotes/headr/${headRef.ref}` };
+    } else {
+      const repo = await this.repoService.get(headRemote);
+      return { repo, baseRef: baseRef.ref, headRef: headRef.ref };
+    }
+  }
+
   public async compare(
     remote: string,
     base: string,
     head: string,
     options: GitBaseOptions = {},
   ): Promise<GitDiff | NotFoundException> {
-    const compareRepo = await this.repoService.createForCompare(
-      {
-        name: "baser",
-        remote: "github.com/test-repo-billy/azure-rest-api-specs",
-      },
-      {
-        name: "headr",
-        remote,
-      },
-      options,
-    );
-    // const repo = await this.repoService.get(remote, options);
+    const compareRepo = await this.getCompareRepo(remote, base, head, options);
+    const repo = compareRepo.repo;
 
     const [baseCommit, headCommit] = await Promise.all([
-      this.commitService.getCommit(compareRepo, `refs/remotes/baser/${base}`),
-      this.commitService.getCommit(compareRepo, `refs/remotes/headr/${head}`),
+      this.commitService.getCommit(repo, compareRepo.baseRef),
+      this.commitService.getCommit(repo, compareRepo.headRef),
     ]);
     if (!baseCommit) {
       return new NotFoundException(`Base ${base} was not found`);
@@ -40,7 +72,7 @@ export class CompareService {
       return new NotFoundException(`Head ${base} was not found`);
     }
 
-    return this.getComparison(compareRepo, baseCommit, headCommit);
+    return this.getComparison(repo, baseCommit, headCommit);
   }
 
   public async getMergeBase(repo: Repository, base: Oid, head: Oid): Promise<Commit | undefined> {
