@@ -17,6 +17,10 @@ Run in vscode
 
 Instead of `npm start` run `npm build:watch` and in vscode press `F5`
 
+# Windows
+
+* Long path issue. libgit2(library behind nodegit) doesn't support windows long path feature. Which means some repo with long reference might not work on windows. You can test with other simpler repos on windows. You should however not use this in production on windows.
+
 # Contributing
 
 This project welcomes contributions and suggestions.  Most contributions require you to agree to a

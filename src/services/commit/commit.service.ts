@@ -1,5 +1,5 @@
 import { Injectable } from "@nestjs/common";
-import { Commit, Repository, Signature, Time } from "nodegit";
+import { Commit, Oid, Repository, Signature, Time } from "nodegit";
 
 import { GitCommit, GitCommitRef } from "../../dtos";
 import { GitSignature } from "../../dtos/git-signature";
@@ -22,14 +22,21 @@ export class CommitService {
    * @param repo Repository instance
    * @param ref Commit SHA, Branch name
    */
-  public async getCommit(repo: Repository, ref: string): Promise<Commit | undefined> {
+  public async getCommit(repo: Repository, ref: string | Oid): Promise<Commit | undefined> {
     try {
       return await repo.getCommit(ref);
     } catch {
-      try {
-        return await repo.getReferenceCommit(`origin/${ref}`);
-      } catch {
+      if (typeof ref !== "string") {
         return undefined;
+      }
+      try {
+        return await repo.getReferenceCommit(ref);
+      } catch (e) {
+        try {
+          return await repo.getReferenceCommit(`origin/${ref}`);
+        } catch {
+          return undefined;
+        }
       }
     }
   }

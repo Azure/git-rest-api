@@ -377,6 +377,12 @@
         "totalCommits": {
           "type": "number"
         },
+        "commits": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/GitCommit"
+          }
+        },
         "files": {
           "type": "array",
           "items": {
@@ -389,6 +395,7 @@
         "baseCommit",
         "mergeBaseCommit",
         "totalCommits",
+        "commits",
         "files"
       ]
     },

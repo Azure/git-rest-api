@@ -3,8 +3,12 @@ import { Commit, ConvenientPatch, Diff, Merge, Oid, Repository } from "nodegit";
 
 import { GitFileDiff, PatchStatus } from "../../dtos";
 import { GitDiff } from "../../dtos/git-diff";
+import { GitUtils, notUndefined } from "../../utils";
 import { CommitService, toGitCommit } from "../commit";
 import { GitBaseOptions, RepoService } from "../repo";
+
+const MAX_COMMIT_PER_DIFF = 250;
+const MAX_FILES_PER_DIFF = 300;
 
 @Injectable()
 export class CompareService {
@@ -16,10 +20,12 @@ export class CompareService {
     head: string,
     options: GitBaseOptions = {},
   ): Promise<GitDiff | NotFoundException> {
-    const repo = await this.repoService.get(remote, options);
+    const compareRepo = await this.getCompareRepo(remote, base, head, options);
+    const repo = compareRepo.repo;
+
     const [baseCommit, headCommit] = await Promise.all([
-      this.commitService.getCommit(repo, base),
-      this.commitService.getCommit(repo, head),
+      this.commitService.getCommit(repo, compareRepo.baseRef),
+      this.commitService.getCommit(repo, compareRepo.headRef),
     ]);
     if (!baseCommit) {
       return new NotFoundException(`Base ${base} was not found`);
@@ -50,13 +56,20 @@ export class CompareService {
 
     const mergeBaseCommit = await toGitCommit(mergeBase);
     const files = await this.getFileDiffs(nativeBaseCommit, nativeHeadCommit);
-    const commits = await this.listCommitIdsBetween(repo, mergeBase.id(), nativeHeadCommit.id());
+    const commitIds = await this.listCommitIdsBetween(repo, mergeBase.id(), nativeHeadCommit.id());
 
+    const commits = await Promise.all(
+      commitIds.slice(0, MAX_COMMIT_PER_DIFF).map(async x => {
+        const commit = await this.commitService.getCommit(repo, x);
+        return commit ? toGitCommit(commit) : undefined;
+      }),
+    );
     return new GitDiff({
       baseCommit,
       headCommit,
       mergeBaseCommit,
-      totalCommits: commits.length,
+      totalCommits: commitIds.length,
+      commits: commits.filter(notUndefined),
       files,
     });
   }
@@ -84,7 +97,33 @@ export class CompareService {
     });
     const patches = await diff.patches();
 
-    return patches.map(x => toFileDiff(x));
+    return patches.map(x => toFileDiff(x)).slice(0, MAX_FILES_PER_DIFF);
+  }
+
+  private async getCompareRepo(remote: string, base: string, head: string, options: GitBaseOptions) {
+    const baseRef = GitUtils.parseRemoteReference(base, remote);
+    const headRef = GitUtils.parseRemoteReference(head, remote);
+
+    const baseRemote = baseRef.remote;
+    const headRemote = headRef.remote;
+
+    if (baseRemote !== headRemote) {
+      const repo = await this.repoService.createForCompare(
+        {
+          name: "baser",
+          remote: baseRemote,
+        },
+        {
+          name: "headr",
+          remote: headRemote,
+        },
+        options,
+      );
+      return { repo, baseRef: `refs/remotes/headr/${baseRef.ref}`, headRef: `refs/remotes/headr/${headRef.ref}` };
+    } else {
+      const repo = await this.repoService.get(headRemote);
+      return { repo, baseRef: baseRef.ref, headRef: headRef.ref };
+    }
   }
 }
 
