@@ -193,6 +193,8 @@
     },
     "/repos/{remote}/contents/{path}": {
       "get": {
+        "summary": "Get content",
+        "operationId": "contents_get",
         "parameters": [
           {
             "type": "string",
