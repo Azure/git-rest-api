@@ -9,7 +9,7 @@ import { CompareService } from "../../services";
 export class CompareController {
   constructor(private compareService: CompareService) {}
 
-  @Get(":base...:head")
+  @Get(":base([^/]*)...:head([^/]*)")
   @ApiHasPassThruAuth()
   @ApiOkResponse({ type: GitDiff })
   @ApiNotFoundResponse({})

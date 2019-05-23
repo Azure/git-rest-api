@@ -12,20 +12,20 @@ export class CompareService {
 
   public async compare(
     remote: string,
-    baseSha: string,
-    headSha: string,
+    base: string,
+    head: string,
     options: GitBaseOptions = {},
   ): Promise<GitDiff | NotFoundException> {
     const repo = await this.repoService.get(remote, options);
     const [baseCommit, headCommit] = await Promise.all([
-      this.commitService.getCommit(repo, baseSha),
-      this.commitService.getCommit(repo, headSha),
+      this.commitService.getCommit(repo, base),
+      this.commitService.getCommit(repo, head),
     ]);
     if (!baseCommit) {
-      return new NotFoundException(`Base commit ${baseSha} was not found`);
+      return new NotFoundException(`Base ${base} was not found`);
     }
     if (!headCommit) {
-      return new NotFoundException(`Head commit ${baseSha} was not found`);
+      return new NotFoundException(`Head ${base} was not found`);
     }
 
     return this.getComparison(repo, baseCommit, headCommit);
