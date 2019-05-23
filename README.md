@@ -1,4 +1,6 @@
-[![Build Status](https://dev.azure.com/azure-public/azsdk/_apis/build/status/Azure.git-rest-api?branchName=master)](https://dev.azure.com/azure-public/azsdk/_build/latest?definitionId=33&branchName=master)
+| CI | CD |
+|----|----|
+| [![Build Status](https://dev.azure.com/azure-sdk/public/_apis/build/status/tools/public.git-rest-api.ci?branchName=master)](https://dev.azure.com/azure-sdk/public/_build/latest?definitionId=444&branchName=master) |  [![Build Status](https://dev.azure.com/azure-sdk/public/_apis/build/status/tools/Azure.git-rest-api%20Build?branchName=master)](https://dev.azure.com/azure-sdk/public/_build/latest?definitionId=445&branchName=master) |
 
 # Start
 
