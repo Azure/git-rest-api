@@ -403,7 +403,7 @@
       "type": "object",
       "properties": {
         "type": {
-          "type": "dir"
+          "type": "string"
         },
         "size": {
           "type": "number"
@@ -423,15 +423,14 @@
         "size",
         "name",
         "path",
-        "sha",
-        "type"
+        "sha"
       ]
     },
     "GitFileObjectContent": {
       "type": "object",
       "properties": {
         "type": {
-          "type": "file"
+          "type": "string"
         },
         "size": {
           "type": "number"
@@ -458,7 +457,6 @@
         "name",
         "path",
         "sha",
-        "type",
         "content",
         "encoding"
       ]
@@ -467,7 +465,7 @@
       "type": "object",
       "properties": {
         "type": {
-          "type": "submodule"
+          "type": "string"
         },
         "size": {
           "type": "number"
@@ -487,8 +485,7 @@
         "size",
         "name",
         "path",
-        "sha",
-        "type"
+        "sha"
       ]
     },
     "GitContents": {
