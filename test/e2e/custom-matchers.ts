@@ -38,6 +38,13 @@ function toMatchSpecificSnapshot(
   received: object | object[],
   filename: string,
 ): jest.CustomMatcherResult {
+  if (this.isNot) {
+    return {
+      pass: true, // Will get inverted because of the .not
+      message: () => `.${this.utils.BOLD_WEIGHT("not")} cannot be used with snapshot matchers`,
+    };
+  }
+
   const filepath = getAbsolutePathToSnapshot(this.testPath!, filename);
   const content = serializeContent(received);
   const updateSnapshot: "none" | "all" | "new" = (this.snapshotState as any)._updateSnapshot;
@@ -51,7 +58,7 @@ function toMatchSpecificSnapshot(
     this.snapshotState.unmatched++;
 
     return {
-      pass: this.isNot,
+      pass: false,
       message: () =>
         `New output file ${coloredFilename} was ${errorColor("not written")}.\n\n` +
         "The update flag must be explicitly passed to write a new snapshot.\n\n",
@@ -61,47 +68,32 @@ function toMatchSpecificSnapshot(
   if (fs.existsSync(filepath)) {
     const output = fs.readFileSync(filepath, "utf8");
     // The matcher is being used with `.not`
-    if (this.isNot) {
-      if (output !== content) {
-        this.snapshotState.matched++;
-        // The value of `pass` is reversed when used with `.not`
-        return { pass: false, message: () => "" };
+    if (output === content) {
+      this.snapshotState.matched++;
+      return { pass: true, message: () => "" };
+    } else {
+      if (updateSnapshot === "all") {
+        fs.mkdirSync(path.dirname(filepath), { recursive: true });
+        fs.writeFileSync(filepath, content);
+
+        this.snapshotState.updated++;
+
+        return { pass: true, message: () => "" };
       } else {
         this.snapshotState.unmatched++;
 
         return {
-          pass: true,
-          message: () => `Expected received content ${errorColor("to not match")} the snapshot ${coloredFilename}.`,
+          pass: false,
+          message: () =>
+            `Received content ${errorColor("doesn't match")} the file ${coloredFilename}.\n\n${this.utils.diff(
+              content,
+              output,
+            )}`,
         };
-      }
-    } else {
-      if (output === content) {
-        this.snapshotState.matched++;
-        return { pass: true, message: () => "" };
-      } else {
-        if (updateSnapshot === "all") {
-          fs.mkdirSync(path.dirname(filepath), { recursive: true });
-          fs.writeFileSync(filepath, content);
-
-          this.snapshotState.updated++;
-
-          return { pass: true, message: () => "" };
-        } else {
-          this.snapshotState.unmatched++;
-
-          return {
-            pass: false,
-            message: () =>
-              `Received content ${errorColor("doesn't match")} the file ${coloredFilename}.\n\n${this.utils.diff(
-                content,
-                output,
-              )}`,
-          };
-        }
       }
     }
   } else {
-    if (!this.isNot && (updateSnapshot === "new" || updateSnapshot === "all")) {
+    if (updateSnapshot === "new" || updateSnapshot === "all") {
       fs.mkdirSync(path.dirname(filepath), { recursive: true });
       fs.writeFileSync(filepath, content);
 
