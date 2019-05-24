@@ -1,6 +1,7 @@
 import fetch, { RequestInit, Response } from "node-fetch";
 
 const testUrl = process.env.GIT_REST_API_E2E_ENDPOINT || "http://localhost:3009";
+jest.setTimeout(60_000);
 
 class E2EClient {
   public fetch(uri: string, init?: RequestInit): Promise<Response> {
