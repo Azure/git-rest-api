@@ -55,7 +55,7 @@ export class CompareService {
     }
 
     const mergeBaseCommit = await toGitCommit(mergeBase);
-    const files = await this.getFileDiffs(nativeBaseCommit, nativeHeadCommit);
+    const files = await this.getFileDiffs(mergeBase, nativeHeadCommit);
     const commitIds = await this.listCommitIdsBetween(repo, mergeBase.id(), nativeHeadCommit.id());
 
     const commits = await Promise.all(
