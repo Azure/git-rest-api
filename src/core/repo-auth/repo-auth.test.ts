@@ -5,7 +5,7 @@ import { RepoAuth } from "./repo-auth";
 describe("RepoAuth", () => {
   describe("Model", () => {
     it("doesn't generated any creds when no options are passed", () => {
-      expect(new RepoAuth().toCreds()).toBeUndefined();
+      expect(new RepoAuth().toCreds()).toEqual(Cred.defaultNew());
     });
 
     it("returns undefined if invalid basic header", () => {
