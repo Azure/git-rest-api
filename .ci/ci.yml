@@ -1,12 +1,11 @@
-pool:
-  vmImage: "Ubuntu 16.04"
-
 trigger:
   - master
 
 jobs:
   - job: test
     displayName: Tests
+    pool:
+      vmImage: "Ubuntu-16.04"
     steps:
       - task: NodeTool@0
         inputs:
@@ -37,6 +36,8 @@ jobs:
 
   - job: build
     displayName: Build and integration tests
+    pool:
+      vmImage: "Ubuntu-16.04"
     steps:
       - task: NodeTool@0
         inputs:
@@ -52,4 +53,3 @@ jobs:
           npm run -s start:prod &
           npm run -s test:e2e
         displayName: "Build"
-
