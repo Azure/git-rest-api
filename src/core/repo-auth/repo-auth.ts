@@ -48,11 +48,11 @@ export class RepoAuth {
     return new RepoAuth();
   }
 
-  public toCreds(): Cred | undefined {
+  public toCreds(): Cred {
     if (this.username && this.password) {
       return Cred.userpassPlaintextNew(this.username, this.password);
     }
-    return undefined;
+    return Cred.defaultNew();
   }
 
   public toAuthorizationHeader(): string | undefined {

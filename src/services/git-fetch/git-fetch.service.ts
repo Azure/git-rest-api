@@ -1,16 +1,16 @@
 import { Injectable, NotFoundException } from "@nestjs/common";
-import { Clone, Fetch, FetchOptions, Repository } from "nodegit";
+import { Clone, Cred, Fetch, FetchOptions, Repository } from "nodegit";
 import path from "path";
 
 import { FSService } from "../fs";
 import { GitBaseOptions } from "../repo";
 
-export function credentialsCallback(options: GitBaseOptions) {
+export function credentialsCallback(options: GitBaseOptions): () => Cred {
   return () => {
     if (options.auth) {
       return options.auth.toCreds();
     }
-    return undefined;
+    return Cred.defaultNew();
   };
 }
 
