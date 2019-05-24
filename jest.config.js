@@ -11,6 +11,7 @@ const config = {
   collectCoverageFrom: ["src/**/*.ts", "!**/node_modules/**"],
   coverageReporters: ["json", "lcov", "cobertura", "text", "html", "clover"],
   coveragePathIgnorePatterns: ["/node_modules/", ".*/test/.*"],
+  modulePathIgnorePatterns: ['<rootDir>/sdk'],
   globals: {
     "ts-jest": {
       tsConfig: "tsconfig.json",
