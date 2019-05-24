@@ -52,4 +52,4 @@ jobs:
       - script: |
           npm run -s start:prod &
           npm run -s test:e2e
-        displayName: "Build"
+        displayName: "Run integration tests"
