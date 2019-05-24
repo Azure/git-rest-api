@@ -32,6 +32,7 @@ export class RepoService {
   ) {}
 
   public async get(remote: string, options: GitBaseOptions = {}): Promise<Repository> {
+    await this.validatePermissions([remote], options);
     const repoPath = getRepoMainPath(remote);
 
     if (await this.fs.exists(repoPath)) {
