@@ -14,10 +14,12 @@
     "test:ci": "jest --ci --reporters=default --reporters=jest-junit",
     "lint": "tslint -p tsconfig.json",
     "test:watch": "jest --watch --coverage=false --config ./config/jest.dev.config.js",
+    "test:e2e": "jest --config ./config/jest.e2e.config.js",
     "swagger:gen": "node ./bin/scripts/generate-swagger-specs.js",
     "autorest": "cross-var autorest sdk/config.yaml --package-version=$npm_package_version",
     "sdk:gen": "npm run sdk:gen:ts",
-    "sdk:gen:ts": "rimraf ./sdk/out/typescript/* && copyfiles -u 3 \"./sdk/src/typescript/**/*\" ./sdk/out/typescript && npm run autorest -- --typescript && cross-var npm version --prefix ./sdk/out/typescript $npm_package_version  && npm run prepack --prefix ./sdk/out/typescript"  },
+    "sdk:gen:ts": "rimraf ./sdk/out/typescript/* && copyfiles -u 3 \"./sdk/src/typescript/**/*\" ./sdk/out/typescript && npm run autorest -- --typescript && cross-var npm version --prefix ./sdk/out/typescript $npm_package_version  && npm run prepack --prefix ./sdk/out/typescript"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/Azure/git-rest-api.git"
