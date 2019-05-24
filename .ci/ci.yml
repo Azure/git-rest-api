@@ -6,6 +6,7 @@ trigger:
 
 jobs:
   - job: test
+    displayName: Tests
     steps:
       - task: NodeTool@0
         inputs:
@@ -34,7 +35,8 @@ jobs:
       - script: npm run -s lint
         displayName: "Lint"
 
-  - job: Build and integration tests
+  - job: build
+    displayName: Build and integration tests
     steps:
       - task: NodeTool@0
         inputs:
