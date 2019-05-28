@@ -1,5 +1,4 @@
 import chalk from "chalk";
-// tslint:disable-next-line: no-implicit-dependencies
 import jsonStringify from "fast-safe-stringify";
 import { MESSAGE } from "triple-beam";
 import winston, { LoggerOptions, format } from "winston";
