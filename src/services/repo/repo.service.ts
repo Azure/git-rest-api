@@ -53,10 +53,9 @@ export class RepoService {
       repo = await Repository.open(repoPath);
     } else {
       repo = await Repository.init(repoPath, 0);
-      await Promise.all([
-        Remote.create(repo, base.name, `https://${base.remote}`),
-        Remote.create(repo, head.name, `https://${head.remote}`),
-      ]);
+      // Remotes cannot be added in parrelel.
+      await Remote.create(repo, base.name, `https://${base.remote}`);
+      await Remote.create(repo, head.name, `https://${head.remote}`);
     }
 
     await this.fetchService.fetch(localName, repo, options);
