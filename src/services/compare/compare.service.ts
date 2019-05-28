@@ -119,7 +119,7 @@ export class CompareService {
         },
         options,
       );
-      return { repo, baseRef: `refs/remotes/headr/${baseRef.ref}`, headRef: `refs/remotes/headr/${headRef.ref}` };
+      return { repo, baseRef: `refs/remotes/baser/${baseRef.ref}`, headRef: `refs/remotes/headr/${headRef.ref}` };
     } else {
       const repo = await this.repoService.get(headRemote, options);
       return { repo, baseRef: baseRef.ref, headRef: headRef.ref };
