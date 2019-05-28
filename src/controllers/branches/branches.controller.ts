@@ -16,8 +16,6 @@ export class BranchesController {
   @ApiOperation({ title: "List branches", operationId: "Branches_List" })
   public async list(@Param("remote") remote: string, @Auth() auth: RepoAuth): Promise<GitBranch[]> {
     const branches = await this.branchService.list(remote, { auth });
-    // @ts-ignore
-    undefined();
     return branches;
   }
 }
