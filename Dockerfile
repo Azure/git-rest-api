@@ -4,10 +4,9 @@ EXPOSE 3009
 
 COPY ./ ./
 
-RUN npm ci
-
-# Remove .npmrc in case it was injected at build time
-RUN rm -f .npmrc
+# Install and remove .npmrc in case it was injected at build time
+RUN npm ci && \
+    rm -f .npmrc 
 
 RUN npm run build
 
