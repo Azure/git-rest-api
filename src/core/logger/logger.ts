@@ -17,7 +17,7 @@ const customFormat = format(info => {
   const stringifiedRest = jsonStringify(others);
 
   const padding = (info.padding && info.padding[level]) || "";
-  const coloredTime = chalk.dim.yellow.bold(timestamp.toString());
+  const coloredTime = chalk.dim.yellow.bold(timestamp);
   const coloredContext = chalk.grey(context);
   let coloredMessage = `${level}:${padding} ${coloredTime} | [${coloredContext}] ${message}`;
   if (stringifiedRest !== "{}") {
@@ -34,10 +34,14 @@ const config = new Configuration();
 // Production depends on the default JSON serialized logs to be uploaded to Geneva.
 if (config.env === "development") {
   consoleTransport.format = winston.format.combine(
-    winston.format.timestamp(),
+    winston.format.timestamp({
+      format: "YYYY-MM-DD HH:mm:ss",
+    }),
     winston.format.colorize(),
     customFormat(),
   );
+} else {
+  consoleTransport.format = winston.format.combine(winston.format.timestamp(), winston.format.json());
 }
 
 export class LoggerService {
@@ -55,7 +59,6 @@ export class LoggerService {
   };
 
   private logger: winston.Logger;
-  private readonly prettyError = new PrettyError();
 
   constructor() {
     this.logger = winston.createLogger(LoggerService.loggerOptions);
