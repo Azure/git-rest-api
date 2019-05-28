@@ -68,9 +68,10 @@ export class LoggerService {
     this.logger.info(message, { context });
   }
 
-  public error(message: string, trace: string) {
+  public error(message: string, trace?: string, context?: string) {
     this.logger.error(message, {
       trace,
+      context,
     });
   }
 
