@@ -3,9 +3,12 @@ import { DocumentBuilder, SwaggerModule } from "@nestjs/swagger";
 import helmet from "helmet";
 
 import { AppModule } from "./app.module";
+import { LoggerService } from "./core";
 
 export async function createApp() {
-  const app = await NestFactory.create(AppModule);
+  const app = await NestFactory.create(AppModule, {
+    logger: new LoggerService(),
+  });
   app.enableCors();
   app.use(helmet());
 
