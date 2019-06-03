@@ -1,9 +1,11 @@
-import { Controller, Get, NotFoundException, Param, Query } from "@nestjs/common";
-import { ApiNotFoundResponse, ApiOkResponse, ApiOperation } from "@nestjs/swagger";
+import { Controller, Get, NotFoundException, Param, Query, Res } from "@nestjs/common";
+import { ApiNotFoundResponse, ApiOkResponse, ApiOperation, ApiImplicitQuery } from "@nestjs/swagger";
 
 import { ApiHasPassThruAuth, Auth, RepoAuth } from "../../core";
 import { GitCommit } from "../../dtos";
 import { CommitService } from "../../services";
+import { applyPaginatedResponse } from "../../core/pagination";
+import { Response } from "express";
 
 @Controller("/repos/:remote/commits")
 export class CommitsController {
@@ -14,12 +16,22 @@ export class CommitsController {
   @ApiOkResponse({ type: GitCommit, isArray: true })
   @ApiNotFoundResponse({})
   @ApiOperation({ title: "List commits", operationId: "commits_list" })
-  public async list(@Param("remote") remote: string, @Query("ref") ref: string | undefined, @Auth() auth: RepoAuth) {
+  @ApiImplicitQuery({
+    name: "ref",
+    required: false,
+    description: "Reference to list the commits from. Can be a branch or a commit. Default to master",
+  })
+  public async list(
+    @Param("remote") remote: string,
+    @Query("ref") ref: string | undefined,
+    @Auth() auth: RepoAuth,
+    @Res() response: Response,
+  ) {
     const commits = await this.commitService.list(remote, { auth, ref });
     if (commits instanceof NotFoundException) {
       throw commits;
     }
-    return commits;
+    return applyPaginatedResponse(commits, response);
   }
 
   @Get(":commitSha")

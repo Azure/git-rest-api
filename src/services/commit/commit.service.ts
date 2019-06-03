@@ -4,6 +4,7 @@ import { Commit, Oid, Repository, Signature, Time } from "nodegit";
 import { GitCommit, GitCommitRef } from "../../dtos";
 import { GitSignature } from "../../dtos/git-signature";
 import { GitBaseOptions, RepoService } from "../repo";
+import { PaginatedList } from "../../core/pagination";
 
 const LIST_COMMIT_PAGE_SIZE = 100;
 
@@ -19,14 +20,18 @@ export class CommitService {
   public async list(
     remote: string,
     options: ListCommitsOptions & GitBaseOptions = {},
-  ): Promise<GitCommit[] | NotFoundException> {
+  ): Promise<PaginatedList<GitCommit> | NotFoundException> {
     const repo = await this.repoService.get(remote, options);
     const commits = await this.listCommits(repo, options);
     if (commits instanceof NotFoundException) {
       return commits;
     }
 
-    return Promise.all(commits.map(async x => toGitCommit(x)));
+    const items = await Promise.all(commits.items.map(async x => toGitCommit(x)));
+    return {
+      ...commits,
+      items,
+    };
   }
 
   public async get(remote: string, commitSha: string, options: GitBaseOptions = {}): Promise<GitCommit | undefined> {
@@ -61,8 +66,12 @@ export class CommitService {
     }
   }
 
-  public async listCommits(repo: Repository, options: ListCommitsOptions): Promise<Commit[] | NotFoundException> {
+  public async listCommits(
+    repo: Repository,
+    options: ListCommitsOptions,
+  ): Promise<PaginatedList<Commit> | NotFoundException> {
     const walk = repo.createRevWalk();
+
     if (options.ref) {
       const commit = await this.getCommit(repo, options.ref);
       if (!commit) {
@@ -72,7 +81,12 @@ export class CommitService {
     } else {
       walk.pushHead();
     }
-    return walk.getCommits(LIST_COMMIT_PAGE_SIZE);
+
+    const commits = await walk.getCommits(LIST_COMMIT_PAGE_SIZE);
+    return {
+      items: commits,
+      page: 1,
+    };
   }
 }
 
