@@ -1,13 +1,40 @@
-import { Injectable } from "@nestjs/common";
+import { Injectable, NotFoundException } from "@nestjs/common";
 import { Commit, Oid, Repository, Signature, Time } from "nodegit";
 
 import { GitCommit, GitCommitRef } from "../../dtos";
 import { GitSignature } from "../../dtos/git-signature";
+import { notUndefined } from "../../utils";
 import { GitBaseOptions, RepoService } from "../repo";
+
+const LIST_COMMIT_PAGE_SIZE = 100;
+
+export interface ListCommitsOptions {
+  page?: number;
+  ref?: string;
+}
 
 @Injectable()
 export class CommitService {
   constructor(private repoService: RepoService) {}
+
+  public async list(
+    remote: string,
+    options: ListCommitsOptions & GitBaseOptions = {},
+  ): Promise<GitCommit[] | NotFoundException> {
+    const repo = await this.repoService.get(remote, options);
+    const commitIds = await this.listCommitIds(repo, options);
+    if (commitIds instanceof NotFoundException) {
+      return commitIds;
+    }
+
+    const commits = await Promise.all(
+      commitIds.map(async x => {
+        const commit = await this.getCommit(repo, x);
+        return commit ? toGitCommit(commit) : undefined;
+      }),
+    );
+    return commits.filter(notUndefined);
+  }
 
   public async get(remote: string, commitSha: string, options: GitBaseOptions = {}): Promise<GitCommit | undefined> {
     const repo = await this.repoService.get(remote, options);
@@ -39,6 +66,24 @@ export class CommitService {
         }
       }
     }
+  }
+
+  public async listCommitIds(repo: Repository, options: ListCommitsOptions): Promise<Oid[] | NotFoundException> {
+    const walk = repo.createRevWalk();
+    if (options.ref) {
+      const commit = await this.getCommit(repo, options.ref);
+      if (!commit) {
+        return new NotFoundException(`Couldn't find reference with name ${options.ref}`);
+      }
+      walk.push(commit.id());
+    }
+    let current: Oid;
+    const commits = [];
+    for (let i = 0; i < LIST_COMMIT_PAGE_SIZE; i++) {
+      current = await walk.next();
+      commits.push(current);
+    }
+    return commits;
   }
 }
 
