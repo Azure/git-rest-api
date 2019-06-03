@@ -78,6 +78,62 @@
         ]
       }
     },
+    "/repos/{remote}/commits": {
+      "get": {
+        "summary": "List commits",
+        "operationId": "commits_list",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "remote",
+            "required": true,
+            "in": "path"
+          },
+          {
+            "name": "ref",
+            "required": false,
+            "in": "query",
+            "description": "Reference to list the commits from. Can be a branch or a commit. Default to master",
+            "type": ""
+          },
+          {
+            "name": "x-authorization",
+            "required": false,
+            "in": "header",
+            "type": "string"
+          },
+          {
+            "name": "x-github-token",
+            "required": false,
+            "in": "header",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/GitCommit"
+              }
+            }
+          },
+          "400": {
+            "description": "When the x-authorization header is malformed"
+          },
+          "404": {
+            "description": ""
+          }
+        },
+        "produces": [
+          "application/json"
+        ],
+        "consumes": [
+          "application/json"
+        ]
+      }
+    },
     "/repos/{remote}/commits/{commitSha}": {
       "get": {
         "summary": "Get a commit",
@@ -112,10 +168,7 @@
           "200": {
             "description": "",
             "schema": {
-              "type": "array",
-              "items": {
-                "$ref": "#/definitions/GitCommit"
-              }
+              "$ref": "#/definitions/GitCommit"
             }
           },
           "400": {
