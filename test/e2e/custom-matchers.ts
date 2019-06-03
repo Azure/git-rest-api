@@ -66,7 +66,7 @@ function toMatchSpecificSnapshot(
   }
 
   if (fs.existsSync(filepath)) {
-    const output = fs.readFileSync(filepath, "utf8");
+    const output = fs.readFileSync(filepath, "utf8").replace(/\r\n/g, "\n");
     // The matcher is being used with `.not`
     if (output === content) {
       this.snapshotState.matched++;
