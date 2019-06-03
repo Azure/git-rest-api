@@ -77,6 +77,7 @@ export class GitFetchService {
           credentials: credentialsCallback(options),
         },
       });
+      await repo.mergeBranches("master", "origin/master");
       this.lastFetch.set(remote, new Date().getTime());
     } catch {
       throw new NotFoundException();
@@ -92,6 +93,7 @@ export class GitFetchService {
       return true;
     }
     const now = new Date().getTime();
+    console.log("NEED to fetch", now - lastFetch, now - lastFetch > FETCH_TIMEOUT);
     return now - lastFetch > FETCH_TIMEOUT;
   }
 }

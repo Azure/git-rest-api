@@ -1,4 +1,4 @@
-import { Controller, Get, NotFoundException, Param } from "@nestjs/common";
+import { Controller, Get, NotFoundException, Param, Query } from "@nestjs/common";
 import { ApiNotFoundResponse, ApiOkResponse, ApiOperation } from "@nestjs/swagger";
 
 import { ApiHasPassThruAuth, Auth, RepoAuth } from "../../core";
@@ -13,9 +13,12 @@ export class CommitsController {
   @ApiHasPassThruAuth()
   @ApiOkResponse({ type: GitCommit, isArray: true })
   @ApiNotFoundResponse({})
-  @ApiOperation({ title: "Get a commit", operationId: "commits_get" })
-  public async list(@Param("remote") remote: string, @Auth() auth: RepoAuth) {
-    const commits = await this.commitService.list(remote, { auth });
+  @ApiOperation({ title: "List commits", operationId: "commits_list" })
+  public async list(@Param("remote") remote: string, @Query("ref") ref: string | undefined, @Auth() auth: RepoAuth) {
+    const commits = await this.commitService.list(remote, { auth, ref });
+    if (commits instanceof NotFoundException) {
+      throw commits;
+    }
     return commits;
   }
 
