@@ -20,6 +20,7 @@ export class CommitsController {
     name: "ref",
     required: false,
     description: "Reference to list the commits from. Can be a branch or a commit. Default to master",
+    type: String,
   })
   public async list(
     @Param("remote") remote: string,

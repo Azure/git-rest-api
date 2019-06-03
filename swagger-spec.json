@@ -94,7 +94,7 @@
             "required": false,
             "in": "query",
             "description": "Reference to list the commits from. Can be a branch or a commit. Default to master",
-            "type": ""
+            "type": "string"
           },
           {
             "name": "x-authorization",
