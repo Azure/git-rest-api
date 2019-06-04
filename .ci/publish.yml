@@ -3,33 +3,34 @@ trigger:
 
 pr: none
 
+
 stages:
   - stage: Build_Docker
     jobs:
       - job: Build_Docker
+        displayName: Build and publish to hub.docker.com
         pool:
           vmImage: "Ubuntu-16.04"
+        variables:
+          build_counter: $[counter('versioncounter', 1)]
         steps:
+          - script: |
+              version=$(npm run -s get-version)
+              echo "Current package version is $version"
+              echo "Current build number is $(build_counter)"
+
+              echo "##vso[build.updatebuildnumber]$version.$(build_counter)"
+              echo "##vso[task.setvariable variable=NpmVersion]$version"
+            displayName: Resolve package version
           - task: Docker@2
             displayName: "Build azuredevx/git-rest-api"
             inputs:
               containerRegistry: "git-rest-api docker"
               repository: "azuredevx/git-rest-api"
               tags: |
-                $(Build.BuildId)
+                $(Build.BuildNumber)
+                $(NpmVersion)-latest
                 latest
-  - stage: Publish_Docker
-    dependsOn: Build_Docker
-    jobs:
-      - job: Publish_Docker
-        pool:
-          vmImage: "Ubuntu-16.04"
-        steps:
-          - task: Docker@2
-            displayName: "Push azuredevx/git-rest-api"
-            inputs:
-              containerRegistry: "git-rest-api docker"
-              repository: "azuredevx/git-rest-api"
 
   - stage: build_sdks
     displayName: Build SDKs
