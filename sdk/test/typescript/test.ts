@@ -10,6 +10,9 @@ async function run() {
   for (const branch of branches) {
     console.log(`  - ${branch.name}  ${branch.commit.sha}`);
   }
+
+  const response = await sdk.commits.list("github.com/Azure/BatchExplorer");
+  console.log("Total commits", response.xTotalCount);
 }
 
 run().catch(e => {

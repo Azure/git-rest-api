@@ -87,11 +87,23 @@ export class CommitService {
     for (let i = 0; i < skip; i++) {
       await walk.next();
     }
-
     const commits = await walk.getCommits(LIST_COMMIT_PAGE_SIZE);
+
+    let total = skip + LIST_COMMIT_PAGE_SIZE;
+
+    while (true) {
+      try {
+        await walk.next();
+        total++;
+      } catch (e) {
+        break;
+      }
+    }
     return {
       items: commits,
       page,
+      total,
+      perPage: LIST_COMMIT_PAGE_SIZE,
     };
   }
 }

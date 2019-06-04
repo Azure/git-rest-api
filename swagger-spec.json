@@ -90,6 +90,12 @@
             "in": "path"
           },
           {
+            "name": "page",
+            "required": false,
+            "in": "query",
+            "type": "string"
+          },
+          {
             "name": "ref",
             "required": false,
             "in": "query",
@@ -111,6 +117,16 @@
         ],
         "responses": {
           "200": {
+            "headers": {
+              "Link": {
+                "type": "string",
+                "description": "Links to navigate pagination in the format defined by [RFC 5988](https://tools.ietf.org/html/rfc5988#section-5). It will include next, last, first and prev links if applicable"
+              },
+              "x-total-count": {
+                "type": "integer",
+                "description": "Total count of items that can be retrieved"
+              }
+            },
             "description": "",
             "schema": {
               "type": "array",

@@ -4,7 +4,7 @@ import { ApiNotFoundResponse, ApiOkResponse, ApiOperation, ApiImplicitQuery } fr
 import { ApiHasPassThruAuth, Auth, RepoAuth } from "../../core";
 import { GitCommit } from "../../dtos";
 import { CommitService } from "../../services";
-import { applyPaginatedResponse, ApiHasPagination, Page, Pagination } from "../../core/pagination";
+import { applyPaginatedResponse, ApiPaginated, Page, Pagination } from "../../core/pagination";
 import { Response } from "express";
 
 @Controller("/repos/:remote/commits")
@@ -13,7 +13,6 @@ export class CommitsController {
 
   @Get()
   @ApiHasPassThruAuth()
-  @ApiOkResponse({ type: GitCommit, isArray: true })
   @ApiNotFoundResponse({})
   @ApiOperation({ title: "List commits", operationId: "commits_list" })
   @ApiImplicitQuery({
@@ -22,7 +21,7 @@ export class CommitsController {
     description: "Reference to list the commits from. Can be a branch or a commit. Default to master",
     type: String,
   })
-  @ApiHasPagination()
+  @ApiPaginated(GitCommit)
   public async list(
     @Param("remote") remote: string,
     @Query("ref") ref: string | undefined,
