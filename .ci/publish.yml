@@ -13,16 +13,16 @@ stages:
         steps:
           - script: |
               version=$(npm run -s get-version)
-              echo "##vso[task.setvariable variable=NpmVersion;]$version"
+              echo "##vso[task.setvariable variable=NpmVersion]$version"
 
-          - script: echo "Version is $(version) or $version"
+          - script: echo "Version is $(NpmVersion) or $NpmVersion"
           # - task: Docker@2
           #   displayName: "Build azuredevx/git-rest-api"
           #   inputs:
           #     containerRegistry: "git-rest-api docker"
           #     repository: "azuredevx/git-rest-api"
           #     tags: |
-          #       $(version).$(Build.BuildNumber)
+          #       $(NpmVersion).$(Build.BuildNumber)
           #       latest
 
   - stage: build_sdks
