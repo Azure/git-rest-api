@@ -62,6 +62,7 @@
     "chalk": "^2.4.2",
     "class-validator": "^0.9.1",
     "convict": "^5.0.0",
+    "express": "^4.17.1",
     "fast-safe-stringify": "^2.0.6",
     "helmet": "^3.18.0",
     "node-fetch": "^2.6.0",

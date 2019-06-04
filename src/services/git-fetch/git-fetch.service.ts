@@ -93,7 +93,6 @@ export class GitFetchService {
       return true;
     }
     const now = new Date().getTime();
-    console.log("NEED to fetch", now - lastFetch, now - lastFetch > FETCH_TIMEOUT);
     return now - lastFetch > FETCH_TIMEOUT;
   }
 }
