@@ -23,7 +23,7 @@ stages:
               containerRegistry: "git-rest-api docker"
               repository: "azuredevx/git-rest-api"
               tags: |
-                $(NpmVersion).$(Build.BuildNumber)
+                $(Build.BuildNumber)
                 latest
 
   - stage: build_sdks
