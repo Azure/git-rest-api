@@ -66,6 +66,16 @@ export class CommitService {
     }
   }
 
+  public async getCommitOrDefault(repo: Repository, ref: string | undefined) {
+    if (ref) {
+      return this.getCommit(repo, ref);
+    } else {
+      const branch = await repo.getCurrentBranch();
+      const name = branch.shorthand();
+      return repo.getReferenceCommit(`origin/${name}`);
+    }
+  }
+
   public async listCommits(
     repo: Repository,
     options: ListCommitsOptions,
@@ -73,15 +83,11 @@ export class CommitService {
     const walk = repo.createRevWalk();
 
     const page = getPage(options.pagination);
-    if (options.ref) {
-      const commit = await this.getCommit(repo, options.ref);
-      if (!commit) {
-        return new NotFoundException(`Couldn't find reference with name ${options.ref}`);
-      }
-      walk.push(commit.id());
-    } else {
-      walk.pushHead();
+    const commit = await this.getCommitOrDefault(repo, options.ref);
+    if (!commit) {
+      return new NotFoundException(`Couldn't find reference with name ${options.ref}`);
     }
+    walk.push(commit.id());
 
     const skip = getPaginationSkip(options.pagination, LIST_COMMIT_PAGE_SIZE);
     await walkSkip(walk, skip);

@@ -77,7 +77,6 @@ export class GitFetchService {
           credentials: credentialsCallback(options),
         },
       });
-      await repo.mergeBranches("master", "origin/master");
       this.lastFetch.set(remote, new Date().getTime());
     } catch {
       throw new NotFoundException();
