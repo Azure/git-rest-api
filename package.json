@@ -4,6 +4,7 @@
   "description": "This project welcomes contributions and suggestions.  Most contributions require you to agree to a\r Contributor License Agreement (CLA) declaring that you have the right to, and actually do, grant us\r the rights to use your contribution. For details, visit https://cla.microsoft.com.",
   "main": "bin/main.js",
   "scripts": {
+    "get-version": "cross-var echo $npm_package_version",
     "build": "tsc -p config/tsconfig.build.json",
     "build:watch": "npm run -s build -- --watch",
     "start": "npm run build && node ./bin/main.js",

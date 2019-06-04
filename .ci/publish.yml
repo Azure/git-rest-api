@@ -12,7 +12,7 @@ stages:
           vmImage: "Ubuntu-16.04"
         steps:
           - script: |
-              version=$(npm version)
+              version=$(npm run -s get-version)
               echo "##vso[task.setvariable variable=NpmVersion;]$version"
 
           - script: echo "Version is $(version) or $version"
