@@ -8,6 +8,10 @@ COPY ./ ./
 RUN npm ci && \
     rm -f .npmrc 
 
+
+# Set environment to production
+ENV NODE_ENV=production
+
 RUN npm run build
 
 CMD npm run start:prod
