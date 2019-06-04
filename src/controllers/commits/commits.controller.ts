@@ -4,7 +4,7 @@ import { ApiNotFoundResponse, ApiOkResponse, ApiOperation, ApiImplicitQuery } fr
 import { ApiHasPassThruAuth, Auth, RepoAuth } from "../../core";
 import { GitCommit } from "../../dtos";
 import { CommitService } from "../../services";
-import { applyPaginatedResponse } from "../../core/pagination";
+import { applyPaginatedResponse, ApiHasPagination, Page, Pagination } from "../../core/pagination";
 import { Response } from "express";
 
 @Controller("/repos/:remote/commits")
@@ -22,13 +22,15 @@ export class CommitsController {
     description: "Reference to list the commits from. Can be a branch or a commit. Default to master",
     type: String,
   })
+  @ApiHasPagination()
   public async list(
     @Param("remote") remote: string,
     @Query("ref") ref: string | undefined,
     @Auth() auth: RepoAuth,
+    @Page() pagination: Pagination,
     @Res() response: Response,
   ) {
-    const commits = await this.commitService.list(remote, { auth, ref });
+    const commits = await this.commitService.list(remote, { auth, ref, pagination });
     if (commits instanceof NotFoundException) {
       throw commits;
     }

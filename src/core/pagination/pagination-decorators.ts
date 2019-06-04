@@ -1,20 +1,17 @@
 import { ApiImplicitQuery, ApiImplicitHeaders } from "@nestjs/swagger";
 import { createParamDecorator } from "@nestjs/common";
 import { Request } from "express";
+import { Pagination } from "./pagination";
 
 /**
  * Decorator to let swagger know about all the pagination properties available
  */
 export function ApiHasPagination(): MethodDecorator {
   const implicitpage = ApiImplicitQuery({ name: "page", required: false });
-    ApiImplicitHeaders
+  ApiImplicitHeaders;
   return (...args) => {
     implicitpage(...args);
   };
-}
-
-export interface Pagination {
-  page?: number;
 }
 
 /**
@@ -28,4 +25,3 @@ export const Page = createParamDecorator(
     };
   },
 );
-

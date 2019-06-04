@@ -4,12 +4,12 @@ import { Commit, Oid, Repository, Signature, Time } from "nodegit";
 import { GitCommit, GitCommitRef } from "../../dtos";
 import { GitSignature } from "../../dtos/git-signature";
 import { GitBaseOptions, RepoService } from "../repo";
-import { PaginatedList } from "../../core/pagination";
+import { PaginatedList, Pagination, getPaginationSkip, getPage } from "../../core";
 
 const LIST_COMMIT_PAGE_SIZE = 100;
 
 export interface ListCommitsOptions {
-  page?: number;
+  pagination?: Pagination;
   ref?: string;
 }
 
@@ -72,6 +72,7 @@ export class CommitService {
   ): Promise<PaginatedList<Commit> | NotFoundException> {
     const walk = repo.createRevWalk();
 
+    const page = getPage(options.pagination);
     if (options.ref) {
       const commit = await this.getCommit(repo, options.ref);
       if (!commit) {
@@ -82,10 +83,15 @@ export class CommitService {
       walk.pushHead();
     }
 
+    const skip = getPaginationSkip(options.pagination, LIST_COMMIT_PAGE_SIZE);
+    for (let i = 0; i < skip; i++) {
+      await walk.next();
+    }
+
     const commits = await walk.getCommits(LIST_COMMIT_PAGE_SIZE);
     return {
       items: commits,
-      page: 1,
+      page,
     };
   }
 }
