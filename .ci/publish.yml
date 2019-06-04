@@ -3,6 +3,9 @@ trigger:
 
 pr: none
 
+variables:
+  BUILD_COUNTER: $[counter('versioncounter', 1)]
+  
 stages:
   - stage: Build_Docker
     jobs:
@@ -14,7 +17,7 @@ stages:
           - script: |
               version=$(npm run -s get-version)
               echo "Current package version is $version"
-              echo "##vso[build.updatebuildnumber]$version.$(Build.BuildNumber)"
+              echo "##vso[build.updatebuildnumber]$version.$(BUILD_NUMBER)"
               echo "##vso[task.setvariable variable=NpmVersion]$version"
             displayName: Resolve package version
           - task: Docker@2
