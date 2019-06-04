@@ -1,5 +1,5 @@
 import { Injectable, NotFoundException } from "@nestjs/common";
-import { Commit, Oid, Repository, Signature, Time } from "nodegit";
+import { Commit, Oid, Repository, Revwalk, Signature, Time } from "nodegit";
 
 import { PaginatedList, Pagination, getPage, getPaginationSkip } from "../../core";
 import { GitCommit, GitCommitRef } from "../../dtos";
@@ -84,9 +84,7 @@ export class CommitService {
     }
 
     const skip = getPaginationSkip(options.pagination, LIST_COMMIT_PAGE_SIZE);
-    for (let i = 0; i < skip; i++) {
-      await walk.next();
-    }
+    await walkSkip(walk, skip);
     const commits = await walk.getCommits(LIST_COMMIT_PAGE_SIZE);
 
     let total = skip + LIST_COMMIT_PAGE_SIZE;
@@ -145,4 +143,18 @@ export function getSignature(sig: Signature): GitSignature {
 
 export function getDateFromTime(time: Time): Date {
   return new Date(time.time() * 1000);
+}
+
+/**
+ * Try to skip the given number of item in the walk.
+ * If there is less than ask remaining it will just stop gracfully
+ */
+async function walkSkip(revwalk: Revwalk, skip: number) {
+  for (let i = 0; i < skip; i++) {
+    try {
+      await revwalk.next();
+    } catch {
+      return;
+    }
+  }
 }
