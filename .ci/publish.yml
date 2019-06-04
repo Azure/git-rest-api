@@ -29,6 +29,7 @@ stages:
               repository: "azuredevx/git-rest-api"
               tags: |
                 $(Build.BuildNumber)
+                $(NpmVersion)-latest
                 latest
 
   - stage: build_sdks
