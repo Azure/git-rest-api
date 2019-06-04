@@ -407,7 +407,10 @@
             "added",
             "deleted",
             "renamed"
-          ]
+          ],
+          "x-ms-enum": {
+            "name": "PatchStatus"
+          }
         },
         "additions": {
           "type": "number"
