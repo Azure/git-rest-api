@@ -1,13 +1,38 @@
-import { Injectable } from "@nestjs/common";
-import { Commit, Oid, Repository, Signature, Time } from "nodegit";
+import { Injectable, NotFoundException } from "@nestjs/common";
+import { Commit, Oid, Repository, Revwalk, Signature, Time } from "nodegit";
 
+import { PaginatedList, Pagination, getPage, getPaginationSkip } from "../../core";
 import { GitCommit, GitCommitRef } from "../../dtos";
 import { GitSignature } from "../../dtos/git-signature";
 import { GitBaseOptions, RepoService } from "../repo";
 
+const LIST_COMMIT_PAGE_SIZE = 100;
+
+export interface ListCommitsOptions {
+  pagination?: Pagination;
+  ref?: string;
+}
+
 @Injectable()
 export class CommitService {
   constructor(private repoService: RepoService) {}
+
+  public async list(
+    remote: string,
+    options: ListCommitsOptions & GitBaseOptions = {},
+  ): Promise<PaginatedList<GitCommit> | NotFoundException> {
+    const repo = await this.repoService.get(remote, options);
+    const commits = await this.listCommits(repo, options);
+    if (commits instanceof NotFoundException) {
+      return commits;
+    }
+
+    const items = await Promise.all(commits.items.map(async x => toGitCommit(x)));
+    return {
+      ...commits,
+      items,
+    };
+  }
 
   public async get(remote: string, commitSha: string, options: GitBaseOptions = {}): Promise<GitCommit | undefined> {
     const repo = await this.repoService.get(remote, options);
@@ -39,6 +64,51 @@ export class CommitService {
         }
       }
     }
+  }
+
+  public async getCommitOrDefault(repo: Repository, ref: string | undefined) {
+    if (ref) {
+      return this.getCommit(repo, ref);
+    } else {
+      const branch = await repo.getCurrentBranch();
+      const name = branch.shorthand();
+      return repo.getReferenceCommit(`origin/${name}`);
+    }
+  }
+
+  public async listCommits(
+    repo: Repository,
+    options: ListCommitsOptions,
+  ): Promise<PaginatedList<Commit> | NotFoundException> {
+    const walk = repo.createRevWalk();
+
+    const page = getPage(options.pagination);
+    const commit = await this.getCommitOrDefault(repo, options.ref);
+    if (!commit) {
+      return new NotFoundException(`Couldn't find reference with name ${options.ref}`);
+    }
+    walk.push(commit.id());
+
+    const skip = getPaginationSkip(options.pagination, LIST_COMMIT_PAGE_SIZE);
+    await walkSkip(walk, skip);
+    const commits = await walk.getCommits(LIST_COMMIT_PAGE_SIZE);
+
+    let total = skip + LIST_COMMIT_PAGE_SIZE;
+
+    while (true) {
+      try {
+        await walk.next();
+        total++;
+      } catch (e) {
+        break;
+      }
+    }
+    return {
+      items: commits,
+      page,
+      total,
+      perPage: LIST_COMMIT_PAGE_SIZE,
+    };
   }
 }
 
@@ -79,4 +149,18 @@ export function getSignature(sig: Signature): GitSignature {
 
 export function getDateFromTime(time: Time): Date {
   return new Date(time.time() * 1000);
+}
+
+/**
+ * Try to skip the given number of item in the walk.
+ * If there is less than ask remaining it will just stop gracfully
+ */
+async function walkSkip(revwalk: Revwalk, skip: number) {
+  for (let i = 0; i < skip; i++) {
+    try {
+      await revwalk.next();
+    } catch {
+      return;
+    }
+  }
 }

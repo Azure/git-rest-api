@@ -78,6 +78,78 @@
         ]
       }
     },
+    "/repos/{remote}/commits": {
+      "get": {
+        "summary": "List commits",
+        "operationId": "commits_list",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "remote",
+            "required": true,
+            "in": "path"
+          },
+          {
+            "name": "page",
+            "required": false,
+            "in": "query",
+            "type": "string"
+          },
+          {
+            "name": "ref",
+            "required": false,
+            "in": "query",
+            "description": "Reference to list the commits from. Can be a branch or a commit. Default to master",
+            "type": "string"
+          },
+          {
+            "name": "x-authorization",
+            "required": false,
+            "in": "header",
+            "type": "string"
+          },
+          {
+            "name": "x-github-token",
+            "required": false,
+            "in": "header",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "headers": {
+              "Link": {
+                "type": "string",
+                "description": "Links to navigate pagination in the format defined by [RFC 5988](https://tools.ietf.org/html/rfc5988#section-5). It will include next, last, first and prev links if applicable"
+              },
+              "x-total-count": {
+                "type": "integer",
+                "description": "Total count of items that can be retrieved"
+              }
+            },
+            "description": "",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/GitCommit"
+              }
+            }
+          },
+          "400": {
+            "description": "When the x-authorization header is malformed"
+          },
+          "404": {
+            "description": ""
+          }
+        },
+        "produces": [
+          "application/json"
+        ],
+        "consumes": [
+          "application/json"
+        ]
+      }
+    },
     "/repos/{remote}/commits/{commitSha}": {
       "get": {
         "summary": "Get a commit",
@@ -112,10 +184,7 @@
           "200": {
             "description": "",
             "schema": {
-              "type": "array",
-              "items": {
-                "$ref": "#/definitions/GitCommit"
-              }
+              "$ref": "#/definitions/GitCommit"
             }
           },
           "400": {
@@ -338,7 +407,10 @@
             "added",
             "deleted",
             "renamed"
-          ]
+          ],
+          "x-ms-enum": {
+            "name": "PatchStatus"
+          }
         },
         "additions": {
           "type": "number"
