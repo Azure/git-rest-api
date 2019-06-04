@@ -3,8 +3,6 @@ trigger:
 
 pr: none
 
-variables:
-  BUILD_COUNTER: $[counter('versioncounter', 1)]
 
 stages:
   - stage: Build_Docker
@@ -13,13 +11,15 @@ stages:
         displayName: Build and publish to hub.docker.com
         pool:
           vmImage: "Ubuntu-16.04"
+        variables:
+          build_counter: $[counter('versioncounter', 1)]
         steps:
           - script: |
               version=$(npm run -s get-version)
               echo "Current package version is $version"
-              echo "Current build number is $BUILD_NUMBER"
-              
-              echo "##vso[build.updatebuildnumber]$version.$BUILD_NUMBER"
+              echo "Current build number is $(build_counter)"
+
+              echo "##vso[build.updatebuildnumber]$version.$(build_counter)"
               echo "##vso[task.setvariable variable=NpmVersion]$version"
             displayName: Resolve package version
           - task: Docker@2
