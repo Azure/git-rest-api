@@ -54,7 +54,6 @@ export class LoggingInterceptor implements NestInterceptor {
             value: 1,
             dimensions: {
               type: error.name,
-              stack: error.stack,
               path: properties.path,
               method: properties.method,
             },
