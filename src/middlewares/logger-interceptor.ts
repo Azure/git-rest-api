@@ -3,7 +3,7 @@ import { Observable, throwError } from "rxjs";
 import { catchError, tap } from "rxjs/operators";
 
 import { Configuration } from "../config";
-import { Logger, LogMetadata } from "../core";
+import { LogMetadata, Logger } from "../core";
 
 @Injectable()
 export class LoggingInterceptor implements NestInterceptor {
