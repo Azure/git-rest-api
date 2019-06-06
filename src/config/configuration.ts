@@ -5,7 +5,7 @@ import { productionConfig } from "./production";
 import { configSchema } from "./schema";
 import { testConfig } from "./test";
 
-export type Env = "production" | "development" | "test";
+export type NodeEnv = "production" | "development" | "test";
 
 export interface StatsdConfig {
   readonly host: string | undefined;
@@ -14,26 +14,38 @@ export interface StatsdConfig {
 
 @Injectable()
 export class Configuration {
-  public readonly env: Env;
+  /**
+   * Correspond the env this code is running on.
+   * If not deveopping or running test it should always be "production".
+   * This should be used to decide to optimize the code for dev or prod.
+   */
+  public readonly nodeEnv: NodeEnv;
+
+  /**
+   * This is the actual environment name where the service is run.(Stagging, PPE, Prod, etc.)
+   * This can be anything.
+   */
+  public readonly env: string;
   public readonly serviceName: string;
   public readonly statsd: StatsdConfig;
 
   constructor() {
-    const environmentOverrides: Record<Env, Partial<Configuration>> = {
+    const environmentOverrides: Record<NodeEnv, Partial<Configuration>> = {
       production: developmentConfig,
       development: productionConfig,
       test: testConfig,
     };
 
-    const env: Env = configSchema.get("env");
+    const nodeEnv: NodeEnv = configSchema.get("nodeEnv");
 
     // Load environment dependent configuration
-    configSchema.load(environmentOverrides[env]);
+    configSchema.load(environmentOverrides[nodeEnv]);
 
     // Perform validation
     configSchema.validate({ allowed: "strict" });
 
-    this.env = env;
+    this.nodeEnv = nodeEnv;
+    this.env = configSchema.get("env");
     this.serviceName = configSchema.get("serviceName");
     this.statsd = configSchema.get("statsd");
   }

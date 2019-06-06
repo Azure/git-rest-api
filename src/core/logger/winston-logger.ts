@@ -32,7 +32,7 @@ const customFormat = format(info => {
 const config = new Configuration();
 
 // In development only we want to have the logs printed nicely. For production we want json log lines that can be parsed easily
-if (config.env === "development") {
+if (config.nodeEnv === "development") {
   consoleTransport.format = winston.format.combine(
     winston.format.timestamp({
       format: "YYYY-MM-DD HH:mm:ss",
