@@ -68,11 +68,19 @@ export class LoggingInterceptor implements NestInterceptor {
   }
 
   private trackRequest(properties: { duration: number; path: string; method: string; status: number }) {
+    const { duration, ...otherProperties } = properties;
     this.telemetry.emitMetric({
       name: "INCOMING_REQUEST",
       value: 1,
       dimensions: {
-        properties,
+        ...otherProperties,
+      },
+    });
+    this.telemetry.emitMetric({
+      name: "INCOMING_REQUEST_DURATION",
+      value: duration,
+      dimensions: {
+        ...otherProperties,
       },
     });
   }
