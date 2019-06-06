@@ -4,7 +4,7 @@ import { Configuration } from "./configuration";
 
 export const configSchema = convict<Configuration>({
   nodeEnv: {
-    doc: "The application environment.",
+    doc: "The code environment. This should always be production when running in production",
     format: ["production", "development", "test"],
     default: "development",
     env: "NODE_ENV",
