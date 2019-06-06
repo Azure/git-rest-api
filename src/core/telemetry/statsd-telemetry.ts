@@ -12,7 +12,7 @@ export class StatsdTelemetry extends Telemetry {
     this.instance = new StatsD({ host, port });
   }
 
-  public egressMetric(metric: Metric): void {
+  public emitMetric(metric: Metric): void {
     const stat = JSON.stringify({
       Metric: metric,
       Namespace: this.config.serviceName,

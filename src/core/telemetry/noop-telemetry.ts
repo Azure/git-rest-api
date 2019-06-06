@@ -1,7 +1,7 @@
 import { Metric, Telemetry } from "./telemetry";
 
 export class NoopTelemetry extends Telemetry {
-  protected egressMetric(_: Metric): void {
+  public emitMetric(_: Metric): void {
     // Noop
   }
 }

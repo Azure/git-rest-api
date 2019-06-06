@@ -1,9 +1,9 @@
 export interface Metric {
   name: string;
   value: number;
-  dimensions: StringMap<unknown>;
+  dimensions?: StringMap<unknown>;
 }
 
 export abstract class Telemetry {
-  protected abstract egressMetric(metric: Metric): void;
+  public abstract emitMetric(metric: Metric): void;
 }
