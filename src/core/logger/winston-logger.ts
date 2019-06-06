@@ -30,7 +30,8 @@ const customFormat = format(info => {
 });
 
 const config = new Configuration();
-// Production depends on the default JSON serialized logs to be uploaded to Geneva.
+
+// In development only we want to have the logs printed nicely. For production we want json log lines that can be parsed easily
 if (config.env === "development") {
   consoleTransport.format = winston.format.combine(
     winston.format.timestamp({
