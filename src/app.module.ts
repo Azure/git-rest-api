@@ -9,6 +9,7 @@ import {
   ContentController,
   HealthCheckController,
 } from "./controllers";
+import { Telemetry, createTelemetry } from "./core";
 import { LoggingInterceptor } from "./middlewares";
 import {
   AppService,
@@ -43,6 +44,11 @@ import { ContentService } from "./services/content";
     {
       provide: APP_INTERCEPTOR,
       useClass: LoggingInterceptor,
+    },
+    {
+      provide: Telemetry,
+      useFactory: (config: Configuration) => createTelemetry(config),
+      inject: [Configuration],
     },
   ],
 })

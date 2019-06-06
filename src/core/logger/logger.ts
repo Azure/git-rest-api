@@ -9,6 +9,7 @@ export interface LogMetadata {
 
 export class Logger {
   private logger: winston.Logger;
+
   constructor(private context: string) {
     this.logger = WINSTON_LOGGER;
   }
