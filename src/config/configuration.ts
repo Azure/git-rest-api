@@ -16,7 +16,6 @@ export interface StatsdConfig {
 export class Configuration {
   public readonly env: Env;
   public readonly serviceName: string;
-
   public readonly statsd: StatsdConfig;
 
   constructor() {
