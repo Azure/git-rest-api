@@ -1,7 +1,7 @@
 export interface Metric {
   name: string;
   value: number;
-  dimensions?: StringMap<unknown>;
+  dimensions?: StringMap<string>;
 }
 
 export abstract class Telemetry {
