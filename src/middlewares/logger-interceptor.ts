@@ -1,22 +1,23 @@
-import { CallHandler, ExecutionContext, HttpException, Injectable, NestInterceptor } from "@nestjs/common";
+import { CallHandler, ExecutionContext, HttpException, HttpStatus, Injectable, NestInterceptor } from "@nestjs/common";
+import { Request } from "express";
 import { Observable, throwError } from "rxjs";
 import { catchError, tap } from "rxjs/operators";
 
 import { Configuration } from "../config";
-import { LogMetadata, Logger } from "../core";
+import { LogMetadata, Logger, Telemetry } from "../core";
 
 @Injectable()
 export class LoggingInterceptor implements NestInterceptor {
   private logger = new Logger("Request");
 
-  constructor(private config: Configuration) {}
+  constructor(private config: Configuration, private telemetry: Telemetry) {}
 
   public intercept(context: ExecutionContext, next: CallHandler): Observable<any> {
     const now = Date.now();
-    const req = context.switchToHttp().getRequest();
+    const req: Request = context.switchToHttp().getRequest();
 
     const commonProperties = {
-      url: req.originalUrl,
+      path: req.route.path,
       method: req.method,
     };
 
@@ -28,32 +29,60 @@ export class LoggingInterceptor implements NestInterceptor {
         const properties = {
           ...commonProperties,
           duration,
-          statusCode: response.statusCode,
+          status: response.statusCode,
         };
 
-        this.logger.info(
-          `${req.method} ${response.statusCode} ${req.originalUrl} (${duration}ms)`,
-          this.clean(properties),
-        );
+        const message = `${req.method} ${response.statusCode} ${req.originalUrl} (${duration}ms)`;
+        this.logger.info(message, this.clean(properties));
+        this.trackRequest(properties);
       }),
       catchError((error: Error | HttpException) => {
-        const statusCode = error instanceof HttpException ? error.getStatus() : 500;
+        const statusCode = error instanceof HttpException ? error.getStatus() : HttpStatus.INTERNAL_SERVER_ERROR;
         const duration = Date.now() - now;
         const message = `${req.method} ${statusCode} ${req.originalUrl} (${duration}ms)`;
 
         const properties = {
+          ...commonProperties,
           duration,
-          statusCode,
+          status: statusCode,
         };
 
+        this.trackRequest(properties);
         if (statusCode >= 500) {
           this.logger.error(message, this.clean(properties));
+          this.telemetry.emitMetric({
+            name: "EXCEPTIONS",
+            value: 1,
+            dimensions: {
+              type: error.name,
+              path: properties.path,
+              method: properties.method,
+            },
+          });
         } else {
           this.logger.info(message, this.clean(properties));
         }
         return throwError(error);
       }),
     );
+  }
+
+  private trackRequest(properties: { duration: number; path: string; method: string; status: number }) {
+    const { duration, ...otherProperties } = properties;
+    this.telemetry.emitMetric({
+      name: "INCOMING_REQUEST",
+      value: 1,
+      dimensions: {
+        ...otherProperties,
+      },
+    });
+    this.telemetry.emitMetric({
+      name: "INCOMING_REQUEST_DURATION",
+      value: duration,
+      dimensions: {
+        ...otherProperties,
+      },
+    });
   }
 
   private clean(meta: LogMetadata) {
