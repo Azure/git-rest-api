@@ -81,6 +81,6 @@ export class LoggingInterceptor implements NestInterceptor {
   }
 
   private clean(meta: LogMetadata) {
-    return this.config.env === "development" ? {} : meta;
+    return this.config.nodeEnv === "development" ? {} : meta;
   }
 }
