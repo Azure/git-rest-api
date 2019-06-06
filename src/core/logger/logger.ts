@@ -1,88 +1,42 @@
-import chalk from "chalk";
-import jsonStringify from "fast-safe-stringify";
-import { MESSAGE } from "triple-beam";
-import winston, { LoggerOptions, format } from "winston";
-import winstonDailyFile from "winston-daily-rotate-file";
+import winston from "winston";
 
-import { Configuration } from "../../config";
+import { WINSTON_LOGGER } from "./winston-logger";
 
-const consoleTransport: winston.transports.ConsoleTransportOptions = {
-  handleExceptions: true,
-  level: "info",
-};
-
-const customFormat = format(info => {
-  const { message, level, timestamp, context, trace, ...others } = info;
-  const stringifiedRest = jsonStringify(others);
-
-  const padding = (info.padding && info.padding[level]) || "";
-  const coloredTime = chalk.dim.yellow.bold(timestamp);
-  const coloredContext = chalk.grey(context);
-  let coloredMessage = `${level}:${padding} ${coloredTime} | [${coloredContext}] ${message}`;
-  if (stringifiedRest !== "{}") {
-    coloredMessage = `${coloredMessage} ${stringifiedRest}`;
-  }
-  if (trace) {
-    coloredMessage = `${coloredMessage}\n${trace}`;
-  }
-  info[MESSAGE] = coloredMessage;
-  return info;
-});
-
-const config = new Configuration();
-// Production depends on the default JSON serialized logs to be uploaded to Geneva.
-if (config.env === "development") {
-  consoleTransport.format = winston.format.combine(
-    winston.format.timestamp({
-      format: "YYYY-MM-DD HH:mm:ss",
-    }),
-    winston.format.colorize(),
-    customFormat(),
-  );
-} else {
-  consoleTransport.format = winston.format.combine(winston.format.timestamp(), winston.format.json());
+export interface LogMetadata {
+  context?: string;
+  [key: string]: any;
 }
 
-export class LoggerService {
-  public static loggerOptions: LoggerOptions = {
-    transports: [
-      new winston.transports.Console(consoleTransport),
-      new winstonDailyFile({
-        filename: `%DATE%.log`,
-        datePattern: "YYYY-MM-DD-HH",
-        level: "debug",
-        dirname: "logs",
-        handleExceptions: true,
-      }),
-    ],
-  };
-
+export class Logger {
   private logger: winston.Logger;
-
-  constructor() {
-    this.logger = winston.createLogger(LoggerService.loggerOptions);
+  constructor(private context: string) {
+    this.logger = WINSTON_LOGGER;
   }
 
-  public log(message: string, context?: string) {
-    this.logger.info(message, { context });
+  public info(message: string, meta?: LogMetadata) {
+    this.logger.info(message, this.processMetadata(meta));
   }
 
-  public error(message: string, trace?: string, context?: string) {
-    this.logger.error(message, {
-      trace,
-      context,
-    });
+  public debug(message: string, meta?: LogMetadata) {
+    this.logger.debug(message, this.processMetadata(meta));
   }
 
-  public warn(message: string, context?: string) {
-    this.logger.warn(message, { context });
+  public warning(message: string, meta?: LogMetadata) {
+    this.logger.warning(message, this.processMetadata(meta));
   }
 
-  public debug(message: string, context?: string) {
-    this.logger.debug(message, { context });
+  public error(message: string | Error, meta?: LogMetadata) {
+    if (message instanceof Error) {
+      this.logger.error(message.message, this.processMetadata({ ...meta, stack: message.stack }));
+    } else {
+      this.logger.error(message, this.processMetadata(meta));
+    }
   }
 
-  public verbose(message: string, context?: string) {
-    this.logger.verbose(message, { context });
+  private processMetadata(meta: LogMetadata | undefined) {
+    return {
+      context: this.context,
+      ...meta,
+    };
   }
 }
