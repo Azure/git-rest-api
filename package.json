@@ -66,6 +66,7 @@
     "express": "^4.17.1",
     "fast-safe-stringify": "^2.0.6",
     "helmet": "^3.18.0",
+    "hot-shots": "^6.3.0",
     "node-fetch": "^2.6.0",
     "nodegit": "^0.24.3",
     "reflect-metadata": "^0.1.13",
