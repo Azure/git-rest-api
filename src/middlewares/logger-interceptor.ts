@@ -1,4 +1,5 @@
 import { CallHandler, ExecutionContext, HttpException, HttpStatus, Injectable, NestInterceptor } from "@nestjs/common";
+import { Request } from "express";
 import { Observable, throwError } from "rxjs";
 import { catchError, tap } from "rxjs/operators";
 
@@ -13,10 +14,10 @@ export class LoggingInterceptor implements NestInterceptor {
 
   public intercept(context: ExecutionContext, next: CallHandler): Observable<any> {
     const now = Date.now();
-    const req = context.switchToHttp().getRequest();
+    const req: Request = context.switchToHttp().getRequest();
 
     const commonProperties = {
-      path: req.originalUrl,
+      path: req.route.path,
       method: req.method,
     };
 
