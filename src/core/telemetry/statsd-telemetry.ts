@@ -14,7 +14,7 @@ export class StatsdTelemetry extends Telemetry {
 
   public emitMetric(metric: Metric): void {
     const stat = JSON.stringify({
-      Metric: metric,
+      Metric: metric.name,
       Namespace: this.config.serviceName,
       Dims: {
         ...metric.dimensions,
