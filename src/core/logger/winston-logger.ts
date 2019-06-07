@@ -52,7 +52,11 @@ if (config.nodeEnv === "development") {
     customFormat(),
   );
 } else {
-  consoleTransport.format = winston.format.combine(addProdMetadata(), winston.format.timestamp(), winston.format.json());
+  consoleTransport.format = winston.format.combine(
+    addProdMetadata(),
+    winston.format.timestamp(),
+    winston.format.json(),
+  );
 }
 
 export const WINSTON_LOGGER_OPTIONS: LoggerOptions = {
