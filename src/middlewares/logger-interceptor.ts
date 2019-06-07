@@ -33,7 +33,7 @@ export class LoggingInterceptor implements NestInterceptor {
         };
 
         const message = `${req.method} ${response.statusCode} ${req.originalUrl} (${duration}ms)`;
-        this.logger.info(message, this.clean(properties));
+        this.logger.info(message, this.clean({ ...properties, uri: req.originalUrl }));
         this.trackRequest(properties);
       }),
       catchError((error: Error | HttpException) => {
@@ -49,7 +49,7 @@ export class LoggingInterceptor implements NestInterceptor {
 
         this.trackRequest(properties);
         if (statusCode >= 500) {
-          this.logger.error(message, this.clean(properties));
+          this.logger.error(message, this.clean({ ...properties, uri: req.originalUrl }));
           this.telemetry.emitMetric({
             name: "EXCEPTIONS",
             value: 1,
