@@ -21,20 +21,20 @@ export class CompareService {
     options: GitBaseOptions = {},
   ): Promise<GitDiff | NotFoundException> {
     const compareRepo = await this.getCompareRepo(remote, base, head, options);
-    const repo = compareRepo.repo;
+    return this.repoService.using(compareRepo.repo, async repo => {
+      const [baseCommit, headCommit] = await Promise.all([
+        this.commitService.getCommit(repo, compareRepo.baseRef),
+        this.commitService.getCommit(repo, compareRepo.headRef),
+      ]);
+      if (!baseCommit) {
+        return new NotFoundException(`Base ${base} was not found`);
+      }
+      if (!headCommit) {
+        return new NotFoundException(`Head ${base} was not found`);
+      }
 
-    const [baseCommit, headCommit] = await Promise.all([
-      this.commitService.getCommit(repo, compareRepo.baseRef),
-      this.commitService.getCommit(repo, compareRepo.headRef),
-    ]);
-    if (!baseCommit) {
-      return new NotFoundException(`Base ${base} was not found`);
-    }
-    if (!headCommit) {
-      return new NotFoundException(`Head ${base} was not found`);
-    }
-
-    return this.getComparison(repo, baseCommit, headCommit);
+      return this.getComparison(repo, baseCommit, headCommit);
+    });
   }
 
   public async getMergeBase(repo: Repository, base: Oid, head: Oid): Promise<Commit | undefined> {

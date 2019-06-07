@@ -13,21 +13,22 @@ export class BranchService {
    * @param remote
    */
   public async list(remote: string, options: GitBaseOptions = {}): Promise<GitBranch[]> {
-    const repo = await this.repoService.get(remote, options);
-    const refs = await repo.getReferences(Reference.TYPE.LISTALL);
-    const branches = refs.filter(x => x.isRemote());
+    return this.repoService.use(remote, options, async repo => {
+      const refs = await repo.getReferences(Reference.TYPE.LISTALL);
+      const branches = refs.filter(x => x.isRemote());
 
-    return Promise.all(
-      branches.map(async ref => {
-        const target = await ref.target();
-        return new GitBranch({
-          name: getRemoteBranchName(ref.name()),
-          commit: {
-            sha: target.toString(),
-          },
-        });
-      }),
-    );
+      return Promise.all(
+        branches.map(async ref => {
+          const target = await ref.target();
+          return new GitBranch({
+            name: getRemoteBranchName(ref.name()),
+            commit: {
+              sha: target.toString(),
+            },
+          });
+        }),
+      );
+    });
   }
 }
 

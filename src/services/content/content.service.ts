@@ -1,5 +1,5 @@
 import { Injectable, NotFoundException } from "@nestjs/common";
-import { TreeEntry } from "nodegit";
+import { TreeEntry, Repository } from "nodegit";
 
 import { GitContents } from "../../dtos/git-contents";
 import { GitDirObjectContent } from "../../dtos/git-dir-object-content";
@@ -18,9 +18,13 @@ export class ContentService {
     ref: string | undefined = "master",
     options: GitBaseOptions = {},
   ): Promise<GitContents | NotFoundException> {
-    const repo = await this.repoService.get(remote, options);
-    const commit = await this.commitService.getCommit(repo, ref);
+    return this.repoService.use(remote, options, async repo => {
+      return this.getGitContents(repo, path, ref);
+    });
+  }
 
+  public async getGitContents(repo: Repository, path: string | undefined, ref: string | undefined = "master") {
+    const commit = await this.commitService.getCommit(repo, ref);
     if (!commit) {
       return new NotFoundException(`Ref '${ref}' not found.`);
     }
