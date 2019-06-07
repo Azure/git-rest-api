@@ -89,16 +89,46 @@ export class RepoService {
     const repoPath = getRepoMainPath(localName, "compare");
     let repo: Repository;
 
-    if (await this.fs.exists(repoPath)) {
+    const cloningRepo = this.cloningRepos.get(repoPath);
+    if (cloningRepo) {
+      return cloningRepo;
+    }
+
+    const exists = await this.fs.exists(repoPath);
+    // Check again if the repo didn't start cloning since the last time
+    const isCloningRepo = this.cloningRepos.get(repoPath);
+    if (isCloningRepo) {
+      return isCloningRepo;
+    }
+
+    if (exists) {
       repo = await Repository.open(repoPath);
     } else {
-      repo = await Repository.init(repoPath, 0);
-      // Remotes cannot be added in parrelel.
-      await Remote.create(repo, base.name, `https://${base.remote}`);
-      await Remote.create(repo, head.name, `https://${head.remote}`);
+      const cloneRepoPromise = this.cloneWithMultiRemote(localName, repoPath, [head, base], options).then(r => {
+        this.cloningRepos.delete(repoPath);
+        return r;
+      });
+      this.cloningRepos.set(repoPath, cloneRepoPromise);
+      repo = await cloneRepoPromise;
+    }
+
+    return repo;
+  }
+
+  private async cloneWithMultiRemote(
+    localName: string,
+    repoPath: string,
+    remotes: RemoteDef[],
+    options: GitBaseOptions = {},
+  ) {
+    const repo = await Repository.init(repoPath, 0);
+    // Remotes cannot be added in parrelel.
+    for (const { name, remote } of remotes) {
+      await Remote.create(repo, name, `https://${remote}`);
     }
 
     await this.fetchService.fetch(localName, repo, options);
+
     return repo;
   }
 
