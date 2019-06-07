@@ -1,4 +1,4 @@
-import { Module } from "@nestjs/common";
+import { Module, MiddlewareConsumer, NestModule } from "@nestjs/common";
 import { APP_INTERCEPTOR } from "@nestjs/core";
 
 import { Configuration } from "./config";
@@ -10,7 +10,7 @@ import {
   HealthCheckController,
 } from "./controllers";
 import { Telemetry, createTelemetry } from "./core";
-import { LoggingInterceptor } from "./middlewares";
+import { LoggingInterceptor, ContextMiddleware } from "./middlewares";
 import {
   AppService,
   BranchService,
@@ -52,4 +52,8 @@ import { ContentService } from "./services/content";
     },
   ],
 })
-export class AppModule {}
+export class AppModule implements NestModule {
+  public configure(consumer: MiddlewareConsumer) {
+    consumer.apply(ContextMiddleware).forRoutes("*");
+  }
+}

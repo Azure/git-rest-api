@@ -5,6 +5,17 @@ import winston, { LoggerOptions, format } from "winston";
 import winstonDailyFile from "winston-daily-rotate-file";
 
 import { Configuration } from "../../config";
+import { getContext } from "../context";
+
+// Adds default metadata to logs
+const addProdMetadata = winston.format(info => {
+  info.Env = config.env;
+  info.Service = config.serviceName;
+  if (!info.requestId) {
+    info.requestId = getContext("requestId");
+  }
+  return info;
+});
 
 const consoleTransport: winston.transports.ConsoleTransportOptions = {
   handleExceptions: true,
@@ -41,7 +52,7 @@ if (config.nodeEnv === "development") {
     customFormat(),
   );
 } else {
-  consoleTransport.format = winston.format.combine(winston.format.timestamp(), winston.format.json());
+  consoleTransport.format = winston.format.combine(addProdMetadata(), winston.format.timestamp(), winston.format.json());
 }
 
 export const WINSTON_LOGGER_OPTIONS: LoggerOptions = {
