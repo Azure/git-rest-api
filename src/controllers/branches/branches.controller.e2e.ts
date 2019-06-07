@@ -3,7 +3,9 @@ import { delay } from "../../utils";
 
 describe("Test branch controller", () => {
   it("doesn't conflict when getting the same repo twice at the same time", async () => {
+    await delay(100);
     await deleteLocalRepo(UNENCODED_TEST_REPO);
+    await delay(100);
     const responses = await Promise.all([
       e2eClient.fetch(`/repos/${TEST_REPO}/branches`),
       // Delay a little to start the clone

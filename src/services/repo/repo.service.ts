@@ -64,7 +64,13 @@ export class RepoService {
       return cloningRepo;
     }
 
-    if (await this.fs.exists(repoPath)) {
+    const exists = await this.fs.exists(repoPath);
+    // Check again if the repo didn't start cloning since the last time
+    const isCloningRepo = this.cloningRepos.get(repoPath);
+    if (isCloningRepo) {
+      return isCloningRepo;
+    }
+    if (exists) {
       const repo = await Repository.open(repoPath);
       return this.fetchService.fetch(remote, repo, options);
     } else {
