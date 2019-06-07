@@ -25,21 +25,61 @@ export interface RemoteDef {
 
 @Injectable()
 export class RepoService {
+  /**
+   * Map that contains a key and promise when cloning a given repo
+   */
+  private cloningRepos = new Map<string, Promise<Repository>>();
+
   constructor(
     private fs: FSService,
     private fetchService: GitFetchService,
     private permissionService: PermissionService,
   ) {}
 
+  public async use<T>(remote: string, options: GitBaseOptions, action: (repo: Repository) => Promise<T>): Promise<T> {
+    const repo = await this.get(remote, options);
+    return this.using(repo, action);
+  }
+
+  public async using<T>(repo: Repository, action: (repo: Repository) => Promise<T>): Promise<T> {
+    try {
+      const response = await action(repo);
+      repo.cleanup();
+      return response;
+    } catch (error) {
+      repo.cleanup();
+      throw error;
+    }
+  }
+
+  /**
+   * Be carfull with using this one. Repository object needs to be clenup. Make sure its with `using` to ensure it gets cleanup after
+   */
   public async get(remote: string, options: GitBaseOptions = {}): Promise<Repository> {
     await this.validatePermissions([remote], options);
     const repoPath = getRepoMainPath(remote);
 
-    if (await this.fs.exists(repoPath)) {
+    const cloningRepo = this.cloningRepos.get(repoPath);
+    if (cloningRepo) {
+      return cloningRepo;
+    }
+
+    const exists = await this.fs.exists(repoPath);
+    // Check again if the repo didn't start cloning since the last time
+    const isCloningRepo = this.cloningRepos.get(repoPath);
+    if (isCloningRepo) {
+      return isCloningRepo;
+    }
+    if (exists) {
       const repo = await Repository.open(repoPath);
       return this.fetchService.fetch(remote, repo, options);
     } else {
-      return this.fetchService.clone(remote, repoPath, options);
+      const cloneRepoPromise = this.fetchService.clone(remote, repoPath, options).then(repo => {
+        this.cloningRepos.delete(repoPath);
+        return repo;
+      });
+      this.cloningRepos.set(repoPath, cloneRepoPromise);
+      return cloneRepoPromise;
     }
   }
 

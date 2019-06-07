@@ -21,26 +21,28 @@ export class CommitService {
     remote: string,
     options: ListCommitsOptions & GitBaseOptions = {},
   ): Promise<PaginatedList<GitCommit> | NotFoundException> {
-    const repo = await this.repoService.get(remote, options);
-    const commits = await this.listCommits(repo, options);
-    if (commits instanceof NotFoundException) {
-      return commits;
-    }
+    return this.repoService.use(remote, options, async repo => {
+      const commits = await this.listCommits(repo, options);
+      if (commits instanceof NotFoundException) {
+        return commits;
+      }
 
-    const items = await Promise.all(commits.items.map(async x => toGitCommit(x)));
-    return {
-      ...commits,
-      items,
-    };
+      const items = await Promise.all(commits.items.map(async x => toGitCommit(x)));
+      return {
+        ...commits,
+        items,
+      };
+    });
   }
 
   public async get(remote: string, commitSha: string, options: GitBaseOptions = {}): Promise<GitCommit | undefined> {
-    const repo = await this.repoService.get(remote, options);
-    const commit = await this.getCommit(repo, commitSha);
-    if (!commit) {
-      return undefined;
-    }
-    return toGitCommit(commit);
+    return this.repoService.use(remote, options, async repo => {
+      const commit = await this.getCommit(repo, commitSha);
+      if (!commit) {
+        return undefined;
+      }
+      return toGitCommit(commit);
+    });
   }
 
   /**

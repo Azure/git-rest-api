@@ -31,7 +31,7 @@ describe("BranchService", () => {
   };
 
   const repoServiceSpy = {
-    get: jest.fn(() => mockRepo),
+    use: jest.fn((_, _1, action) => action(mockRepo)),
   };
 
   beforeEach(() => {
@@ -42,8 +42,8 @@ describe("BranchService", () => {
   it("List the branches", async () => {
     const branches = await service.list("github.com/Azure/git-rest-api");
 
-    expect(repoServiceSpy.get).toHaveBeenCalledTimes(1);
-    expect(repoServiceSpy.get).toHaveBeenCalledWith("github.com/Azure/git-rest-api", {});
+    expect(repoServiceSpy.use).toHaveBeenCalledTimes(1);
+    expect(repoServiceSpy.use).toHaveBeenCalledWith("github.com/Azure/git-rest-api", {}, expect.any(Function));
     expect(mockRepo.getReferences).toHaveBeenCalledTimes(1);
     expect(branches).toEqual([b1, b2]);
   });

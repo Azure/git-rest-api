@@ -1,4 +1,5 @@
 import { createApp } from "./app";
+import { Logger } from "./core";
 
 async function bootstrap() {
   const { app } = await createApp();
@@ -6,7 +7,8 @@ async function bootstrap() {
 }
 
 bootstrap().catch(error => {
+  const logger = new Logger("Bootstrap");
   // tslint:disable-next-line: no-console
-  console.error("Error in app", error);
+  logger.error("Error in app", error);
   process.exit(1);
 });
