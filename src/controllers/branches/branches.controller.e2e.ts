@@ -2,7 +2,7 @@ import { TEST_REPO, UNENCODED_TEST_REPO, deleteLocalRepo, e2eClient } from "../.
 import { delay } from "../../utils";
 
 describe("Test branch controller", () => {
-  fit("doesn't conflict when getting the same repo twice at the same time", async () => {
+  it("doesn't conflict when getting the same repo twice at the same time", async () => {
     await deleteLocalRepo(UNENCODED_TEST_REPO);
     const responses = await Promise.all([
       e2eClient.fetch(`/repos/${TEST_REPO}/branches`),

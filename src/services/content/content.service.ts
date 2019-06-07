@@ -1,5 +1,5 @@
 import { Injectable, NotFoundException } from "@nestjs/common";
-import { TreeEntry, Repository } from "nodegit";
+import { Repository, TreeEntry } from "nodegit";
 
 import { GitContents } from "../../dtos/git-contents";
 import { GitDirObjectContent } from "../../dtos/git-dir-object-content";
