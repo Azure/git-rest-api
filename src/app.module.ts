@@ -1,4 +1,4 @@
-import { Module, MiddlewareConsumer, NestModule } from "@nestjs/common";
+import { MiddlewareConsumer, Module, NestModule } from "@nestjs/common";
 import { APP_INTERCEPTOR } from "@nestjs/core";
 
 import { Configuration } from "./config";
@@ -10,7 +10,7 @@ import {
   HealthCheckController,
 } from "./controllers";
 import { Telemetry, createTelemetry } from "./core";
-import { LoggingInterceptor, ContextMiddleware } from "./middlewares";
+import { ContextMiddleware, LoggingInterceptor } from "./middlewares";
 import {
   AppService,
   BranchService,
