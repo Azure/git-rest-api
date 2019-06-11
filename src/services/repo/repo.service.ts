@@ -2,7 +2,7 @@ import { Injectable, NotFoundException } from "@nestjs/common";
 import { Remote, Repository } from "nodegit";
 import path from "path";
 
-import { GCRepo, RepoAuth } from "../../core";
+import { SharedRepo, RepoAuth } from "../../core";
 import { FSService } from "../fs";
 import { GitFetchService, repoCacheFolder } from "../git-fetch";
 import { GitRemotePermission, PermissionService } from "../permission";
@@ -28,7 +28,7 @@ export class RepoService {
   /**
    * Map that contains a key and promise when cloning a given repo
    */
-  private cloningRepos = new Map<string, Promise<GCRepo>>();
+  private cloningRepos = new Map<string, Promise<SharedRepo>>();
 
   constructor(
     private fs: FSService,
@@ -41,7 +41,7 @@ export class RepoService {
     return this.using(repo, action);
   }
 
-  public async using<T>(repo: GCRepo, action: (repo: Repository) => Promise<T>): Promise<T> {
+  public async using<T>(repo: SharedRepo, action: (repo: Repository) => Promise<T>): Promise<T> {
     try {
       const response = await action(repo.instance);
       repo.unlock();
@@ -55,7 +55,7 @@ export class RepoService {
   /**
    * Be carfull with using this one. Repository object needs to be clenup. Make sure its with `using` to ensure it gets cleanup after
    */
-  public async get(remote: string, options: GitBaseOptions = {}): Promise<GCRepo> {
+  public async get(remote: string, options: GitBaseOptions = {}): Promise<SharedRepo> {
     await this.validatePermissions([remote], options);
     const repoPath = getRepoMainPath(remote);
 
@@ -66,7 +66,7 @@ export class RepoService {
     });
   }
 
-  public async createForCompare(base: RemoteDef, head: RemoteDef, options: GitBaseOptions = {}): Promise<GCRepo> {
+  public async createForCompare(base: RemoteDef, head: RemoteDef, options: GitBaseOptions = {}): Promise<SharedRepo> {
     await this.validatePermissions([base.remote, head.remote], options);
     const localName = `${base.remote}-${head.remote}`;
     const repoPath = getRepoMainPath(localName, "compare");
@@ -111,11 +111,11 @@ export class RepoService {
     if (exists) {
       const repo = await Repository.open(repoPath);
       await config.fetch(repo);
-      return new GCRepo(repo);
+      return new SharedRepo(repo);
     } else {
       const cloneRepoPromise = config.clone().then(repo => {
         this.cloningRepos.delete(repoPath);
-        return new GCRepo(repo);
+        return new SharedRepo(repo);
       });
       this.cloningRepos.set(repoPath, cloneRepoPromise);
       return cloneRepoPromise;
