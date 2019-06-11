@@ -24,6 +24,12 @@ describe("Test branch controller", () => {
     for (const content of others) {
       expect(sortBy(content, x => x.name)).toEqual(sortBy(first, x => x.name));
     }
+
+    // Make sure the server didn't crash. This is a regression test where a segfault happened freeing the Repository object.
+    await delay(1000);
+    const lastResponse = await e2eClient.fetch(`/repos/${TEST_REPO}/branches`);
+
+    expect(lastResponse.status).toEqual(200);
   });
 
   it("List branches in the test repo", async () => {
