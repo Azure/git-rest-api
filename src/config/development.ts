@@ -1,4 +1,3 @@
 import { Configuration } from "./configuration";
 
-export const developmentConfig: Partial<Configuration> = {
-};
+export const developmentConfig: Partial<Configuration> = {};
