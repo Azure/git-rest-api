@@ -29,10 +29,16 @@ export class Configuration {
   public readonly serviceName: string;
   public readonly statsd: StatsdConfig;
 
+  /**
+   * Path to handle data(e.g. CLone repos)
+   * This dir will be cleared.
+   */
+  public readonly dataDir: string;
+
   constructor() {
     const environmentOverrides: Record<NodeEnv, Partial<Configuration>> = {
-      production: developmentConfig,
-      development: productionConfig,
+      production: productionConfig,
+      development: developmentConfig,
       test: testConfig,
     };
 
@@ -48,5 +54,6 @@ export class Configuration {
     this.env = configSchema.get("env");
     this.serviceName = configSchema.get("serviceName");
     this.statsd = configSchema.get("statsd");
+    this.dataDir = configSchema.get("dataDir");
   }
 }

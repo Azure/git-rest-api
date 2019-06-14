@@ -35,4 +35,10 @@ export const configSchema = convict<Configuration>({
       env: "statsd_port",
     },
   },
+  dataDir: {
+    doc: "Temprory local data dir. Used for cloning the repos",
+    format: String,
+    default: "./tmp",
+    env: "dataDir",
+  },
 });
