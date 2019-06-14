@@ -37,8 +37,8 @@ export class Configuration {
 
   constructor() {
     const environmentOverrides: Record<NodeEnv, Partial<Configuration>> = {
-      production: developmentConfig,
-      development: productionConfig,
+      production: productionConfig,
+      development: developmentConfig,
       test: testConfig,
     };
 
@@ -55,5 +55,6 @@ export class Configuration {
     this.serviceName = configSchema.get("serviceName");
     this.statsd = configSchema.get("statsd");
     this.dataDir = configSchema.get("dataDir");
+    console.log("Data", this.dataDir);
   }
 }
