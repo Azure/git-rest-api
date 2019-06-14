@@ -2,6 +2,7 @@ import { Injectable, NotFoundException } from "@nestjs/common";
 import { Clone, Cred, Fetch, FetchOptions, Repository } from "nodegit";
 import path from "path";
 
+import { Configuration } from "../../config";
 import { FSService } from "../fs";
 import { GitBaseOptions } from "../repo";
 
@@ -18,19 +19,20 @@ export const defaultFetchOptions: FetchOptions = {
   downloadTags: 0,
   prune: Fetch.PRUNE.GIT_FETCH_PRUNE,
 };
-export const repoCacheFolder = path.join("./tmp", "repos");
 
 const FETCH_TIMEOUT = 30_000; // 30s;
 
 @Injectable()
 export class GitFetchService {
+  public readonly repoCacheFolder = path.join(this.config.dataDir, "repos");
+
   private currentFetches = new Map<string, Promise<Repository>>();
   private lastFetch = new Map<string, number>();
 
   private cacheReady: Promise<string>;
 
-  constructor(fs: FSService) {
-    this.cacheReady = fs.mkdir(repoCacheFolder);
+  constructor(fs: FSService, private config: Configuration) {
+    this.cacheReady = fs.mkdir(this.repoCacheFolder);
   }
 
   public async fetch(id: string, repo: Repository, options: GitBaseOptions): Promise<Repository> {

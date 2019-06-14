@@ -4,15 +4,8 @@ import path from "path";
 
 import { GCRepo, RepoAuth } from "../../core";
 import { FSService } from "../fs";
-import { GitFetchService, repoCacheFolder } from "../git-fetch";
+import { GitFetchService } from "../git-fetch";
 import { GitRemotePermission, PermissionService } from "../permission";
-
-export function getRepoMainPath(remote: string, namespace?: string) {
-  if (namespace) {
-    return path.join(repoCacheFolder, namespace, encodeURIComponent(remote));
-  }
-  return path.join(repoCacheFolder, encodeURIComponent(remote));
-}
 
 export interface GitBaseOptions {
   auth?: RepoAuth;
@@ -57,7 +50,7 @@ export class RepoService {
    */
   public async get(remote: string, options: GitBaseOptions = {}): Promise<GCRepo> {
     await this.validatePermissions([remote], options);
-    const repoPath = getRepoMainPath(remote);
+    const repoPath = this.getRepoMainPath(remote);
 
     return this.loadRepo({
       repoPath,
@@ -69,7 +62,7 @@ export class RepoService {
   public async createForCompare(base: RemoteDef, head: RemoteDef, options: GitBaseOptions = {}): Promise<GCRepo> {
     await this.validatePermissions([base.remote, head.remote], options);
     const localName = `${base.remote}-${head.remote}`;
-    const repoPath = getRepoMainPath(localName, "compare");
+    const repoPath = this.getRepoMainPath(localName, "compare");
 
     const fetch = (repo: Repository) => this.fetchService.fetch(localName, repo, options);
     return this.loadRepo({
@@ -141,5 +134,12 @@ export class RepoService {
         }
       }),
     );
+  }
+
+  private getRepoMainPath(remote: string, namespace?: string) {
+    if (namespace) {
+      return path.join(this.fetchService.repoCacheFolder, namespace, encodeURIComponent(remote));
+    }
+    return path.join(this.fetchService.repoCacheFolder, encodeURIComponent(remote));
   }
 }
