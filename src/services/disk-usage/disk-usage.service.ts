@@ -1,10 +1,10 @@
 import { Injectable } from "@nestjs/common";
 import diskusage from "diskusage";
-import { Observable, Subscription, from, interval } from "rxjs";
+import { Observable, Subscription, from, timer } from "rxjs";
 import { map, publishReplay, refCount, switchMap } from "rxjs/operators";
 
 import { Configuration } from "../../config";
-import { Telemetry } from "../../core";
+import { Logger, Telemetry } from "../../core";
 
 const DISK_USAGE_COLLECTION_INTERVAL = 10_000;
 
@@ -18,8 +18,10 @@ export interface DiskUsage {
 export class DiskUsageService {
   public dataDiskUsage: Observable<DiskUsage>;
 
+  private logger = new Logger("DiskUsageService");
+
   constructor(private config: Configuration, private telemetry: Telemetry) {
-    this.dataDiskUsage = interval(DISK_USAGE_COLLECTION_INTERVAL).pipe(
+    this.dataDiskUsage = timer(0, DISK_USAGE_COLLECTION_INTERVAL).pipe(
       switchMap(() => from(this.checkDataDiskUsage())),
       map(({ available, total }) => {
         return { available, total, used: total - available };
@@ -40,6 +42,7 @@ export class DiskUsageService {
       name: "DATA_DISK_USAGE_AVAILABLE",
       value: usage.available,
     });
+    this.logger.debug("Data disk usage", usage);
   }
 
   private checkDataDiskUsage(): Promise<diskusage.DiskUsage> {

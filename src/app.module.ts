@@ -57,7 +57,7 @@ import {
 export class AppModule implements NestModule {
   constructor(private diskUsage: DiskUsageService) {}
   public configure(consumer: MiddlewareConsumer) {
-    this.diskUsage.start();
+    this.diskUsage.startCollection();
     consumer.apply(ContextMiddleware).forRoutes("*");
   }
 }
