@@ -48,7 +48,7 @@ export class DiskUsageService {
 
   private async checkDataDiskUsage(): Promise<diskusage.DiskUsage | undefined> {
     try {
-      return diskusage.check(this.config.dataDir);
+      return await diskusage.check(this.config.dataDir);
     } catch (error) {
       this.logger.error("Failed to get disk usage", error);
       return undefined;
