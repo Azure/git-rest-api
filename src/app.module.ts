@@ -16,6 +16,8 @@ import {
   BranchService,
   CommitService,
   CompareService,
+  ContentService,
+  DiskUsageService,
   FSService,
   GitFetchService,
   HttpService,
@@ -23,7 +25,6 @@ import {
   PermissionService,
   RepoService,
 } from "./services";
-import { ContentService } from "./services/content";
 
 @Module({
   imports: [],
@@ -41,6 +42,7 @@ import { ContentService } from "./services/content";
     Configuration,
     CommitService,
     ContentService,
+    DiskUsageService,
     {
       provide: APP_INTERCEPTOR,
       useClass: LoggingInterceptor,
@@ -53,7 +55,9 @@ import { ContentService } from "./services/content";
   ],
 })
 export class AppModule implements NestModule {
+  constructor(private diskUsage: DiskUsageService) {}
   public configure(consumer: MiddlewareConsumer) {
+    this.diskUsage.startCollection();
     consumer.apply(ContextMiddleware).forRoutes("*");
   }
 }
