@@ -1,7 +1,7 @@
 import { Injectable } from "@nestjs/common";
 import diskusage from "diskusage";
 import { Observable, Subscription, from, timer } from "rxjs";
-import { map, publishReplay, refCount, switchMap } from "rxjs/operators";
+import { filter, map, publishReplay, refCount, switchMap } from "rxjs/operators";
 
 import { Configuration } from "../../config";
 import { Logger, Telemetry } from "../../core";
@@ -23,6 +23,7 @@ export class DiskUsageService {
   constructor(private config: Configuration, private telemetry: Telemetry) {
     this.dataDiskUsage = timer(0, DISK_USAGE_COLLECTION_INTERVAL).pipe(
       switchMap(() => from(this.checkDataDiskUsage())),
+      filter(<T>(x: T | undefined): x is T => x !== undefined),
       map(({ available, total }) => {
         return { available, total, used: total - available };
       }),
@@ -45,7 +46,12 @@ export class DiskUsageService {
     this.logger.debug("Data disk usage", usage);
   }
 
-  private checkDataDiskUsage(): Promise<diskusage.DiskUsage> {
-    return diskusage.check(this.config.dataDir);
+  private async checkDataDiskUsage(): Promise<diskusage.DiskUsage | undefined> {
+    try {
+      return diskusage.check(this.config.dataDir);
+    } catch (error) {
+      this.logger.error("Failed to get disk usage", error);
+      return undefined;
+    }
   }
 }
