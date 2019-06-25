@@ -29,7 +29,7 @@ export class RepoService {
 
   public async use<T>(remote: string, options: GitBaseOptions, action: (repo: Repository) => Promise<T>): Promise<T> {
     await this.validatePermissions([remote], options);
-    const repoPath = this.getRepoMainPath(remote, "repos");
+    const repoPath = this.getRepoMainPath(remote);
     const origin = {
       name: "origin",
       remote,

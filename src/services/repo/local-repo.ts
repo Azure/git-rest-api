@@ -1,7 +1,7 @@
 import { NotFoundException } from "@nestjs/common";
 import { Cred, Fetch, FetchOptions, Remote, Repository } from "nodegit";
 import { BehaviorSubject, Subject } from "rxjs";
-import { filter, take } from "rxjs/operators";
+import { filter, take, first } from "rxjs/operators";
 
 import { Logger } from "../../core";
 import { FSService } from "../fs";
@@ -30,38 +30,43 @@ export enum LocalRepoStatus {
 }
 
 interface InitializingState {
-  status: LocalRepoStatus.Initializing;
-  repo: undefined;
-  needToFetch: boolean;
-  reading: 0;
+  readonly status: LocalRepoStatus.Initializing;
+  readonly repo: undefined;
+  readonly needToFetch: boolean;
+  readonly reading: 0;
+  readonly waitingRead: number;
 }
 
 interface UpdatingState {
-  status: LocalRepoStatus.Updating;
-  repo: Repository;
-  needToFetch: boolean;
-  reading: 0;
+  readonly status: LocalRepoStatus.Updating;
+  readonly repo: Repository;
+  readonly needToFetch: boolean;
+  readonly reading: 0;
+  readonly waitingRead: number;
 }
 
 interface ReadyToFetchState {
-  status: LocalRepoStatus.Ready;
-  repo: Repository;
-  needToFetch: true;
-  reading: 0;
+  readonly status: LocalRepoStatus.Ready;
+  readonly repo: Repository;
+  readonly needToFetch: true;
+  readonly reading: 0;
+  readonly waitingRead: number;
 }
 
 interface ReadyState {
-  status: LocalRepoStatus.Ready;
-  repo: Repository;
-  needToFetch: boolean;
-  reading: number;
+  readonly status: LocalRepoStatus.Ready;
+  readonly repo: Repository;
+  readonly needToFetch: boolean;
+  readonly reading: number;
+  readonly waitingRead: number;
 }
 
 interface DeletingState {
-  status: LocalRepoStatus.Deleting;
-  repo: Repository;
-  needToFetch: boolean;
-  reading: 0;
+  readonly status: LocalRepoStatus.Deleting;
+  readonly repo: Repository;
+  readonly needToFetch: boolean;
+  readonly reading: 0;
+  readonly waitingRead: number;
 }
 
 type LocalRepoState = InitializingState | UpdatingState | ReadyToFetchState | ReadyState | DeletingState;
@@ -71,27 +76,31 @@ export interface RemoteDef {
   remote: string;
 }
 
+const initialState: InitializingState = Object.freeze({
+  status: LocalRepoStatus.Initializing,
+  repo: undefined,
+  needToFetch: false,
+  reading: 0,
+  waitingRead: 0,
+});
+
 export class LocalRepo {
   public onDestroy = new Subject();
 
   private logger = new Logger("LocalRepo");
-  private state = new BehaviorSubject<LocalRepoState>({
-    status: LocalRepoStatus.Initializing,
-    needToFetch: false,
-    repo: undefined,
-    reading: 0,
-  });
+  private state = new BehaviorSubject<LocalRepoState>(initialState);
 
   constructor(public readonly path: string, private fs: FSService, private repoIndex: RepoIndexService) {
     this.state
       .pipe(
-        filter(
-          x =>
-            (x.status === LocalRepoStatus.Ready && x.reading === 0! && x.needToFetch) ||
-            x.status === LocalRepoStatus.Deleting,
-        ),
+        filter(x => {
+          return (
+            (x.status === LocalRepoStatus.Ready && x.reading === 0 && x.waitingRead === 0 && !x.needToFetch) ||
+            x.status === LocalRepoStatus.Deleting
+          );
+        }),
       )
-      .subscribe(() => {
+      .subscribe((x) => {
         this.dispose();
       });
   }
@@ -107,20 +116,14 @@ export class LocalRepo {
   }
 
   public async init(remotes: RemoteDef[]): Promise<void> {
-    this.state.next({ status: LocalRepoStatus.Initializing, repo: undefined, needToFetch: false, reading: 0 });
-    const repo = await this.loadRepo();
-    for (const { name, remote: value } of remotes) {
-      await Remote.create(repo, name, `https://${value}`);
-    }
+    this.state.next(initialState);
+    const repo = await this.loadRepo(remotes);
     this.state.next({ ...this.state.value, status: LocalRepoStatus.Ready, repo });
   }
 
   public async update(options: GitBaseOptions = {}) {
     const state = this.state.value;
-    if (state.status !== LocalRepoStatus.Ready || state.reading !== 0) {
-      this.state.next({ ...state, needToFetch: true });
-      return;
-    }
+    this.state.next({ ...state, needToFetch: true });
     const readyState = await this.waitForState<ReadyToFetchState>({
       status: LocalRepoStatus.Ready,
       reading: 0,
@@ -128,7 +131,7 @@ export class LocalRepo {
     });
     this.state.next({ ...readyState, status: LocalRepoStatus.Updating, needToFetch: false });
 
-    await this.updateRepo(state.repo, options);
+    await this.updateRepo(readyState.repo, options);
     if (this.state.value.status !== LocalRepoStatus.Updating) {
       this.logger.error(
         `Unexpected state changed occured for repo while updating ${this.path}. Status: ${this.state.value.status}`,
@@ -139,6 +142,7 @@ export class LocalRepo {
   }
 
   public async use<T>(action: (repo: Repository) => Promise<T>): Promise<T> {
+    this.state.next({ ...this.state.value, waitingRead: this.state.value.waitingRead + 1 });
     const state = await this.waitForState<ReadyState>({
       status: LocalRepoStatus.Ready,
       needToFetch: false,
@@ -157,11 +161,15 @@ export class LocalRepo {
     }
   }
 
-  private async loadRepo() {
+  private async loadRepo(remotes: RemoteDef[]) {
     if (await this.fs.exists(this.path)) {
       return Repository.open(this.path);
     } else {
-      return Repository.init(this.path, 1);
+      const repo = await Repository.init(this.path, 1);
+      for (const { name, remote: value } of remotes) {
+        await Remote.create(repo, name, `https://${value}`);
+      }
+      return repo;
     }
   }
 
@@ -191,7 +199,7 @@ export class LocalRepo {
           }
           return true;
         }),
-        take(1),
+        first(),
       )
       .toPromise();
     return state as T;
