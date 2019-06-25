@@ -1,7 +1,7 @@
 import { NotFoundException } from "@nestjs/common";
 import { Cred, Fetch, FetchOptions, Remote, Repository } from "nodegit";
 import { BehaviorSubject, Subject } from "rxjs";
-import { filter, take, first } from "rxjs/operators";
+import { filter, take, first, debounceTime, tap } from "rxjs/operators";
 
 import { Logger } from "../../core";
 import { FSService } from "../fs";
@@ -93,6 +93,7 @@ export class LocalRepo {
   constructor(public readonly path: string, private fs: FSService, private repoIndex: RepoIndexService) {
     this.state
       .pipe(
+        debounceTime(100), // Give a 100ms timeout before closing
         filter(x => {
           return (
             (x.status === LocalRepoStatus.Ready && x.reading === 0 && x.waitingRead === 0 && !x.needToFetch) ||
@@ -100,7 +101,7 @@ export class LocalRepo {
           );
         }),
       )
-      .subscribe((x) => {
+      .subscribe(x => {
         this.dispose();
       });
   }
