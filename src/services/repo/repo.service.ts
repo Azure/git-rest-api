@@ -1,19 +1,16 @@
 import { Injectable, NotFoundException } from "@nestjs/common";
-import { Remote, Repository } from "nodegit";
+import { Repository } from "nodegit";
 import path from "path";
 
-import { GCRepo, RepoAuth } from "../../core";
+import { RepoAuth } from "../../core";
 import { FSService } from "../fs";
 import { GitFetchService } from "../git-fetch";
 import { GitRemotePermission, PermissionService } from "../permission";
+import { RepoIndexService } from "../repo-index";
+import { LocalRepo, RemoteDef } from "./local-repo";
 
 export interface GitBaseOptions {
   auth?: RepoAuth;
-}
-
-export interface RemoteDef {
-  remote: string;
-  name: string;
 }
 
 @Injectable()
@@ -21,108 +18,57 @@ export class RepoService {
   /**
    * Map that contains a key and promise when cloning a given repo
    */
-  private cloningRepos = new Map<string, Promise<GCRepo>>();
+  private openedRepos = new Map<string, LocalRepo>();
 
   constructor(
     private fs: FSService,
+    private repoIndexService: RepoIndexService,
     private fetchService: GitFetchService,
     private permissionService: PermissionService,
   ) {}
 
   public async use<T>(remote: string, options: GitBaseOptions, action: (repo: Repository) => Promise<T>): Promise<T> {
-    const repo = await this.get(remote, options);
-    return this.using(repo, action);
-  }
-
-  public async using<T>(repo: GCRepo, action: (repo: Repository) => Promise<T>): Promise<T> {
-    try {
-      const response = await action(repo.instance);
-      repo.unlock();
-      return response;
-    } catch (error) {
-      repo.unlock();
-      throw error;
-    }
-  }
-
-  /**
-   * Be carfull with using this one. Repository object needs to be clenup. Make sure its with `using` to ensure it gets cleanup after
-   */
-  public async get(remote: string, options: GitBaseOptions = {}): Promise<GCRepo> {
     await this.validatePermissions([remote], options);
-    const repoPath = this.getRepoMainPath(remote);
-
-    return this.loadRepo({
-      repoPath,
-      fetch: repo => this.fetchService.fetch(remote, repo, options),
-      clone: () => this.fetchService.clone(remote, repoPath, options),
-    });
+    const repoPath = this.getRepoMainPath(remote, "repos");
+    const origin = {
+      name: "origin",
+      remote,
+    };
+    return this.useWithRemotes(repoPath, options, [origin], action);
   }
 
-  public async createForCompare(base: RemoteDef, head: RemoteDef, options: GitBaseOptions = {}): Promise<GCRepo> {
+  public async useForCompare<T>(
+    base: RemoteDef,
+    head: RemoteDef,
+    options: GitBaseOptions = {},
+    action: (repo: Repository) => Promise<T>,
+  ): Promise<T> {
     await this.validatePermissions([base.remote, head.remote], options);
     const localName = `${base.remote}-${head.remote}`;
     const repoPath = this.getRepoMainPath(localName, "compare");
 
-    const fetch = (repo: Repository) => this.fetchService.fetch(localName, repo, options);
-    return this.loadRepo({
-      repoPath,
-      fetch,
-      clone: async () => {
-        const repo = await this.cloneWithMultiRemote(repoPath, [head, base]);
-        await fetch(repo);
-        return repo;
-      },
-    });
+    return this.useWithRemotes(repoPath, options, [base, head], action);
   }
 
-  /**
-   * Generic repo loader that manage concurrency issue with cloning/fetching a repo
-   */
-  private async loadRepo(config: {
-    repoPath: string;
-    fetch: (repo: Repository) => Promise<unknown>;
-    clone: () => Promise<Repository>;
-  }) {
-    const repoPath = config.repoPath;
-    const cloningRepo = this.cloningRepos.get(repoPath);
-    if (cloningRepo) {
-      return cloningRepo.then(x => {
-        x.lock(); // Need to lock the repo as this object can be shared between requests
-        return x;
+  private async useWithRemotes<T>(
+    repoPath: string,
+    options: GitBaseOptions,
+    remotes: RemoteDef[],
+    action: (repo: Repository) => Promise<T>,
+  ): Promise<T> {
+    let repo = this.openedRepos.get(repoPath);
+    if (!repo) {
+      repo = new LocalRepo(repoPath, this.fs, this.repoIndexService);
+      repo.onDestroy.subscribe(() => {
+        this.openedRepos.delete(repoPath);
       });
-    }
-    const exists = await this.fs.exists(repoPath);
-    const isCloningRepo = this.cloningRepos.get(repoPath);
-    if (isCloningRepo) {
-      return isCloningRepo.then(x => {
-        x.lock(); // Need to lock the repo as this object can be shared between requests
-        return x;
-      });
+      await repo.init(remotes);
     }
 
-    if (exists) {
-      const repo = await Repository.open(repoPath);
-      await config.fetch(repo);
-      return new GCRepo(repo);
-    } else {
-      const cloneRepoPromise = config.clone().then(repo => {
-        this.cloningRepos.delete(repoPath);
-        return new GCRepo(repo);
-      });
-      this.cloningRepos.set(repoPath, cloneRepoPromise);
-      return cloneRepoPromise;
+    if (this.repoIndexService.needToFetch(repoPath)) {
+      await repo.update(options);
     }
-  }
-
-  private async cloneWithMultiRemote(repoPath: string, remotes: RemoteDef[]) {
-    const repo = await Repository.init(repoPath, 0);
-    // Remotes cannot be added in parrelel.
-    for (const { name, remote } of remotes) {
-      await Remote.create(repo, name, `https://${remote}`);
-    }
-
-    return repo;
+    return repo.use(action);
   }
 
   public async validatePermissions(remotes: string[], options: GitBaseOptions) {

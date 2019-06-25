@@ -35,7 +35,7 @@ export class GitFetchService {
     this.cacheReady = fs.mkdir(this.repoCacheFolder);
   }
 
-  public async fetch(id: string, repo: Repository, options: GitBaseOptions): Promise<Repository> {
+  public async fetch(id: string, repo: Repository, options: GitBaseOptions = {}): Promise<Repository> {
     if (await this.needToFetch(id)) {
       return this.ensureSingleFetch(id, () => this.fetchAll(id, repo, options).then(() => repo));
     }

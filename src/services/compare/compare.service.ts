@@ -20,8 +20,8 @@ export class CompareService {
     head: string,
     options: GitBaseOptions = {},
   ): Promise<GitDiff | NotFoundException> {
-    const compareRepo = await this.getCompareRepo(remote, base, head, options);
-    return this.repoService.using(compareRepo.repo, async repo => {
+    return this.useCompareRepo(remote, base, head, options, async compareRepo => {
+      const repo = compareRepo.repo;
       const [baseCommit, headCommit] = await Promise.all([
         this.commitService.getCommit(repo, compareRepo.baseRef),
         this.commitService.getCommit(repo, compareRepo.headRef),
@@ -100,7 +100,13 @@ export class CompareService {
     return patches.map(x => toFileDiff(x)).slice(0, MAX_FILES_PER_DIFF);
   }
 
-  private async getCompareRepo(remote: string, base: string, head: string, options: GitBaseOptions) {
+  private async useCompareRepo<T>(
+    remote: string,
+    base: string,
+    head: string,
+    options: GitBaseOptions,
+    action: (p: any) => Promise<T>,
+  ): Promise<T> {
     const baseRef = GitUtils.parseRemoteReference(base, remote);
     const headRef = GitUtils.parseRemoteReference(head, remote);
 
@@ -108,7 +114,7 @@ export class CompareService {
     const headRemote = headRef.remote;
 
     if (baseRemote !== headRemote) {
-      const repo = await this.repoService.createForCompare(
+      return this.repoService.useForCompare(
         {
           name: "baser",
           remote: baseRemote,
@@ -118,11 +124,13 @@ export class CompareService {
           remote: headRemote,
         },
         options,
+        repo =>
+          action({ repo, baseRef: `refs/remotes/baser/${baseRef.ref}`, headRef: `refs/remotes/headr/${headRef.ref}` }),
       );
-      return { repo, baseRef: `refs/remotes/baser/${baseRef.ref}`, headRef: `refs/remotes/headr/${headRef.ref}` };
     } else {
-      const repo = await this.repoService.get(headRemote, options);
-      return { repo, baseRef: baseRef.ref, headRef: headRef.ref };
+      return this.repoService.use(headRemote, options, repo =>
+        action({ repo, baseRef: baseRef.ref, headRef: headRef.ref }),
+      );
     }
   }
 }

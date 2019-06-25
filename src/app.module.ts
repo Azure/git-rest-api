@@ -25,6 +25,7 @@ import {
   PermissionService,
   RepoService,
 } from "./services";
+import { RepoIndexService } from "./services/repo-index";
 
 @Module({
   imports: [],
@@ -43,6 +44,7 @@ import {
     CommitService,
     ContentService,
     DiskUsageService,
+    RepoIndexService,
     {
       provide: APP_INTERCEPTOR,
       useClass: LoggingInterceptor,
