@@ -101,7 +101,7 @@ export class LocalRepo {
           );
         }),
       )
-      .subscribe(x => {
+      .subscribe(() => {
         this.dispose();
       });
   }
