@@ -59,6 +59,7 @@ export class RepoService {
     let repo = this.openedRepos.get(repoPath);
     if (!repo) {
       repo = new LocalRepo(repoPath, this.fs, this.repoIndexService);
+      this.openedRepos.set(repoPath, repo);
       repo.onDestroy.subscribe(() => {
         this.openedRepos.delete(repoPath);
       });

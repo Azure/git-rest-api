@@ -118,6 +118,7 @@ export class LocalRepo {
 
   public async init(remotes: RemoteDef[]): Promise<void> {
     this.state.next(initialState);
+    console.log(`INIT repo ${this.path}`);
     const repo = await this.loadRepo(remotes);
     this.state.next({ ...this.state.value, status: LocalRepoStatus.Ready, repo });
   }
@@ -148,7 +149,7 @@ export class LocalRepo {
       status: LocalRepoStatus.Ready,
       needToFetch: false,
     });
-    this.state.next({ ...state, reading: state.reading + 1 });
+    this.state.next({ ...state, reading: state.reading + 1, waitingRead: state.waitingRead - 1 });
     try {
       return await action(state.repo);
     } finally {
@@ -164,8 +165,10 @@ export class LocalRepo {
 
   private async loadRepo(remotes: RemoteDef[]) {
     if (await this.fs.exists(this.path)) {
+      console.log(`Exists? ${this.path}`);
       return Repository.open(this.path);
     } else {
+      console.log(`Not Exists? ${this.path}`);
       const repo = await Repository.init(this.path, 1);
       for (const { name, remote: value } of remotes) {
         await Remote.create(repo, name, `https://${value}`);
