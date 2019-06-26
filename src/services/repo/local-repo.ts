@@ -93,6 +93,14 @@ export class LocalRepo {
   constructor(public readonly path: string, private fs: FSService, private repoIndex: RepoIndexService) {
     this.state
       .pipe(
+        tap(state => {
+          if (state.reading < 0) {
+            this.logger.error("Reading count is less than 0. This should never have happened", { state });
+          }
+          if (state.waitingRead < 0) {
+            this.logger.error("Waiting to read count is less than 0. This should never have happened", { state });
+          }
+        }),
         debounceTime(100), // Give a 100ms timeout before closing
         filter(x => {
           return (
@@ -153,7 +161,7 @@ export class LocalRepo {
       status: LocalRepoStatus.Ready,
       needToFetch: false,
     });
-    this.state.next({ ...state, reading: state.reading + 1, waitingRead: state.waitingRead - 1 });
+    this.state.next({ ...state, reading: this.state.value.reading + 1, waitingRead: state.waitingRead - 1 });
     try {
       return await action(state.repo);
     } finally {
