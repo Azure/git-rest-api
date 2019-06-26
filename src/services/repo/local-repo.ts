@@ -125,6 +125,10 @@ export class LocalRepo {
 
   public async update(options: GitBaseOptions = {}) {
     const state = this.state.value;
+    // If already updating or waiting to update
+    if (state.needToFetch || state.status === LocalRepoStatus.Updating) {
+      return;
+    }
     this.state.next({ ...state, needToFetch: true });
     const readyState = await this.waitForState<ReadyToFetchState>({
       status: LocalRepoStatus.Ready,
@@ -158,7 +162,7 @@ export class LocalRepo {
           `Unexpected state changed occured for repo while reading ${this.path}. Status: ${this.state.value.status}`,
         );
       } else {
-        this.state.next({ ...this.state.value, reading: state.reading - 1 });
+        this.state.next({ ...this.state.value, reading: this.state.value.reading - 1 });
       }
     }
   }
@@ -166,15 +170,21 @@ export class LocalRepo {
   private async loadRepo(remotes: RemoteDef[]) {
     if (await this.fs.exists(this.path)) {
       console.log(`Exists? ${this.path}`);
-      return Repository.open(this.path);
+      try {
+        return await Repository.open(this.path);
+      } catch (error) {
+        this.logger.error("Failed to open repository. Deleting it");
+        await this.fs.rm(this.path);
+      }
     } else {
       console.log(`Not Exists? ${this.path}`);
-      const repo = await Repository.init(this.path, 1);
-      for (const { name, remote: value } of remotes) {
-        await Remote.create(repo, name, `https://${value}`);
-      }
-      return repo;
     }
+
+    const repo = await Repository.init(this.path, 1);
+    for (const { name, remote: value } of remotes) {
+      await Remote.create(repo, name, `https://${value}`);
+    }
+    return repo;
   }
 
   private async updateRepo(repo: Repository, options: GitBaseOptions) {
