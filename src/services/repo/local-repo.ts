@@ -161,7 +161,7 @@ export class LocalRepo {
       status: LocalRepoStatus.Ready,
       needToFetch: false,
     });
-    this.state.next({ ...state, reading: this.state.value.reading + 1, waitingRead: state.waitingRead - 1 });
+    this.state.next({ ...state, reading: this.state.value.reading + 1, waitingRead: this.state.value.waitingRead - 1 });
     try {
       return await action(state.repo);
     } finally {
