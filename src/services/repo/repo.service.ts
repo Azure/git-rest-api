@@ -64,12 +64,15 @@ export class RepoService {
         this.openedRepos.delete(repoPath);
       });
       await repo.init(remotes);
+    } else {
+      repo.ref();
     }
-
     if (this.repoIndexService.needToFetch(repoPath)) {
       await repo.update(options);
     }
-    return repo.use(action);
+    const response = await repo.use(action);
+    repo.unref();
+    return response;
   }
 
   public async validatePermissions(remotes: string[], options: GitBaseOptions) {

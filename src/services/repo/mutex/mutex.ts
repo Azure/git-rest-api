@@ -1,15 +1,24 @@
 import uuid from "uuid/v4";
 
-interface Lock {
+export interface Lock {
   readonly id: string;
   readonly release: () => void;
 }
 
-interface LockOptions {
+export interface LockOptions {
   exclusive: boolean;
 }
 
 export class Mutex {
+  public get pending() {
+    return !(
+      this.sharedLocks.size === 0 &&
+      this.exclusiveLocks.size === 0 &&
+      this.sharedQueue.length === 0 &&
+      this.exclusiveQueue.length === 0
+    );
+  }
+
   private readonly sharedLocks = new Set<string>();
   private readonly exclusiveLocks = new Set<string>();
   private readonly exclusiveQueue: Array<(lock: Lock) => void> = [];
