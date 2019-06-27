@@ -1,11 +1,12 @@
 import { NotFoundException } from "@nestjs/common";
 import { Cred, Fetch, FetchOptions, Remote, Repository } from "nodegit";
 import { BehaviorSubject, Subject } from "rxjs";
-import { filter, take, first, debounceTime, tap } from "rxjs/operators";
+import { debounceTime, filter } from "rxjs/operators";
 
 import { Logger } from "../../core";
 import { FSService } from "../fs";
 import { RepoIndexService } from "../repo-index";
+import { StateMutex } from "./mutex";
 import { GitBaseOptions } from "./repo.service";
 
 export function credentialsCallback(options: GitBaseOptions): () => Cred {
@@ -26,152 +27,82 @@ export enum LocalRepoStatus {
   Initializing = "initializing",
   Updating = "updating",
   Deleting = "deleting",
-  Ready = "ready",
+  Idle = "idle",
+  Reading = "reading",
 }
-
-interface InitializingState {
-  readonly status: LocalRepoStatus.Initializing;
-  readonly repo: undefined;
-  readonly needToFetch: boolean;
-  readonly reading: 0;
-  readonly waitingRead: number;
-}
-
-interface UpdatingState {
-  readonly status: LocalRepoStatus.Updating;
-  readonly repo: Repository;
-  readonly needToFetch: boolean;
-  readonly reading: 0;
-  readonly waitingRead: number;
-}
-
-interface ReadyToFetchState {
-  readonly status: LocalRepoStatus.Ready;
-  readonly repo: Repository;
-  readonly needToFetch: true;
-  readonly reading: 0;
-  readonly waitingRead: number;
-}
-
-interface ReadyState {
-  readonly status: LocalRepoStatus.Ready;
-  readonly repo: Repository;
-  readonly needToFetch: boolean;
-  readonly reading: number;
-  readonly waitingRead: number;
-}
-
-interface DeletingState {
-  readonly status: LocalRepoStatus.Deleting;
-  readonly repo: Repository;
-  readonly needToFetch: boolean;
-  readonly reading: 0;
-  readonly waitingRead: number;
-}
-
-type LocalRepoState = InitializingState | UpdatingState | ReadyToFetchState | ReadyState | DeletingState;
 
 export interface RemoteDef {
   name: string;
   remote: string;
 }
 
-const initialState: InitializingState = Object.freeze({
-  status: LocalRepoStatus.Initializing,
-  repo: undefined,
-  needToFetch: false,
-  reading: 0,
-  waitingRead: 0,
-});
-
 export class LocalRepo {
   public onDestroy = new Subject();
 
+  private repo?: Repository;
+  private currentUpdate?: Promise<void>;
+
+  private mutex = new StateMutex<LocalRepoStatus, LocalRepoStatus.Reading>(
+    LocalRepoStatus.Idle,
+    LocalRepoStatus.Initializing,
+  );
+
   private logger = new Logger("LocalRepo");
-  private state = new BehaviorSubject<LocalRepoState>(initialState);
+  private refs = new BehaviorSubject(1); // Automatically start with a reference
 
   constructor(public readonly path: string, private fs: FSService, private repoIndex: RepoIndexService) {
-    this.state
+    this.refs
       .pipe(
-        tap(state => {
-          if (state.reading < 0) {
-            this.logger.error("Reading count is less than 0. This should never have happened", { state });
-          }
-          if (state.waitingRead < 0) {
-            this.logger.error("Waiting to read count is less than 0. This should never have happened", { state });
-          }
-        }),
         debounceTime(100), // Give a 100ms timeout before closing
-        filter(x => {
-          return (
-            (x.status === LocalRepoStatus.Ready && x.reading === 0 && x.waitingRead === 0 && !x.needToFetch) ||
-            x.status === LocalRepoStatus.Deleting
-          );
-        }),
+        filter(x => x === 0),
       )
       .subscribe(() => {
         this.dispose();
       });
   }
 
+  public ref() {
+    const refs = this.refs.value;
+    this.refs.next(refs + 1);
+  }
+
+  public unref() {
+    this.refs.next(this.refs.value - 1);
+  }
+
   public dispose() {
-    const state = this.state.value;
-    if (state.repo) {
-      state.repo.cleanup();
+    if (this.repo) {
+      this.repo.cleanup();
     }
-    this.state.complete();
+    this.refs.complete();
     this.onDestroy.next();
     this.onDestroy.complete();
   }
 
   public async init(remotes: RemoteDef[]): Promise<void> {
-    this.state.next(initialState);
-    console.log(`INIT repo ${this.path}`);
-    const repo = await this.loadRepo(remotes);
-    this.state.next({ ...this.state.value, status: LocalRepoStatus.Ready, repo });
+    const lock = await this.mutex.lock(LocalRepoStatus.Initializing, { exclusive: true });
+    this.repo = await this.loadRepo(remotes);
+    lock.release();
   }
 
   public async update(options: GitBaseOptions = {}) {
-    const state = this.state.value;
-    // If already updating or waiting to update
-    if (state.needToFetch || state.status === LocalRepoStatus.Updating) {
-      return;
+    if (!this.currentUpdate) {
+      this.currentUpdate = this.lockAndUpdate(options);
     }
-    this.state.next({ ...state, needToFetch: true });
-    const readyState = await this.waitForState<ReadyToFetchState>({
-      status: LocalRepoStatus.Ready,
-      reading: 0,
-      needToFetch: true,
-    });
-    this.state.next({ ...readyState, status: LocalRepoStatus.Updating, needToFetch: false });
-
-    await this.updateRepo(readyState.repo, options);
-    if (this.state.value.status !== LocalRepoStatus.Updating) {
-      this.logger.error(
-        `Unexpected state changed occured for repo while updating ${this.path}. Status: ${this.state.value.status}`,
-      );
-      return;
-    }
-    this.state.next({ ...this.state.value, status: LocalRepoStatus.Ready });
+    return this.currentUpdate;
   }
 
   public async use<T>(action: (repo: Repository) => Promise<T>): Promise<T> {
-    this.state.next({ ...this.state.value, waitingRead: this.state.value.waitingRead + 1 });
-    const state = await this.waitForState<ReadyState>({
-      status: LocalRepoStatus.Ready,
-      needToFetch: false,
-    });
-    this.state.next({ ...state, reading: this.state.value.reading + 1, waitingRead: this.state.value.waitingRead - 1 });
+    const lock = await this.mutex.lock(LocalRepoStatus.Reading);
+
+    if (!this.repo) {
+      throw new Error("Repo should have been loaded. Was init called");
+    }
+
     try {
-      return await action(state.repo);
+      return await action(this.repo);
     } finally {
-      if (this.state.value.status !== LocalRepoStatus.Ready) {
-        this.logger.error(
-          `Unexpected state changed occured for repo while reading ${this.path}. Status: ${this.state.value.status}`,
-        );
-      } else {
-        this.state.next({ ...this.state.value, reading: this.state.value.reading - 1 });
-      }
+      lock.release();
     }
   }
 
@@ -195,6 +126,18 @@ export class LocalRepo {
     return repo;
   }
 
+  private async lockAndUpdate(options: GitBaseOptions = {}) {
+    const lock = await this.mutex.lock(LocalRepoStatus.Updating, { exclusive: true });
+    if (!this.repo) {
+      throw new Error("Repo should have been loaded. Was init called");
+    }
+    try {
+      await this.updateRepo(this.repo, options);
+    } finally {
+      lock.release();
+    }
+  }
+
   private async updateRepo(repo: Repository, options: GitBaseOptions) {
     try {
       await repo.fetchAll({
@@ -207,23 +150,5 @@ export class LocalRepo {
     } catch {
       throw new NotFoundException();
     }
-  }
-
-  private async waitForState<T extends LocalRepoState>(condition: Partial<T>): Promise<T> {
-    const keys: Array<keyof LocalRepoState> = Object.keys(condition) as any;
-    const state = await this.state
-      .pipe(
-        filter(x => {
-          for (const key of keys) {
-            if (x[key] !== condition[key]) {
-              return false;
-            }
-          }
-          return true;
-        }),
-        first(),
-      )
-      .toPromise();
-    return state as T;
   }
 }
