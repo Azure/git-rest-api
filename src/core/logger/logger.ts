@@ -7,10 +7,14 @@ export interface LogMetadata {
   [key: string]: any;
 }
 
-export class Logger {
-  private logger: winston.Logger;
+type Class = new (...args: any[]) => any;
 
-  constructor(private context: string) {
+export class Logger {
+  private readonly logger: winston.Logger;
+  private readonly context: string;
+
+  constructor(context: string | Class) {
+    this.context = typeof context === "string" ? context : context.constructor.name;
     this.logger = WINSTON_LOGGER;
   }
 

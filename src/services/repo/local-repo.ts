@@ -87,7 +87,9 @@ export class LocalRepo {
 
   public async update(options: GitBaseOptions = {}) {
     if (!this.currentUpdate) {
-      this.currentUpdate = this.lockAndUpdate(options);
+      this.currentUpdate = this.lockAndUpdate(options).then(() => {
+        this.currentUpdate = undefined;
+      });
     }
     return this.currentUpdate;
   }
@@ -108,15 +110,12 @@ export class LocalRepo {
 
   private async loadRepo(remotes: RemoteDef[]) {
     if (await this.fs.exists(this.path)) {
-      console.log(`Exists? ${this.path}`);
       try {
         return await Repository.open(this.path);
       } catch (error) {
         this.logger.error("Failed to open repository. Deleting it");
         await this.fs.rm(this.path);
       }
-    } else {
-      console.log(`Not Exists? ${this.path}`);
     }
 
     const repo = await Repository.init(this.path, 1);

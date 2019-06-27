@@ -2,7 +2,7 @@ import { Injectable, NotFoundException } from "@nestjs/common";
 import { Repository } from "nodegit";
 import path from "path";
 
-import { RepoAuth } from "../../core";
+import { Logger, RepoAuth } from "../../core";
 import { FSService } from "../fs";
 import { GitFetchService } from "../git-fetch";
 import { GitRemotePermission, PermissionService } from "../permission";
@@ -19,6 +19,9 @@ export class RepoService {
    * Map that contains a key and promise when cloning a given repo
    */
   private openedRepos = new Map<string, LocalRepo>();
+  private deletingRepos = new Map<string, Promise<boolean>>();
+
+  private logger = new Logger(RepoService);
 
   constructor(
     private fs: FSService,
@@ -50,6 +53,24 @@ export class RepoService {
     return this.useWithRemotes(repoPath, options, [base, head], action);
   }
 
+  public async deleteLocalRepo(repoPath: string): Promise<boolean> {
+    const existingDeletion = this.deletingRepos.get(repoPath);
+    if (existingDeletion) {
+      return existingDeletion;
+    }
+    if (this.openedRepos.has(repoPath)) {
+      this.logger.info("Can't delete this repo has its opened");
+      return false;
+    }
+
+    const promise = this.fs.rm(repoPath).then(() => {
+      this.deletingRepos.delete(repoPath);
+      return true;
+    });
+    this.deletingRepos.set(repoPath, promise);
+    return promise;
+  }
+
   private async useWithRemotes<T>(
     repoPath: string,
     options: GitBaseOptions,
@@ -57,6 +78,13 @@ export class RepoService {
     action: (repo: Repository) => Promise<T>,
   ): Promise<T> {
     let repo = this.openedRepos.get(repoPath);
+
+    // If repo is deleting wait for it to be deleted and reinit again
+    const deletion = this.deletingRepos.get(repoPath);
+    if (deletion) {
+      await deletion;
+    }
+
     if (!repo) {
       repo = new LocalRepo(repoPath, this.fs, this.repoIndexService);
       this.openedRepos.set(repoPath, repo);
