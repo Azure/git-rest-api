@@ -2,7 +2,8 @@ import { Injectable } from "@nestjs/common";
 
 export interface LocalRepoReference {
   readonly path: string;
-  readonly lastFetch: number;
+  readonly lastOpened?: number;
+  readonly lastFetch?: number;
 }
 
 const FETCH_CACHE_EXPIRY = 30_000; // 30s;
@@ -13,11 +14,17 @@ export class RepoIndexService {
 
   public needToFetch(repoId: string): boolean {
     const repo = this.repos.get(repoId);
-    if (!repo) {
+    if (!repo || !repo.lastFetch) {
       return true;
     }
     const now = new Date().getTime();
     return now - repo.lastFetch > FETCH_CACHE_EXPIRY;
+  }
+
+  public markRepoAsOpened(repoId: string) {
+    const now = Date.now();
+    const existing = this.repos.get(repoId);
+    this.repos.set(repoId, { ...existing, path: repoId, lastOpened: now });
   }
 
   public markRepoAsFetched(repoId: string) {

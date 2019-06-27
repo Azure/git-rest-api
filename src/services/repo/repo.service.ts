@@ -79,6 +79,7 @@ export class RepoService {
     remotes: RemoteDef[],
     action: (repo: Repository) => Promise<T>,
   ): Promise<T> {
+    this.repoIndexService.markRepoAsOpened(repoPath);
     let repo = this.openedRepos.get(repoPath);
 
     // If repo is deleting wait for it to be deleted and reinit again
