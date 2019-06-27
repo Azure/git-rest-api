@@ -3,7 +3,7 @@ import { delay } from "../../utils";
 
 describe("Test branch controller", () => {
   it("doesn't conflict when getting the same repo twice at the same time", async () => {
-    await delay(1000);
+    await delay(2000);
     await deleteLocalRepo(UNENCODED_TEST_REPO);
     await delay(100);
     const responses = await Promise.all([
