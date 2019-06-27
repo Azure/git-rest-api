@@ -2,9 +2,9 @@ import { Injectable, NotFoundException } from "@nestjs/common";
 import { Repository } from "nodegit";
 import path from "path";
 
+import { Configuration } from "../../config";
 import { Logger, RepoAuth } from "../../core";
 import { FSService } from "../fs";
-import { GitFetchService } from "../git-fetch";
 import { GitRemotePermission, PermissionService } from "../permission";
 import { RepoIndexService } from "../repo-index";
 import { LocalRepo, RemoteDef } from "./local-repo";
@@ -15,6 +15,8 @@ export interface GitBaseOptions {
 
 @Injectable()
 export class RepoService {
+  public readonly repoCacheFolder = path.join(this.config.dataDir, "repos");
+
   /**
    * Map that contains a key and promise when cloning a given repo
    */
@@ -24,9 +26,9 @@ export class RepoService {
   private logger = new Logger(RepoService);
 
   constructor(
+    private config: Configuration,
     private fs: FSService,
     private repoIndexService: RepoIndexService,
-    private fetchService: GitFetchService,
     private permissionService: PermissionService,
   ) {}
 
@@ -116,8 +118,8 @@ export class RepoService {
 
   private getRepoMainPath(remote: string, namespace?: string) {
     if (namespace) {
-      return path.join(this.fetchService.repoCacheFolder, namespace, encodeURIComponent(remote));
+      return path.join(this.repoCacheFolder, namespace, encodeURIComponent(remote));
     }
-    return path.join(this.fetchService.repoCacheFolder, encodeURIComponent(remote));
+    return path.join(this.repoCacheFolder, encodeURIComponent(remote));
   }
 }
