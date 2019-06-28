@@ -1,7 +1,7 @@
 import nodegit from "nodegit";
 
 import { RepoAuth } from "../../../core";
-import { delay } from "../../../utils";
+import { delay, Deferred } from "../../../utils";
 import { LocalRepo } from "./local-repo";
 
 const origin = {
@@ -136,6 +136,30 @@ describe("LocalRepo", () => {
       resolve!();
       await Promise.all([update1, update2, update3]);
       expect(repoSpy.fetchAll).toHaveBeenCalledTimes(1);
+    });
+
+    it("should wait for uses to complete before updating", async () => {
+      const use1Deferer = new Deferred();
+      const use2Deferer = new Deferred();
+      const use3Deferer = new Deferred();
+
+      const use1 = repo.use(() => use1Deferer.promise);
+      const use2 = repo.use(() => use2Deferer.promise);
+
+      const update = repo.update();
+
+      const use3 = repo.use(() => use3Deferer.promise);
+
+      expect(repoSpy.fetchAll).not.toHaveBeenCalled();
+
+      use1Deferer.resolve();
+      use2Deferer.resolve();
+      await use1;
+      await use2;
+      await update;
+      expect(repoSpy.fetchAll).toHaveBeenCalledTimes(1);
+      use3Deferer.resolve();
+      await use3;
     });
   });
 
