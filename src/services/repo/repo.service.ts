@@ -7,7 +7,7 @@ import { Logger, RepoAuth } from "../../core";
 import { FSService } from "../fs";
 import { GitRemotePermission, PermissionService } from "../permission";
 import { RepoIndexService } from "../repo-index";
-import { LocalRepo, RemoteDef } from "./local-repo";
+import { LocalRepo, RemoteDef } from "./local-repo/local-repo";
 
 export interface GitBaseOptions {
   auth?: RepoAuth;
