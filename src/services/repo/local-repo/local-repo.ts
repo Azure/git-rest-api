@@ -81,7 +81,9 @@ export class LocalRepo {
 
   public async init(remotes: RemoteDef[]): Promise<void> {
     const lock = await this.mutex.lock(LocalRepoStatus.Initializing, { exclusive: true });
-    this.repo = await this.loadRepo(remotes);
+    if (!this.repo) {
+      this.repo = await this.loadRepo(remotes);
+    }
     lock.release();
   }
 

@@ -1,10 +1,11 @@
 import nodegit from "nodegit";
 
+import { delay } from "../../../utils";
 import { LocalRepo } from "./local-repo";
 
 const origin = {
   name: "origin",
-  remote: "https://example.com/git-rest-api.git",
+  remote: "example.com/git-rest-api.git",
 };
 
 describe("LocalRepo", () => {
@@ -12,6 +13,7 @@ describe("LocalRepo", () => {
 
   const fsSpy = {
     exists: jest.fn(),
+    rm: jest.fn(),
   };
   const repoIndexSpy = {
     markRepoAsOpened: jest.fn(),
@@ -28,7 +30,9 @@ describe("LocalRepo", () => {
     init: jest.fn(() => Promise.resolve(repoSpy)),
   };
 
-  const MockRemote = {};
+  const MockRemote = {
+    create: jest.fn(),
+  };
 
   beforeEach(() => {
     jest.useFakeTimers();
@@ -39,6 +43,62 @@ describe("LocalRepo", () => {
 
     repo = new LocalRepo("foo", fsSpy as any, repoIndexSpy as any);
     repo.onDestroy.subscribe(onDestroy);
+  });
+
+  describe("init the repo", () => {
+    it("opens the existing one if the path exists", async () => {
+      fsSpy.exists.mockResolvedValue(true);
+      await repo.init([origin]);
+      expect(MockRepository.open).toHaveBeenCalledTimes(1);
+      expect(MockRepository.open).toHaveBeenCalledWith("foo");
+      expect(MockRepository.init).not.toHaveBeenCalled();
+
+      expect(fsSpy.rm).not.toHaveBeenCalled();
+    });
+
+    it("init the repo if the path doesn't exists", async () => {
+      fsSpy.exists.mockResolvedValue(false);
+      await repo.init([origin]);
+      expect(MockRepository.init).toHaveBeenCalledTimes(1);
+      expect(MockRepository.init).toHaveBeenCalledWith("foo", 1);
+      expect(MockRepository.open).not.toHaveBeenCalled();
+
+      expect(MockRemote.create).toHaveBeenCalledTimes(1);
+      expect(MockRemote.create).toHaveBeenCalledWith(repoSpy, "origin", "https://example.com/git-rest-api.git");
+    });
+
+    it("delete then reinit the repo if it fails to open when the path exists", async () => {
+      fsSpy.exists.mockResolvedValue(true);
+      MockRepository.open.mockRejectedValue(new Error("Failed to open repo"));
+      await repo.init([origin]);
+      expect(MockRepository.open).toHaveBeenCalledTimes(1);
+      expect(MockRepository.open).toHaveBeenCalledWith("foo");
+
+      expect(fsSpy.rm).toHaveBeenCalledTimes(1);
+      expect(fsSpy.rm).toHaveBeenCalledWith("foo");
+
+      expect(MockRepository.init).toHaveBeenCalledTimes(1);
+      expect(MockRepository.init).toHaveBeenCalledWith("foo", 1);
+
+      expect(MockRemote.create).toHaveBeenCalledTimes(1);
+      expect(MockRemote.create).toHaveBeenCalledWith(repoSpy, "origin", "https://example.com/git-rest-api.git");
+    });
+
+    it("calling init again doesn't do anything", async () => {
+      fsSpy.exists.mockResolvedValue(true);
+      const init1 = repo.init([origin]);
+      await delay();
+      const init2 = repo.init([origin]);
+      await init1;
+      await init2;
+      expect(MockRepository.open).toHaveBeenCalledTimes(1);
+      expect(MockRepository.init).not.toHaveBeenCalled();
+
+      await repo.init([origin]);
+      expect(MockRepository.open).toHaveBeenCalledTimes(1);
+      expect(MockRepository.init).not.toHaveBeenCalled();
+      expect(fsSpy.rm).not.toHaveBeenCalled();
+    });
   });
 
   describe("dispose of the repo when nothing is using it", () => {
