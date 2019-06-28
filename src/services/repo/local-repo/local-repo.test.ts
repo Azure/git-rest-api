@@ -1,7 +1,7 @@
 import nodegit from "nodegit";
 
 import { RepoAuth } from "../../../core";
-import { delay, Deferred } from "../../../utils";
+import { Deferred, delay } from "../../../utils";
 import { LocalRepo } from "./local-repo";
 
 const origin = {
