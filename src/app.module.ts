@@ -1,5 +1,6 @@
 import { MiddlewareConsumer, Module, NestModule } from "@nestjs/common";
 import { APP_INTERCEPTOR } from "@nestjs/core";
+import { Connection } from "typeorm";
 
 import { Configuration } from "./config";
 import {
@@ -23,6 +24,7 @@ import {
   PermissionCacheService,
   PermissionService,
   RepoService,
+  createDBConnection,
 } from "./services";
 import { RepoIndexService } from "./services/repo-index";
 
@@ -50,6 +52,11 @@ import { RepoIndexService } from "./services/repo-index";
     {
       provide: Telemetry,
       useFactory: (config: Configuration) => createTelemetry(config),
+      inject: [Configuration],
+    },
+    {
+      provide: Connection,
+      useFactory: (config: Configuration) => createDBConnection(config),
       inject: [Configuration],
     },
   ],

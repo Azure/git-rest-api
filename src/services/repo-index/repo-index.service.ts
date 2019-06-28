@@ -1,6 +1,9 @@
 import { Injectable } from "@nestjs/common";
+import { Connection, Repository } from "typeorm";
 
-export interface LocalRepoReference {
+import { RepoReference } from "../../models";
+
+export interface IRepoReference {
   readonly path: string;
   readonly lastUse: number;
   readonly lastFetch?: number;
@@ -10,7 +13,19 @@ const FETCH_CACHE_EXPIRY = 30_000; // 30s;
 
 @Injectable()
 export class RepoIndexService {
-  private readonly repos = new Map<string, LocalRepoReference>();
+  private readonly repos = new Map<string, IRepoReference>();
+  private repository: Repository<RepoReference>;
+
+  constructor(connection: Connection) {
+    this.repository = connection.getRepository(RepoReference);
+  }
+
+  public async init() {
+    const repos = await this.repository.find();
+    for (const repo of repos) {
+      this.repos.set(repo.path, { ...repo });
+    }
+  }
 
   public get size() {
     return this.repos.size;

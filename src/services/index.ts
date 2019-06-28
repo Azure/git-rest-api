@@ -8,3 +8,4 @@ export * from "./fs";
 export * from "./repo";
 export * from "./permission";
 export * from "./http";
+export * from "./db";
