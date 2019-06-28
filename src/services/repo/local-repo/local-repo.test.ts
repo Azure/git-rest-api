@@ -1,5 +1,6 @@
 import nodegit from "nodegit";
 
+import { RepoAuth } from "../../../core";
 import { delay } from "../../../utils";
 import { LocalRepo } from "./local-repo";
 
@@ -24,6 +25,7 @@ describe("LocalRepo", () => {
 
   const repoSpy = {
     cleanup: jest.fn(),
+    fetchAll: jest.fn(() => Promise.resolve()),
   };
   const MockRepository = {
     open: jest.fn(() => Promise.resolve(repoSpy)),
@@ -35,7 +37,6 @@ describe("LocalRepo", () => {
   };
 
   beforeEach(() => {
-    jest.useFakeTimers();
     jest.clearAllMocks();
 
     nodegit.Repository = MockRepository as any;
@@ -69,7 +70,7 @@ describe("LocalRepo", () => {
 
     it("delete then reinit the repo if it fails to open when the path exists", async () => {
       fsSpy.exists.mockResolvedValue(true);
-      MockRepository.open.mockRejectedValue(new Error("Failed to open repo"));
+      MockRepository.open.mockRejectedValueOnce(new Error("Failed to open repo"));
       await repo.init([origin]);
       expect(MockRepository.open).toHaveBeenCalledTimes(1);
       expect(MockRepository.open).toHaveBeenCalledWith("foo");
@@ -85,7 +86,6 @@ describe("LocalRepo", () => {
     });
 
     it("calling init again doesn't do anything", async () => {
-      jest.useRealTimers();
       fsSpy.exists.mockResolvedValue(true);
       const init1 = await repo.init([origin]);
       await delay();
@@ -102,7 +102,48 @@ describe("LocalRepo", () => {
     });
   });
 
+  describe("Update and use", () => {
+    beforeEach(async () => {
+      fsSpy.exists.mockResolvedValue(true);
+      await repo.init([origin]);
+    });
+
+    it("use the repo", async () => {
+      const response = await repo.use(async r => {
+        expect(r).toBe(repoSpy);
+        return "My-result";
+      });
+
+      expect(response).toEqual("My-result");
+    });
+
+    it("update the repo", async () => {
+      const options = {
+        auth: new RepoAuth(),
+      };
+      await repo.update(options);
+      expect(repoSpy.fetchAll).toHaveBeenCalledTimes(1);
+    });
+
+    it("doesn't trigger multiple updates if one is already in progress", async () => {
+      let resolve: () => void;
+      const fetchPromise = new Promise<void>(r => (resolve = r));
+      repoSpy.fetchAll.mockImplementation(() => fetchPromise);
+      const update1 = repo.update();
+      const update2 = repo.update();
+      await delay();
+      const update3 = repo.update();
+      resolve!();
+      await Promise.all([update1, update2, update3]);
+      expect(repoSpy.fetchAll).toHaveBeenCalledTimes(1);
+    });
+  });
+
   describe("dispose of the repo when nothing is using it", () => {
+    beforeEach(() => {
+      jest.useFakeTimers();
+    });
+
     it("does nothing if the repo wasn't opened", () => {
       expect(onDestroy).not.toHaveBeenCalled();
       repo.unref();

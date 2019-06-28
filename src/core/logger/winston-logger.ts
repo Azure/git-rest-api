@@ -59,6 +59,10 @@ if (config.nodeEnv === "development") {
   );
 }
 
+if (config.nodeEnv === "test") {
+  consoleTransport.silent = true;
+}
+
 export const WINSTON_LOGGER_OPTIONS: LoggerOptions = {
   transports: [
     new winston.transports.Console(consoleTransport),
