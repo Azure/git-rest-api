@@ -85,8 +85,9 @@ describe("LocalRepo", () => {
     });
 
     it("calling init again doesn't do anything", async () => {
+      jest.useRealTimers();
       fsSpy.exists.mockResolvedValue(true);
-      const init1 = repo.init([origin]);
+      const init1 = await repo.init([origin]);
       await delay();
       const init2 = repo.init([origin]);
       await init1;
