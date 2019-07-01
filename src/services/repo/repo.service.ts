@@ -70,7 +70,6 @@ export class RepoService {
       .then(() => true)
       .finally(() => {
         this.deletingRepos.delete(repoPath);
-        console.log("Got ere");
         this.repoIndexService.markRepoAsRemoved(repoPath);
       });
 

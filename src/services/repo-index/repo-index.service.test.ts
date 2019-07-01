@@ -1,3 +1,4 @@
+import { RepoReferenceRecord } from "../../models";
 import { RepoIndexService } from "./repo-index.service";
 
 describe("RepoIndexService", () => {
@@ -6,15 +7,24 @@ describe("RepoIndexService", () => {
   const nowSpy = jest.fn(() => now);
   let originalNow: typeof Date.now;
 
+  const dbRepoSpy = {};
+  const connectionSpy = {
+    getRepository: jest.fn(() => dbRepoSpy),
+  };
   beforeEach(() => {
     originalNow = Date.now;
     now = Date.now();
     Date.now = nowSpy;
-    service = new RepoIndexService();
+    service = new RepoIndexService(connectionSpy as any);
   });
 
   afterEach(() => {
     Date.now = originalNow;
+  });
+
+  it("Calls the repo", () => {
+    expect(connectionSpy.getRepository).toHaveBeenCalledTimes(1);
+    expect(connectionSpy.getRepository).toHaveBeenCalledWith(RepoReferenceRecord);
   });
 
   it("get the least recently used repos", () => {
