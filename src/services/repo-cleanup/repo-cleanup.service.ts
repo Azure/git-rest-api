@@ -29,8 +29,9 @@ export class RepoCleanupService {
           if (this.repoIndexService.size === 0) {
             this.logger.error("There isn't any repo cached on disk. Space is most likely used by something else.");
           }
+          const total = this.repoIndexService.size;
           this.logger.warning(
-            `Disk availability is low. Removing least recently used repos. Total repos: ${this.repoIndexService.size}, Removing: ${count}`,
+            `Disk availability is low. Removing least recently used repos. Total repos: ${total}, Removing: ${count}`,
           );
           const repos = this.repoIndexService.getLeastUsedRepos(count);
           return from(Promise.all(repos.map(x => this.repoService.deleteLocalRepo(x)))).pipe(delay(2000));
