@@ -1,1 +1,1 @@
-export * from "./local-repo"
+export * from "./local-repo";

@@ -74,9 +74,13 @@ export class LocalRepo {
     if (this.repo) {
       this.repo.cleanup();
     }
-    this.refs.complete();
-    this.onDestroy.next();
-    this.onDestroy.complete();
+    if (!this.refs.closed) {
+      this.refs.complete();
+    }
+    if (!this.onDestroy.closed) {
+      this.onDestroy.next();
+      this.onDestroy.complete();
+    }
   }
 
   public async init(remotes: RemoteDef[]): Promise<void> {

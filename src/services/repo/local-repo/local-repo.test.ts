@@ -46,6 +46,12 @@ describe("LocalRepo", () => {
     repo.onDestroy.subscribe(onDestroy);
   });
 
+  afterEach(() => {
+    if (repo) {
+      repo.dispose();
+    }
+  });
+
   describe("init the repo", () => {
     it("opens the existing one if the path exists", async () => {
       fsSpy.exists.mockResolvedValue(true);
@@ -165,7 +171,17 @@ describe("LocalRepo", () => {
 
   describe("dispose of the repo when nothing is using it", () => {
     beforeEach(() => {
+      repo.dispose();
       jest.useFakeTimers();
+      jest.clearAllMocks();
+
+      repo = new LocalRepo("foo", fsSpy as any, repoIndexSpy as any);
+      repo.onDestroy.subscribe(onDestroy);
+    });
+
+    afterEach(() => {
+      jest.clearAllTimers();
+      jest.useRealTimers();
     });
 
     it("does nothing if the repo wasn't opened", () => {
