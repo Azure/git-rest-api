@@ -23,9 +23,9 @@ import {
   HttpService,
   PermissionCacheService,
   PermissionService,
+  RepoCleanupService,
   RepoService,
   createDBConnection,
-  RepoCleanupService,
 } from "./services";
 import { RepoIndexService } from "./services/repo-index";
 

@@ -65,12 +65,23 @@ export class RepoIndexService {
   public markRepoAsOpened(repoId: string) {
     const now = Date.now();
     const existing = this.repos.get(repoId);
-    void this.update({ ...existing, path: repoId, lastUse: now });
+    this.tryAndLog(() => this.update({ ...existing, path: repoId, lastUse: now }));
   }
 
   public markRepoAsFetched(repoId: string) {
     const now = Date.now();
     const existing = this.repos.get(repoId);
-    void this.update({ ...existing, path: repoId, lastFetch: now, lastUse: now });
+    this.tryAndLog(() => this.update({ ...existing, path: repoId, lastFetch: now, lastUse: now }));
+  }
+
+  public markRepoAsRemoved(repoId: string) {
+    this.repos.delete(repoId);
+    this.tryAndLog(() => this.repository.delete({ path: repoId }));
+  }
+
+  private tryAndLog(f: () => Promise<unknown>) {
+    f().catch(error => {
+      this.logger.error("Error occured", error);
+    });
   }
 }
