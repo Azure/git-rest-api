@@ -1,6 +1,6 @@
 import { Injectable } from "@nestjs/common";
 import { from } from "rxjs";
-import { exhaustMap, filter } from "rxjs/operators";
+import { delay, exhaustMap, filter } from "rxjs/operators";
 
 import { Logger } from "../../core";
 import { DiskUsageService } from "../disk-usage";
@@ -33,7 +33,7 @@ export class RepoCleanupService {
             `Disk availability is low. Removing least recently used repos. Total repos: ${this.repoIndexService.size}, Removing: ${count}`,
           );
           const repos = this.repoIndexService.getLeastUsedRepos(count);
-          return from(Promise.all(repos.map(x => this.repoService.deleteLocalRepo(x))));
+          return from(Promise.all(repos.map(x => this.repoService.deleteLocalRepo(x)))).pipe(delay(2000));
         }),
       )
       .subscribe();
