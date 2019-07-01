@@ -4,9 +4,11 @@ import { Configuration } from "../../config";
 import { RepoReference } from "../../models";
 
 export async function createDBConnection(configuration: Configuration) {
-  return createConnection({
+  const connection = await createConnection({
     type: "sqlite",
     database: `${configuration.dataDir}/data.sqlite`,
     entities: [RepoReference],
   });
+  await connection.synchronize();
+  return connection;
 }

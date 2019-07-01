@@ -1,6 +1,7 @@
 import { Injectable } from "@nestjs/common";
 import { Connection, Repository } from "typeorm";
 
+import { Logger } from "../../core";
 import { RepoReference } from "../../models";
 
 export interface IRepoReference {
@@ -13,11 +14,15 @@ const FETCH_CACHE_EXPIRY = 30_000; // 30s;
 
 @Injectable()
 export class RepoIndexService {
+  private logger = new Logger(RepoIndexService);
   private readonly repos = new Map<string, IRepoReference>();
   private repository: Repository<RepoReference>;
 
   constructor(connection: Connection) {
     this.repository = connection.getRepository(RepoReference);
+    this.init().catch(e => {
+      this.logger.error("Failed to load data from database", e);
+    });
   }
 
   public async init() {
@@ -29,6 +34,16 @@ export class RepoIndexService {
 
   public get size() {
     return this.repos.size;
+  }
+
+  private async update(ref: IRepoReference) {
+    this.repos.set(ref.path, ref);
+
+    try {
+      await this.repository.insert(ref);
+    } catch (e) {
+      await this.repository.update({ path: ref.path }, ref);
+    }
   }
 
   public getLeastUsedRepos(count = 1): string[] {
@@ -50,12 +65,12 @@ export class RepoIndexService {
   public markRepoAsOpened(repoId: string) {
     const now = Date.now();
     const existing = this.repos.get(repoId);
-    this.repos.set(repoId, { ...existing, path: repoId, lastUse: now });
+    void this.update({ ...existing, path: repoId, lastUse: now });
   }
 
   public markRepoAsFetched(repoId: string) {
     const now = Date.now();
     const existing = this.repos.get(repoId);
-    this.repos.set(repoId, { ...existing, path: repoId, lastFetch: now, lastUse: now });
+    void this.update({ ...existing, path: repoId, lastFetch: now, lastUse: now });
   }
 }
