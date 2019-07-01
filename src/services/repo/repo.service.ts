@@ -65,10 +65,15 @@ export class RepoService {
       return false;
     }
 
-    const promise = this.fs.rm(repoPath).then(() => {
-      this.deletingRepos.delete(repoPath);
-      return true;
-    });
+    const promise = this.fs
+      .rm(repoPath)
+      .then(() => true)
+      .finally(() => {
+        this.deletingRepos.delete(repoPath);
+        console.log("Got ere");
+        this.repoIndexService.markRepoAsRemoved(repoPath);
+      });
+
     this.deletingRepos.set(repoPath, promise);
     return promise;
   }
