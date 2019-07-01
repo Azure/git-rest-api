@@ -27,7 +27,7 @@ export class Logger {
   }
 
   public warning(message: string, meta?: LogMetadata) {
-    this.logger.warning(message, this.processMetadata(meta));
+    this.logger.warn(message, this.processMetadata(meta));
   }
 
   public error(message: string | Error, meta?: LogMetadata) {

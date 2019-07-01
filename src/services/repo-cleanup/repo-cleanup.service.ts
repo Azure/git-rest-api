@@ -1,6 +1,6 @@
 import { Injectable } from "@nestjs/common";
-import { from } from "rxjs";
-import { delay, exhaustMap, filter } from "rxjs/operators";
+import { from, of } from "rxjs";
+import { catchError, delay, exhaustMap, filter } from "rxjs/operators";
 
 import { Logger } from "../../core";
 import { DiskUsageService } from "../disk-usage";
@@ -34,10 +34,20 @@ export class RepoCleanupService {
             `Disk availability is low. Removing least recently used repos. Total repos: ${total}, Removing: ${count}`,
           );
           const repos = this.repoIndexService.getLeastUsedRepos(count);
-          return from(Promise.all(repos.map(x => this.repoService.deleteLocalRepo(x)))).pipe(delay(2000));
+          return from(Promise.all(repos.map(x => this.repoService.deleteLocalRepo(x)))).pipe(
+            delay(2000),
+            catchError(error => {
+              this.logger.error("Error occured when deleting repos", { error });
+              return of(undefined);
+            }),
+          );
         }),
       )
-      .subscribe();
+      .subscribe({
+        error: error => {
+          this.logger.error("Error occured in repo cleanup", { error });
+        },
+      });
   }
 
   private getNumberOfReposToRemove() {
