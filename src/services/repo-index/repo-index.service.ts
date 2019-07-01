@@ -2,9 +2,9 @@ import { Injectable } from "@nestjs/common";
 import { Connection, Repository } from "typeorm";
 
 import { Logger } from "../../core";
-import { RepoReference } from "../../models";
+import { RepoReferenceRecord } from "../../models";
 
-export interface IRepoReference {
+export interface RepoReference {
   readonly path: string;
   readonly lastUse: number;
   readonly lastFetch?: number;
@@ -15,11 +15,11 @@ const FETCH_CACHE_EXPIRY = 30_000; // 30s;
 @Injectable()
 export class RepoIndexService {
   private logger = new Logger(RepoIndexService);
-  private readonly repos = new Map<string, IRepoReference>();
-  private repository: Repository<RepoReference>;
+  private readonly repos = new Map<string, RepoReference>();
+  private repository: Repository<RepoReferenceRecord>;
 
   constructor(connection: Connection) {
-    this.repository = connection.getRepository(RepoReference);
+    this.repository = connection.getRepository(RepoReferenceRecord);
     this.init().catch(e => {
       this.logger.error("Failed to load data from database", e);
     });
@@ -36,7 +36,7 @@ export class RepoIndexService {
     return this.repos.size;
   }
 
-  private async update(ref: IRepoReference) {
+  private async update(ref: RepoReference) {
     this.repos.set(ref.path, ref);
 
     try {

@@ -1,7 +1,7 @@
 import { Column, Entity, PrimaryColumn } from "typeorm";
 
-@Entity()
-export class RepoReference {
+@Entity({ name: "repo_references" })
+export class RepoReferenceRecord {
   @PrimaryColumn()
   public path!: string;
 
