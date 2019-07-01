@@ -25,6 +25,7 @@ import {
   PermissionService,
   RepoService,
   createDBConnection,
+  RepoCleanupService,
 } from "./services";
 import { RepoIndexService } from "./services/repo-index";
 
@@ -45,6 +46,7 @@ import { RepoIndexService } from "./services/repo-index";
     ContentService,
     DiskUsageService,
     RepoIndexService,
+    RepoCleanupService,
     {
       provide: APP_INTERCEPTOR,
       useClass: LoggingInterceptor,
@@ -62,9 +64,11 @@ import { RepoIndexService } from "./services/repo-index";
   ],
 })
 export class AppModule implements NestModule {
-  constructor(private diskUsage: DiskUsageService) {}
+  constructor(private diskUsage: DiskUsageService, private repoCleanupService: RepoCleanupService) {}
   public configure(consumer: MiddlewareConsumer) {
     this.diskUsage.startCollection();
+    this.repoCleanupService.start();
+
     consumer.apply(ContextMiddleware).forRoutes("*");
   }
 }
