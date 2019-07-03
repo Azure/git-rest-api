@@ -9,6 +9,10 @@ export interface LockOptions {
   exclusive: boolean;
 }
 
+/**
+ * Mutex supporting shared and exclusive locks.
+ * Exclusive locks have priority: If one is requested, following shared lock request will have to wait for the exclusive lock to be acquited and released
+ */
 export class Mutex {
   public get pending() {
     return !(
