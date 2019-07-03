@@ -7,7 +7,7 @@ export interface LogMetadata {
   [key: string]: any;
 }
 
-type Class = new (...args: any[]) => any;
+type Class = new (...args: any[]) => unknown;
 
 export class Logger {
   private readonly logger: winston.Logger;

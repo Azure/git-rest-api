@@ -36,6 +36,11 @@ export interface RemoteDef {
   remote: string;
 }
 
+/**
+ * Class referencing a local repo to manage concorrent actions and garbage collection.
+ * **DO NOT USE outside of the `RepoService`. There must be only on instance of a LocalRepo mapping to the same repository to work correctly**
+ * Use `RepoService` to access a local repo.
+ */
 export class LocalRepo {
   public onDestroy = new Subject();
 

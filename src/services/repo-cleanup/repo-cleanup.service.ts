@@ -7,6 +7,9 @@ import { DiskUsageService } from "../disk-usage";
 import { RepoService } from "../repo";
 import { RepoIndexService } from "../repo-index";
 
+/**
+ * Service handling cleanup of the disk where repos are cloned when available space is getting low.
+ */
 @Injectable()
 export class RepoCleanupService {
   private logger = new Logger(RepoCleanupService);

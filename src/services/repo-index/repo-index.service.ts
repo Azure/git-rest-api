@@ -12,6 +12,11 @@ export interface RepoReference {
 
 const FETCH_CACHE_EXPIRY = 30_000; // 30s;
 
+/**
+ * Service that keep an index on all repository cached. It presisted across restart of the server.
+ * It keeps track of a few details related to the repository such as the last time
+ * it was open/fetched to find least recently used repos or if a fetch is due
+ */
 @Injectable()
 export class RepoIndexService {
   private logger = new Logger(RepoIndexService);
@@ -23,13 +28,6 @@ export class RepoIndexService {
     this.init().catch(e => {
       this.logger.error("Failed to load data from database", e);
     });
-  }
-
-  public async init() {
-    const repos = await this.repository.find();
-    for (const repo of repos) {
-      this.repos.set(repo.path, { ...repo });
-    }
   }
 
   public get size() {
@@ -77,6 +75,13 @@ export class RepoIndexService {
   public markRepoAsRemoved(repoId: string) {
     this.repos.delete(repoId);
     this.tryAndLog(() => this.repository.delete({ path: repoId }));
+  }
+
+  private async init() {
+    const repos = await this.repository.find();
+    for (const repo of repos) {
+      this.repos.set(repo.path, { ...repo });
+    }
   }
 
   private tryAndLog(f: () => Promise<unknown>) {
