@@ -1,12 +1,12 @@
 import { Injectable, NotFoundException } from "@nestjs/common";
 import { Commit, ConvenientPatch, Diff, Merge, Oid, Repository } from "nodegit";
 
+import { Logger } from "../../core";
 import { GitFileDiff, PatchStatus } from "../../dtos";
 import { GitDiff } from "../../dtos/git-diff";
 import { GitUtils, notUndefined } from "../../utils";
 import { CommitService, toGitCommit } from "../commit";
 import { GitBaseOptions, RepoService } from "../repo";
-import { Logger } from "../../core";
 
 const MAX_COMMIT_PER_DIFF = 250;
 const MAX_FILES_PER_DIFF = 300;
