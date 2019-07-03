@@ -6,12 +6,15 @@ import { GitDiff } from "../../dtos/git-diff";
 import { GitUtils, notUndefined } from "../../utils";
 import { CommitService, toGitCommit } from "../commit";
 import { GitBaseOptions, RepoService } from "../repo";
+import { Logger } from "../../core";
 
 const MAX_COMMIT_PER_DIFF = 250;
 const MAX_FILES_PER_DIFF = 300;
 
 @Injectable()
 export class CompareService {
+  private logger = new Logger(CompareService);
+
   constructor(private repoService: RepoService, private commitService: CommitService) {}
 
   public async compare(
@@ -38,8 +41,13 @@ export class CompareService {
   }
 
   public async getMergeBase(repo: Repository, base: Oid, head: Oid): Promise<Commit | undefined> {
-    const mergeBaseSha = await Merge.base(repo, base, head);
-    return this.commitService.getCommit(repo, mergeBaseSha.toString());
+    try {
+      const mergeBaseSha = await Merge.base(repo, base, head);
+      return this.commitService.getCommit(repo, mergeBaseSha.toString());
+    } catch (error) {
+      this.logger.info("Merge base was not found", { error });
+      return undefined;
+    }
   }
 
   public async getComparison(
