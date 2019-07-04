@@ -13,6 +13,7 @@ export class ContentController {
   @ApiHasPassThruAuth()
   @ApiOkResponse({ type: GitContents })
   @ApiImplicitQuery({ name: "ref", required: false, type: "string" })
+  @ApiImplicitQuery({ name: "recursive", required: false, type: "string" })
   @ApiOperation({ title: "Get content", operationId: "contents_get" })
   @ApiNotFoundResponse({})
   public async getContents(

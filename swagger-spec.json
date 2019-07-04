@@ -272,6 +272,64 @@
             "in": "path"
           },
           {
+            "name": "recursive",
+            "required": false,
+            "in": "query",
+            "type": "string"
+          },
+          {
+            "name": "ref",
+            "required": false,
+            "in": "query",
+            "type": "string"
+          },
+          {
+            "name": "x-authorization",
+            "required": false,
+            "in": "header",
+            "type": "string"
+          },
+          {
+            "name": "x-github-token",
+            "required": false,
+            "in": "header",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/GitContents"
+            }
+          },
+          "400": {
+            "description": "When the x-authorization header is malformed"
+          },
+          "404": {
+            "description": ""
+          }
+        },
+        "produces": [
+          "application/json"
+        ],
+        "consumes": [
+          "application/json"
+        ]
+      }
+    },
+    "/repos/{remote}/tree/{path}": {
+      "get": {
+        "summary": "Get tree",
+        "operationId": "tree_get",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "remote",
+            "required": true,
+            "in": "path"
+          },
+          {
             "name": "ref",
             "required": false,
             "in": "query",
@@ -529,7 +587,6 @@
         "name",
         "path",
         "sha",
-        "content",
         "encoding"
       ]
     },
