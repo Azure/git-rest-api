@@ -1,5 +1,5 @@
 import { Injectable, NotFoundException } from "@nestjs/common";
-import { Repository, TreeEntry } from "nodegit";
+import { Repository, TreeEntry, Tree } from "nodegit";
 
 import { GitContents } from "../../dtos/git-contents";
 import { GitDirObjectContent } from "../../dtos/git-dir-object-content";
@@ -16,14 +16,22 @@ export class ContentService {
     remote: string,
     path: string | undefined,
     ref: string | undefined = "master",
+    recursive: boolean = false,
+    includeContents: boolean = true,
     options: GitBaseOptions = {},
   ): Promise<GitContents | NotFoundException> {
     return this.repoService.use(remote, options, async repo => {
-      return this.getGitContents(repo, path, ref);
+      return this.getGitContents(repo, path, recursive, includeContents, ref);
     });
   }
 
-  public async getGitContents(repo: Repository, path: string | undefined, ref: string | undefined = "master") {
+  public async getGitContents(
+    repo: Repository,
+    path: string | undefined,
+    recursive: boolean,
+    includeContents: boolean,
+    ref: string | undefined = "master",
+  ) {
     const commit = await this.commitService.getCommit(repo, ref);
     if (!commit) {
       return new NotFoundException(`Ref '${ref}' not found.`);
@@ -33,19 +41,26 @@ export class ContentService {
 
     if (path) {
       try {
-        entries = [await commit.getEntry(path)];
+        const pathEntry = await commit.getEntry(path);
+
+        const [rootEntry, childEntries] = await Promise.all([
+          commit.getEntry(path),
+          recursive && pathEntry.isTree() ? this.getAllChildEntries(await pathEntry.getTree()) : [],
+        ]);
+
+        entries = [rootEntry, ...childEntries];
       } catch (e) {
         return new NotFoundException(`${path} not found.`);
       }
     } else {
       const tree = await commit.getTree();
-      entries = await tree.entries();
+      entries = recursive ? await this.getAllChildEntries(tree) : await tree.entries();
     }
 
-    return this.getEntries(entries);
+    return this.getEntries(entries, includeContents);
   }
 
-  private async getFileEntryAsObject(entry: TreeEntry): Promise<GitFileObjectContent> {
+  private async getFileEntryAsObject(entry: TreeEntry, includeContents: boolean): Promise<GitFileObjectContent> {
     const blob = await entry.getBlob();
 
     return new GitFileObjectContent({
@@ -54,7 +69,7 @@ export class ContentService {
       size: blob.rawsize(),
       name: entry.name(),
       path: entry.path(),
-      content: blob.content().toString("base64"),
+      content: includeContents ? blob.content().toString("base64") : undefined,
       sha: entry.sha(),
     });
   }
@@ -78,9 +93,11 @@ export class ContentService {
     });
   }
 
-  private async getEntries(entries: TreeEntry[]): Promise<GitContents> {
+  private async getEntries(entries: TreeEntry[], includeContents: boolean): Promise<GitContents> {
     const [files, dirs, submodules] = await Promise.all([
-      Promise.all(entries.filter(entry => entry.isFile()).map(async entry => this.getFileEntryAsObject(entry))),
+      Promise.all(
+        entries.filter(entry => entry.isFile()).map(async entry => this.getFileEntryAsObject(entry, includeContents)),
+      ),
       Promise.all(entries.filter(entry => entry.isDirectory()).map(async entry => this.getDirEntryAsObject(entry))),
       Promise.all(
         entries.filter(entry => entry.isSubmodule()).map(async entry => this.getSubmoduleEntryAsObject(entry)),
@@ -88,5 +105,21 @@ export class ContentService {
     ]);
 
     return new GitContents({ files, dirs, submodules });
+  }
+
+  private async getAllChildEntries(tree: Tree): Promise<TreeEntry[]> {
+    return new Promise((resolve, reject) => {
+      const eventEmitter = tree.walk(false);
+
+      eventEmitter.on("end", (trees: TreeEntry[]) => {
+        resolve(trees);
+      });
+
+      eventEmitter.on("error", error => {
+        reject(error);
+      });
+
+      eventEmitter.start();
+    });
   }
 }

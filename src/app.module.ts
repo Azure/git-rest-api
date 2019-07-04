@@ -9,6 +9,7 @@ import {
   ContentController,
   HealthCheckController,
 } from "./controllers";
+import { TreeController } from "./controllers/tree/tree.controller";
 import { Telemetry, createTelemetry } from "./core";
 import { ContextMiddleware, LoggingInterceptor } from "./middlewares";
 import {
@@ -28,7 +29,14 @@ import {
 
 @Module({
   imports: [],
-  controllers: [HealthCheckController, BranchesController, CommitsController, CompareController, ContentController],
+  controllers: [
+    HealthCheckController,
+    BranchesController,
+    CommitsController,
+    CompareController,
+    ContentController,
+    TreeController,
+  ],
   providers: [
     AppService,
     CompareService,

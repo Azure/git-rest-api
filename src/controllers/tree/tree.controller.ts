@@ -5,24 +5,23 @@ import { ApiHasPassThruAuth, Auth, RepoAuth } from "../../core";
 import { GitContents } from "../../dtos/git-contents";
 import { ContentService } from "../../services/content";
 
-@Controller("/repos/:remote/contents")
-export class ContentController {
+@Controller("/repos/:remote/tree")
+export class TreeController {
   constructor(private contentService: ContentService) {}
 
   @Get([":path([^/]*)", "*"])
   @ApiHasPassThruAuth()
   @ApiOkResponse({ type: GitContents })
   @ApiImplicitQuery({ name: "ref", required: false, type: "string" })
-  @ApiOperation({ title: "Get content", operationId: "contents_get" })
+  @ApiOperation({ title: "Get tree", operationId: "tree_get" })
   @ApiNotFoundResponse({})
-  public async getContents(
+  public async getTree(
     @Param("remote") remote: string,
     @Param("path") path: string | undefined,
     @Query("ref") ref: string | undefined,
-    @Query("recursive") recursive: string | undefined,
     @Auth() auth: RepoAuth,
   ) {
-    const content = await this.contentService.getContents(remote, path, ref, Boolean(recursive), true, { auth });
+    const content = await this.contentService.getContents(remote, path, ref, true, false, { auth });
     if (content instanceof HttpException) {
       throw content;
     }
