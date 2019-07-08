@@ -59,9 +59,12 @@ if (config.nodeEnv === "development") {
   );
 }
 
-export const WINSTON_LOGGER_OPTIONS: LoggerOptions = {
-  transports: [
-    new winston.transports.Console(consoleTransport),
+const transports: any[] = [new winston.transports.Console(consoleTransport)];
+
+if (config.nodeEnv === "test") {
+  consoleTransport.silent = true;
+} else {
+  transports.push(
     new winstonDailyFile({
       filename: `%DATE%.log`,
       datePattern: "YYYY-MM-DD-HH",
@@ -69,7 +72,11 @@ export const WINSTON_LOGGER_OPTIONS: LoggerOptions = {
       dirname: "logs",
       handleExceptions: true,
     }),
-  ],
+  );
+}
+
+export const WINSTON_LOGGER_OPTIONS: LoggerOptions = {
+  transports,
 };
 
 /**

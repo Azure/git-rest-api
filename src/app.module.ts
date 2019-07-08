@@ -1,5 +1,6 @@
 import { MiddlewareConsumer, Module, NestModule } from "@nestjs/common";
 import { APP_INTERCEPTOR } from "@nestjs/core";
+import { Connection } from "typeorm";
 
 import { Configuration } from "./config";
 import {
@@ -19,12 +20,14 @@ import {
   ContentService,
   DiskUsageService,
   FSService,
-  GitFetchService,
   HttpService,
   PermissionCacheService,
   PermissionService,
+  RepoCleanupService,
   RepoService,
+  createDBConnection,
 } from "./services";
+import { RepoIndexService } from "./services/repo-index";
 
 @Module({
   imports: [],
@@ -36,13 +39,14 @@ import {
     FSService,
     BranchService,
     PermissionService,
-    GitFetchService,
     PermissionCacheService,
     HttpService,
     Configuration,
     CommitService,
     ContentService,
     DiskUsageService,
+    RepoIndexService,
+    RepoCleanupService,
     {
       provide: APP_INTERCEPTOR,
       useClass: LoggingInterceptor,
@@ -52,12 +56,19 @@ import {
       useFactory: (config: Configuration) => createTelemetry(config),
       inject: [Configuration],
     },
+    {
+      provide: Connection,
+      useFactory: (config: Configuration) => createDBConnection(config),
+      inject: [Configuration],
+    },
   ],
 })
 export class AppModule implements NestModule {
-  constructor(private diskUsage: DiskUsageService) {}
+  constructor(private diskUsage: DiskUsageService, private repoCleanupService: RepoCleanupService) {}
   public configure(consumer: MiddlewareConsumer) {
     this.diskUsage.startCollection();
+    this.repoCleanupService.start();
+
     consumer.apply(ContextMiddleware).forRoutes("*");
   }
 }
