@@ -1,8 +1,7 @@
 import { Injectable, NotFoundException } from "@nestjs/common";
 import { Commit, ConvenientPatch, Diff, Merge, Oid, Repository } from "nodegit";
 
-import { GitFileDiff, PatchStatus } from "../../dtos";
-import { GitDiff } from "../../dtos/git-diff";
+import { GitDiff, GitFileDiff, PatchStatus } from "../../dtos";
 import { GitUtils, notUndefined } from "../../utils";
 import { CommitService, toGitCommit } from "../commit";
 import { GitBaseOptions, RepoService } from "../repo";

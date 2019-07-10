@@ -1,10 +1,14 @@
 import { Injectable, NotFoundException } from "@nestjs/common";
 import { Repository, Tree, TreeEntry } from "nodegit";
 
-import { GitContents } from "../../dtos/git-contents";
-import { GitDirObjectContent } from "../../dtos/git-dir-object-content";
-import { GitFileObjectContent } from "../../dtos/git-file-object-content";
-import { GitSubmoduleObjectContent } from "../../dtos/git-submodule-object-content";
+import {
+  GitContents,
+  GitDirObjectContent,
+  GitFileObjectWithContent,
+  GitFileObjectWithoutContent,
+  GitSubmoduleObjectContent,
+  GitTree,
+} from "../../dtos";
 import { CommitService } from "../commit";
 import { GitBaseOptions, RepoService } from "../repo";
 
@@ -19,7 +23,7 @@ export class ContentService {
     recursive: boolean = false,
     includeContents: boolean = true,
     options: GitBaseOptions = {},
-  ): Promise<GitContents | NotFoundException> {
+  ): Promise<GitContents | GitTree | NotFoundException> {
     return this.repoService.use(remote, options, async repo => {
       return this.getGitContents(repo, path, recursive, includeContents, ref);
     });
@@ -60,18 +64,28 @@ export class ContentService {
     return this.getEntries(entries, includeContents);
   }
 
-  private async getFileEntryAsObject(entry: TreeEntry, includeContents: boolean): Promise<GitFileObjectContent> {
+  private async getFileEntryAsObject(
+    entry: TreeEntry,
+    includeContents: boolean,
+  ): Promise<GitFileObjectWithContent | GitFileObjectWithoutContent> {
     const blob = await entry.getBlob();
-
-    return new GitFileObjectContent({
+    const file = {
       type: "file",
       encoding: "base64",
       size: blob.rawsize(),
       name: entry.name(),
       path: entry.path(),
-      content: includeContents ? blob.content().toString("base64") : undefined,
       sha: entry.sha(),
-    });
+    };
+
+    if (includeContents) {
+      return new GitFileObjectWithContent({
+        ...file,
+        content: blob.content().toString("base64"),
+      });
+    }
+
+    return new GitFileObjectWithoutContent(file);
   }
 
   private async getDirEntryAsObject(entry: TreeEntry): Promise<GitDirObjectContent> {
@@ -93,7 +107,7 @@ export class ContentService {
     });
   }
 
-  private async getEntries(entries: TreeEntry[], includeContents: boolean): Promise<GitContents> {
+  private async getEntries(entries: TreeEntry[], includeContents: boolean): Promise<GitContents | GitTree> {
     const [files, dirs, submodules] = await Promise.all([
       Promise.all(
         entries.filter(entry => entry.isFile()).map(async entry => this.getFileEntryAsObject(entry, includeContents)),
@@ -104,7 +118,11 @@ export class ContentService {
       ),
     ]);
 
-    return new GitContents({ files, dirs, submodules });
+    if (includeContents) {
+      return new GitContents({ files, dirs, submodules });
+    }
+
+    return new GitTree({ files: files as GitFileObjectWithContent[], dirs, submodules });
   }
 
   private async getAllChildEntries(tree: Tree): Promise<TreeEntry[]> {

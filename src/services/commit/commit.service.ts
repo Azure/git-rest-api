@@ -2,8 +2,7 @@ import { Injectable, NotFoundException } from "@nestjs/common";
 import { Commit, Oid, Repository, Revwalk, Signature, Time } from "nodegit";
 
 import { PaginatedList, Pagination, getPage, getPaginationSkip } from "../../core";
-import { GitCommit, GitCommitRef } from "../../dtos";
-import { GitSignature } from "../../dtos/git-signature";
+import { GitCommit, GitCommitRef, GitSignature } from "../../dtos";
 import { GitBaseOptions, RepoService } from "../repo";
 
 const LIST_COMMIT_PAGE_SIZE = 100;

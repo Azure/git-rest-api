@@ -2,8 +2,9 @@ import { Controller, Get, HttpException, Param, Query } from "@nestjs/common";
 import { ApiImplicitQuery, ApiNotFoundResponse, ApiOkResponse, ApiOperation } from "@nestjs/swagger";
 
 import { ApiHasPassThruAuth, Auth, RepoAuth } from "../../core";
-import { GitContents } from "../../dtos/git-contents";
+import { GitContents } from "../../dtos";
 import { ContentService } from "../../services/content";
+import { parseBooleanFromURLParam } from "../../utils";
 
 @Controller("/repos/:remote/contents")
 export class ContentController {
@@ -23,7 +24,16 @@ export class ContentController {
     @Query("recursive") recursive: string | undefined,
     @Auth() auth: RepoAuth,
   ) {
-    const content = await this.contentService.getContents(remote, path, ref, Boolean(recursive), true, { auth });
+    const content = await this.contentService.getContents(
+      remote,
+      path,
+      ref,
+      parseBooleanFromURLParam(recursive),
+      true,
+      {
+        auth,
+      },
+    );
     if (content instanceof HttpException) {
       throw content;
     }
