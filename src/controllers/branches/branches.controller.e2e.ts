@@ -3,7 +3,7 @@ import { delay } from "../../utils";
 
 describe("Test branch controller", () => {
   it("doesn't conflict when getting the same repo twice at the same time", async () => {
-    await delay(100);
+    await delay(2000); // Need to wait for the server to release locks on the repo from previous tests. As e2e test are run in squence this should be a fixed amount of time
     await deleteLocalRepo(UNENCODED_TEST_REPO);
     await delay(100);
     const responses = await Promise.all([

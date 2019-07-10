@@ -71,9 +71,7 @@ export class CommitService {
     if (ref) {
       return this.getCommit(repo, ref);
     } else {
-      const branch = await repo.getCurrentBranch();
-      const name = branch.shorthand();
-      return repo.getReferenceCommit(`origin/${name}`);
+      return repo.getReferenceCommit(`origin/master`);
     }
   }
 
