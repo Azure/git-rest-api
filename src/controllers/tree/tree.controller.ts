@@ -21,10 +21,10 @@ export class TreeController {
     @Query("ref") ref: string | undefined,
     @Auth() auth: RepoAuth,
   ) {
-    const content = await this.contentService.getContents(remote, path, ref, true, false, { auth });
-    if (content instanceof HttpException) {
-      throw content;
+    const tree = await this.contentService.getContents(remote, path, ref, true, false, { auth });
+    if (tree instanceof HttpException) {
+      throw tree;
     }
-    return content;
+    return tree;
   }
 }
