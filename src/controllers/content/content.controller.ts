@@ -10,7 +10,7 @@ import { parseBooleanFromURLParam } from "../../utils";
 export class ContentController {
   constructor(private contentService: ContentService) {}
 
-  @Get([":path([^/]*)", "*"])
+  @Get([":path([^/]*)", ""])
   @ApiHasPassThruAuth()
   @ApiOkResponse({ type: GitContents })
   @ApiImplicitQuery({ name: "ref", required: false, type: "string" })

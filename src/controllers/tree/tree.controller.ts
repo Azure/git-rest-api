@@ -9,7 +9,7 @@ import { ContentService } from "../../services/content";
 export class TreeController {
   constructor(private contentService: ContentService) {}
 
-  @Get([":path([^/]*)", "*"])
+  @Get([":path([^/]*)", ""])
   @ApiHasPassThruAuth()
   @ApiOkResponse({ type: GitTree })
   @ApiImplicitQuery({ name: "ref", required: false, type: "string" })
