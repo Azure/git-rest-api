@@ -14,6 +14,7 @@ export class TreeController {
   @ApiOkResponse({ type: GitTree })
   @ApiImplicitQuery({ name: "ref", required: false, type: "string" })
   @ApiOperation({ title: "Get tree", operationId: "tree_get" })
+  @ApiImplicitQuery({ name: "path", required: false, type: "string" })
   @ApiNotFoundResponse({})
   public async getTree(
     @Param("remote") remote: string,

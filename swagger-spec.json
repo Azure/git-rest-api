@@ -272,6 +272,12 @@
             "in": "path"
           },
           {
+            "name": "path",
+            "required": false,
+            "in": "query",
+            "type": "string"
+          },
+          {
             "name": "recursive",
             "required": false,
             "in": "query",
@@ -328,6 +334,12 @@
             "name": "remote",
             "required": true,
             "in": "path"
+          },
+          {
+            "name": "path",
+            "required": false,
+            "in": "query",
+            "type": "string"
           },
           {
             "name": "ref",
