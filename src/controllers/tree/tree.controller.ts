@@ -2,7 +2,7 @@ import { Controller, Get, HttpException, Param, Query } from "@nestjs/common";
 import { ApiImplicitQuery, ApiNotFoundResponse, ApiOkResponse, ApiOperation } from "@nestjs/swagger";
 
 import { ApiHasPassThruAuth, Auth, RepoAuth } from "../../core";
-import { GitContents, GitTree } from "../../dtos";
+import { GitTree } from "../../dtos";
 import { ContentService } from "../../services/content";
 
 @Controller("/repos/:remote/tree")
