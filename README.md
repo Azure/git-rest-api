@@ -21,6 +21,12 @@ Following apis are supported for now:
   - List
   - Get content
 
+# Quick start
+
+  docker run -d -p 3009:3009 azuredevx/git-rest-api
+  sleep 3 # optional: wait for container to start
+  curl localhost:3009/repos/github.com%2Foctocat%2FHello-World/contents/
+
 # Deploy with docker
 
 Image: `azuredevx/git-rest-api`
