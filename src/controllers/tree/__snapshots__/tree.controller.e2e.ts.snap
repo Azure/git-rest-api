@@ -1,0 +1,179 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Test content controller for path '/repos/github.com%2Ftest-repo-billy%2Fgit-api-tests/tree' 1`] = `
+Object {
+  "dirs": Array [
+    Object {
+      "name": "dir1",
+      "path": "dir1",
+      "sha": "b638a8a4a9f44184a3a430988a9c5ef383bad364",
+      "size": 0,
+      "type": "dir",
+    },
+    Object {
+      "name": "dir2",
+      "path": "dir1/dir2",
+      "sha": "483221c9d8371862bdb2c5d452130ab5ca0534a3",
+      "size": 0,
+      "type": "dir",
+    },
+  ],
+  "files": Array [
+    Object {
+      "encoding": "base64",
+      "name": ".gitignore",
+      "path": ".gitignore",
+      "sha": "ad46b30886fa350c1f59761b100e5e4b01f9a7ec",
+      "size": 914,
+      "type": "file",
+    },
+    Object {
+      "encoding": "base64",
+      "name": "LICENSE",
+      "path": "LICENSE",
+      "sha": "98023418cdb98210a5f71ea74ec557dbbd8f0e83",
+      "size": 1072,
+      "type": "file",
+    },
+    Object {
+      "encoding": "base64",
+      "name": "README.md",
+      "path": "README.md",
+      "sha": "b5fd37e731f1e7931da42484ae0290554cb42c0f",
+      "size": 78,
+      "type": "file",
+    },
+    Object {
+      "encoding": "base64",
+      "name": "fileA.txt",
+      "path": "dir1/fileA.txt",
+      "sha": "ab47708c98ac88bbdf3ca75f4730d86a84f702a2",
+      "size": 6,
+      "type": "file",
+    },
+    Object {
+      "encoding": "base64",
+      "name": "fileB.txt",
+      "path": "dir1/dir2/fileB.txt",
+      "sha": "78ed112c991c8abeba325c039a398ba626c425ab",
+      "size": 6,
+      "type": "file",
+    },
+  ],
+  "submodules": Array [],
+}
+`;
+
+exports[`Test content controller for path '/repos/github.com%2Ftest-repo-billy%2Fgit-api-tests/tree/' 1`] = `
+Object {
+  "dirs": Array [
+    Object {
+      "name": "dir1",
+      "path": "dir1",
+      "sha": "b638a8a4a9f44184a3a430988a9c5ef383bad364",
+      "size": 0,
+      "type": "dir",
+    },
+    Object {
+      "name": "dir2",
+      "path": "dir1/dir2",
+      "sha": "483221c9d8371862bdb2c5d452130ab5ca0534a3",
+      "size": 0,
+      "type": "dir",
+    },
+  ],
+  "files": Array [
+    Object {
+      "encoding": "base64",
+      "name": ".gitignore",
+      "path": ".gitignore",
+      "sha": "ad46b30886fa350c1f59761b100e5e4b01f9a7ec",
+      "size": 914,
+      "type": "file",
+    },
+    Object {
+      "encoding": "base64",
+      "name": "LICENSE",
+      "path": "LICENSE",
+      "sha": "98023418cdb98210a5f71ea74ec557dbbd8f0e83",
+      "size": 1072,
+      "type": "file",
+    },
+    Object {
+      "encoding": "base64",
+      "name": "README.md",
+      "path": "README.md",
+      "sha": "b5fd37e731f1e7931da42484ae0290554cb42c0f",
+      "size": 78,
+      "type": "file",
+    },
+    Object {
+      "encoding": "base64",
+      "name": "fileA.txt",
+      "path": "dir1/fileA.txt",
+      "sha": "ab47708c98ac88bbdf3ca75f4730d86a84f702a2",
+      "size": 6,
+      "type": "file",
+    },
+    Object {
+      "encoding": "base64",
+      "name": "fileB.txt",
+      "path": "dir1/dir2/fileB.txt",
+      "sha": "78ed112c991c8abeba325c039a398ba626c425ab",
+      "size": 6,
+      "type": "file",
+    },
+  ],
+  "submodules": Array [],
+}
+`;
+
+exports[`Test content controller for path '/repos/github.com%2Ftest-repo-billy%2Fgit-api-tests/tree/README.md' 1`] = `
+Object {
+  "dirs": Array [],
+  "files": Array [
+    Object {
+      "encoding": "base64",
+      "name": "README.md",
+      "path": "README.md",
+      "sha": "b5fd37e731f1e7931da42484ae0290554cb42c0f",
+      "size": 78,
+      "type": "file",
+    },
+  ],
+  "submodules": Array [],
+}
+`;
+
+exports[`Test content controller for path '/repos/github.com%2Ftest-repo-billy%2Fgit-api-tests/tree/dir1' 1`] = `
+Object {
+  "dirs": Array [
+    Object {
+      "name": "dir2",
+      "path": "dir1/dir2",
+      "sha": "483221c9d8371862bdb2c5d452130ab5ca0534a3",
+      "size": 0,
+      "type": "dir",
+    },
+  ],
+  "files": Array [
+    Object {
+      "encoding": "base64",
+      "name": "fileA.txt",
+      "path": "dir1/fileA.txt",
+      "sha": "ab47708c98ac88bbdf3ca75f4730d86a84f702a2",
+      "size": 6,
+      "type": "file",
+    },
+    Object {
+      "encoding": "base64",
+      "name": "fileB.txt",
+      "path": "dir1/dir2/fileB.txt",
+      "sha": "78ed112c991c8abeba325c039a398ba626c425ab",
+      "size": 6,
+      "type": "file",
+    },
+  ],
+  "submodules": Array [],
+}
+`;
