@@ -1,1 +1,14 @@
-[]
+[
+  {
+    "name": "master",
+    "commit": {
+      "sha": "5a999cf552a4bbb5bc21dfabe660e815283f9244"
+    }
+  },
+  {
+    "name": "stable",
+    "commit": {
+      "sha": "04ccae1ed572f3cdc277c4df2ac73130efbbba3a"
+    }
+  }
+]
