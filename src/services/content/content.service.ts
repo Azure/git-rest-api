@@ -47,18 +47,27 @@ export class ContentService {
       try {
         const pathEntry = await commit.getEntry(path);
 
-        const [rootEntry, childEntries] = await Promise.all([
-          commit.getEntry(path),
-          recursive && pathEntry.isTree() ? this.getAllChildEntries(await pathEntry.getTree()) : [],
-        ]);
+        if (pathEntry.isTree()) {
+          const tree = await pathEntry.getTree();
 
-        entries = [rootEntry, ...childEntries];
+          // for directories, either
+          if (recursive) {
+            // recursively get children
+            entries = await this.getAllChildEntries(tree);
+          } else {
+            // get children immediate children
+            entries = tree.entries();
+          }
+        } else {
+          // for files get array of size 1
+          entries = [await commit.getEntry(path)];
+        }
       } catch (e) {
-        return new NotFoundException(`${path} not found.`);
+        return new NotFoundException(`Path '${path}' not found.`);
       }
     } else {
       const tree = await commit.getTree();
-      entries = recursive ? await this.getAllChildEntries(tree) : await tree.entries();
+      entries = recursive ? await this.getAllChildEntries(tree) : tree.entries();
     }
 
     return this.getEntries(entries, includeContents);
