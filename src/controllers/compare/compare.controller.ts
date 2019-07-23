@@ -2,7 +2,7 @@ import { Controller, Get, HttpException, Param } from "@nestjs/common";
 import { ApiNotFoundResponse, ApiOkResponse, ApiOperation } from "@nestjs/swagger";
 
 import { ApiHasPassThruAuth, Auth, RepoAuth } from "../../core";
-import { GitDiff } from "../../dtos/git-diff";
+import { GitDiff } from "../../dtos";
 import { CompareService } from "../../services";
 
 @Controller("/repos/:remote/compare")

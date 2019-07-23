@@ -1,5 +1,6 @@
 export const notUndefined = <T>(x: T | undefined): x is T => x !== undefined;
 export const delay = (timeout?: number) => new Promise(r => setTimeout(r, timeout));
+export const parseBooleanFromURLParam = (bool: string | undefined) => bool === "" || bool === "true";
 
 export class Deferred<T = void> {
   public promise: Promise<T>;

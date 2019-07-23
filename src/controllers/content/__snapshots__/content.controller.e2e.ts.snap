@@ -1,0 +1,237 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Test content controller for path '/repos/github.com%2Ftest-repo-billy%2Fgit-api-tests/contents' 1`] = `
+Object {
+  "dirs": Array [
+    Object {
+      "name": "dir1",
+      "path": "dir1",
+      "sha": "b638a8a4a9f44184a3a430988a9c5ef383bad364",
+      "size": 0,
+      "type": "dir",
+    },
+  ],
+  "files": Array [
+    Object {
+      "content": "IyBMb2dzCmxvZ3MKKi5sb2cKbnBtLWRlYnVnLmxvZyoKeWFybi1kZWJ1Zy5sb2cqCnlhcm4tZXJyb3IubG9nKgoKIyBSdW50aW1lIGRhdGEKcGlkcwoqLnBpZAoqLnNlZWQKKi5waWQubG9jawoKIyBEaXJlY3RvcnkgZm9yIGluc3RydW1lbnRlZCBsaWJzIGdlbmVyYXRlZCBieSBqc2NvdmVyYWdlL0pTQ292ZXIKbGliLWNvdgoKIyBDb3ZlcmFnZSBkaXJlY3RvcnkgdXNlZCBieSB0b29scyBsaWtlIGlzdGFuYnVsCmNvdmVyYWdlCgojIG55YyB0ZXN0IGNvdmVyYWdlCi5ueWNfb3V0cHV0CgojIEdydW50IGludGVybWVkaWF0ZSBzdG9yYWdlIChodHRwOi8vZ3J1bnRqcy5jb20vY3JlYXRpbmctcGx1Z2lucyNzdG9yaW5nLXRhc2stZmlsZXMpCi5ncnVudAoKIyBCb3dlciBkZXBlbmRlbmN5IGRpcmVjdG9yeSAoaHR0cHM6Ly9ib3dlci5pby8pCmJvd2VyX2NvbXBvbmVudHMKCiMgbm9kZS13YWYgY29uZmlndXJhdGlvbgoubG9jay13c2NyaXB0CgojIENvbXBpbGVkIGJpbmFyeSBhZGRvbnMgKGh0dHBzOi8vbm9kZWpzLm9yZy9hcGkvYWRkb25zLmh0bWwpCmJ1aWxkL1JlbGVhc2UKCiMgRGVwZW5kZW5jeSBkaXJlY3Rvcmllcwpub2RlX21vZHVsZXMvCmpzcG1fcGFja2FnZXMvCgojIFR5cGVTY3JpcHQgdjEgZGVjbGFyYXRpb24gZmlsZXMKdHlwaW5ncy8KCiMgT3B0aW9uYWwgbnBtIGNhY2hlIGRpcmVjdG9yeQoubnBtCgojIE9wdGlvbmFsIGVzbGludCBjYWNoZQouZXNsaW50Y2FjaGUKCiMgT3B0aW9uYWwgUkVQTCBoaXN0b3J5Ci5ub2RlX3JlcGxfaGlzdG9yeQoKIyBPdXRwdXQgb2YgJ25wbSBwYWNrJwoqLnRnegoKIyBZYXJuIEludGVncml0eSBmaWxlCi55YXJuLWludGVncml0eQoKIyBkb3RlbnYgZW52aXJvbm1lbnQgdmFyaWFibGVzIGZpbGUKLmVudgoKIyBuZXh0LmpzIGJ1aWxkIG91dHB1dAoubmV4dAo=",
+      "encoding": "base64",
+      "name": ".gitignore",
+      "path": ".gitignore",
+      "sha": "ad46b30886fa350c1f59761b100e5e4b01f9a7ec",
+      "size": 914,
+      "type": "file",
+    },
+    Object {
+      "content": "TUlUIExpY2Vuc2UKCkNvcHlyaWdodCAoYykgMjAxOSB0ZXN0LXJlcG8tYmlsbHkKClBlcm1pc3Npb24gaXMgaGVyZWJ5IGdyYW50ZWQsIGZyZWUgb2YgY2hhcmdlLCB0byBhbnkgcGVyc29uIG9idGFpbmluZyBhIGNvcHkKb2YgdGhpcyBzb2Z0d2FyZSBhbmQgYXNzb2NpYXRlZCBkb2N1bWVudGF0aW9uIGZpbGVzICh0aGUgIlNvZnR3YXJlIiksIHRvIGRlYWwKaW4gdGhlIFNvZnR3YXJlIHdpdGhvdXQgcmVzdHJpY3Rpb24sIGluY2x1ZGluZyB3aXRob3V0IGxpbWl0YXRpb24gdGhlIHJpZ2h0cwp0byB1c2UsIGNvcHksIG1vZGlmeSwgbWVyZ2UsIHB1Ymxpc2gsIGRpc3RyaWJ1dGUsIHN1YmxpY2Vuc2UsIGFuZC9vciBzZWxsCmNvcGllcyBvZiB0aGUgU29mdHdhcmUsIGFuZCB0byBwZXJtaXQgcGVyc29ucyB0byB3aG9tIHRoZSBTb2Z0d2FyZSBpcwpmdXJuaXNoZWQgdG8gZG8gc28sIHN1YmplY3QgdG8gdGhlIGZvbGxvd2luZyBjb25kaXRpb25zOgoKVGhlIGFib3ZlIGNvcHlyaWdodCBub3RpY2UgYW5kIHRoaXMgcGVybWlzc2lvbiBub3RpY2Ugc2hhbGwgYmUgaW5jbHVkZWQgaW4gYWxsCmNvcGllcyBvciBzdWJzdGFudGlhbCBwb3J0aW9ucyBvZiB0aGUgU29mdHdhcmUuCgpUSEUgU09GVFdBUkUgSVMgUFJPVklERUQgIkFTIElTIiwgV0lUSE9VVCBXQVJSQU5UWSBPRiBBTlkgS0lORCwgRVhQUkVTUyBPUgpJTVBMSUVELCBJTkNMVURJTkcgQlVUIE5PVCBMSU1JVEVEIFRPIFRIRSBXQVJSQU5USUVTIE9GIE1FUkNIQU5UQUJJTElUWSwKRklUTkVTUyBGT1IgQSBQQVJUSUNVTEFSIFBVUlBPU0UgQU5EIE5PTklORlJJTkdFTUVOVC4gSU4gTk8gRVZFTlQgU0hBTEwgVEhFCkFVVEhPUlMgT1IgQ09QWVJJR0hUIEhPTERFUlMgQkUgTElBQkxFIEZPUiBBTlkgQ0xBSU0sIERBTUFHRVMgT1IgT1RIRVIKTElBQklMSVRZLCBXSEVUSEVSIElOIEFOIEFDVElPTiBPRiBDT05UUkFDVCwgVE9SVCBPUiBPVEhFUldJU0UsIEFSSVNJTkcgRlJPTSwKT1VUIE9GIE9SIElOIENPTk5FQ1RJT04gV0lUSCBUSEUgU09GVFdBUkUgT1IgVEhFIFVTRSBPUiBPVEhFUiBERUFMSU5HUyBJTiBUSEUKU09GVFdBUkUuCg==",
+      "encoding": "base64",
+      "name": "LICENSE",
+      "path": "LICENSE",
+      "sha": "98023418cdb98210a5f71ea74ec557dbbd8f0e83",
+      "size": 1072,
+      "type": "file",
+    },
+    Object {
+      "content": "IyBnaXQtYXBpLXRlc3RzClJlcG8gdXNlZCBmb3IgaW50ZWdyYXRpb24gdGVzdGluZyBvZiB0aGUgZ2l0LXRlc3QtYXBpIHByb2plY3QK",
+      "encoding": "base64",
+      "name": "README.md",
+      "path": "README.md",
+      "sha": "b5fd37e731f1e7931da42484ae0290554cb42c0f",
+      "size": 78,
+      "type": "file",
+    },
+  ],
+  "submodules": Array [],
+}
+`;
+
+exports[`Test content controller for path '/repos/github.com%2Ftest-repo-billy%2Fgit-api-tests/contents/' 1`] = `
+Object {
+  "dirs": Array [
+    Object {
+      "name": "dir1",
+      "path": "dir1",
+      "sha": "b638a8a4a9f44184a3a430988a9c5ef383bad364",
+      "size": 0,
+      "type": "dir",
+    },
+  ],
+  "files": Array [
+    Object {
+      "content": "IyBMb2dzCmxvZ3MKKi5sb2cKbnBtLWRlYnVnLmxvZyoKeWFybi1kZWJ1Zy5sb2cqCnlhcm4tZXJyb3IubG9nKgoKIyBSdW50aW1lIGRhdGEKcGlkcwoqLnBpZAoqLnNlZWQKKi5waWQubG9jawoKIyBEaXJlY3RvcnkgZm9yIGluc3RydW1lbnRlZCBsaWJzIGdlbmVyYXRlZCBieSBqc2NvdmVyYWdlL0pTQ292ZXIKbGliLWNvdgoKIyBDb3ZlcmFnZSBkaXJlY3RvcnkgdXNlZCBieSB0b29scyBsaWtlIGlzdGFuYnVsCmNvdmVyYWdlCgojIG55YyB0ZXN0IGNvdmVyYWdlCi5ueWNfb3V0cHV0CgojIEdydW50IGludGVybWVkaWF0ZSBzdG9yYWdlIChodHRwOi8vZ3J1bnRqcy5jb20vY3JlYXRpbmctcGx1Z2lucyNzdG9yaW5nLXRhc2stZmlsZXMpCi5ncnVudAoKIyBCb3dlciBkZXBlbmRlbmN5IGRpcmVjdG9yeSAoaHR0cHM6Ly9ib3dlci5pby8pCmJvd2VyX2NvbXBvbmVudHMKCiMgbm9kZS13YWYgY29uZmlndXJhdGlvbgoubG9jay13c2NyaXB0CgojIENvbXBpbGVkIGJpbmFyeSBhZGRvbnMgKGh0dHBzOi8vbm9kZWpzLm9yZy9hcGkvYWRkb25zLmh0bWwpCmJ1aWxkL1JlbGVhc2UKCiMgRGVwZW5kZW5jeSBkaXJlY3Rvcmllcwpub2RlX21vZHVsZXMvCmpzcG1fcGFja2FnZXMvCgojIFR5cGVTY3JpcHQgdjEgZGVjbGFyYXRpb24gZmlsZXMKdHlwaW5ncy8KCiMgT3B0aW9uYWwgbnBtIGNhY2hlIGRpcmVjdG9yeQoubnBtCgojIE9wdGlvbmFsIGVzbGludCBjYWNoZQouZXNsaW50Y2FjaGUKCiMgT3B0aW9uYWwgUkVQTCBoaXN0b3J5Ci5ub2RlX3JlcGxfaGlzdG9yeQoKIyBPdXRwdXQgb2YgJ25wbSBwYWNrJwoqLnRnegoKIyBZYXJuIEludGVncml0eSBmaWxlCi55YXJuLWludGVncml0eQoKIyBkb3RlbnYgZW52aXJvbm1lbnQgdmFyaWFibGVzIGZpbGUKLmVudgoKIyBuZXh0LmpzIGJ1aWxkIG91dHB1dAoubmV4dAo=",
+      "encoding": "base64",
+      "name": ".gitignore",
+      "path": ".gitignore",
+      "sha": "ad46b30886fa350c1f59761b100e5e4b01f9a7ec",
+      "size": 914,
+      "type": "file",
+    },
+    Object {
+      "content": "TUlUIExpY2Vuc2UKCkNvcHlyaWdodCAoYykgMjAxOSB0ZXN0LXJlcG8tYmlsbHkKClBlcm1pc3Npb24gaXMgaGVyZWJ5IGdyYW50ZWQsIGZyZWUgb2YgY2hhcmdlLCB0byBhbnkgcGVyc29uIG9idGFpbmluZyBhIGNvcHkKb2YgdGhpcyBzb2Z0d2FyZSBhbmQgYXNzb2NpYXRlZCBkb2N1bWVudGF0aW9uIGZpbGVzICh0aGUgIlNvZnR3YXJlIiksIHRvIGRlYWwKaW4gdGhlIFNvZnR3YXJlIHdpdGhvdXQgcmVzdHJpY3Rpb24sIGluY2x1ZGluZyB3aXRob3V0IGxpbWl0YXRpb24gdGhlIHJpZ2h0cwp0byB1c2UsIGNvcHksIG1vZGlmeSwgbWVyZ2UsIHB1Ymxpc2gsIGRpc3RyaWJ1dGUsIHN1YmxpY2Vuc2UsIGFuZC9vciBzZWxsCmNvcGllcyBvZiB0aGUgU29mdHdhcmUsIGFuZCB0byBwZXJtaXQgcGVyc29ucyB0byB3aG9tIHRoZSBTb2Z0d2FyZSBpcwpmdXJuaXNoZWQgdG8gZG8gc28sIHN1YmplY3QgdG8gdGhlIGZvbGxvd2luZyBjb25kaXRpb25zOgoKVGhlIGFib3ZlIGNvcHlyaWdodCBub3RpY2UgYW5kIHRoaXMgcGVybWlzc2lvbiBub3RpY2Ugc2hhbGwgYmUgaW5jbHVkZWQgaW4gYWxsCmNvcGllcyBvciBzdWJzdGFudGlhbCBwb3J0aW9ucyBvZiB0aGUgU29mdHdhcmUuCgpUSEUgU09GVFdBUkUgSVMgUFJPVklERUQgIkFTIElTIiwgV0lUSE9VVCBXQVJSQU5UWSBPRiBBTlkgS0lORCwgRVhQUkVTUyBPUgpJTVBMSUVELCBJTkNMVURJTkcgQlVUIE5PVCBMSU1JVEVEIFRPIFRIRSBXQVJSQU5USUVTIE9GIE1FUkNIQU5UQUJJTElUWSwKRklUTkVTUyBGT1IgQSBQQVJUSUNVTEFSIFBVUlBPU0UgQU5EIE5PTklORlJJTkdFTUVOVC4gSU4gTk8gRVZFTlQgU0hBTEwgVEhFCkFVVEhPUlMgT1IgQ09QWVJJR0hUIEhPTERFUlMgQkUgTElBQkxFIEZPUiBBTlkgQ0xBSU0sIERBTUFHRVMgT1IgT1RIRVIKTElBQklMSVRZLCBXSEVUSEVSIElOIEFOIEFDVElPTiBPRiBDT05UUkFDVCwgVE9SVCBPUiBPVEhFUldJU0UsIEFSSVNJTkcgRlJPTSwKT1VUIE9GIE9SIElOIENPTk5FQ1RJT04gV0lUSCBUSEUgU09GVFdBUkUgT1IgVEhFIFVTRSBPUiBPVEhFUiBERUFMSU5HUyBJTiBUSEUKU09GVFdBUkUuCg==",
+      "encoding": "base64",
+      "name": "LICENSE",
+      "path": "LICENSE",
+      "sha": "98023418cdb98210a5f71ea74ec557dbbd8f0e83",
+      "size": 1072,
+      "type": "file",
+    },
+    Object {
+      "content": "IyBnaXQtYXBpLXRlc3RzClJlcG8gdXNlZCBmb3IgaW50ZWdyYXRpb24gdGVzdGluZyBvZiB0aGUgZ2l0LXRlc3QtYXBpIHByb2plY3QK",
+      "encoding": "base64",
+      "name": "README.md",
+      "path": "README.md",
+      "sha": "b5fd37e731f1e7931da42484ae0290554cb42c0f",
+      "size": 78,
+      "type": "file",
+    },
+  ],
+  "submodules": Array [],
+}
+`;
+
+exports[`Test content controller for path '/repos/github.com%2Ftest-repo-billy%2Fgit-api-tests/contents/README.md' 1`] = `
+Object {
+  "dirs": Array [],
+  "files": Array [
+    Object {
+      "content": "IyBnaXQtYXBpLXRlc3RzClJlcG8gdXNlZCBmb3IgaW50ZWdyYXRpb24gdGVzdGluZyBvZiB0aGUgZ2l0LXRlc3QtYXBpIHByb2plY3QK",
+      "encoding": "base64",
+      "name": "README.md",
+      "path": "README.md",
+      "sha": "b5fd37e731f1e7931da42484ae0290554cb42c0f",
+      "size": 78,
+      "type": "file",
+    },
+  ],
+  "submodules": Array [],
+}
+`;
+
+exports[`Test content controller for path '/repos/github.com%2Ftest-repo-billy%2Fgit-api-tests/contents/dir1' 1`] = `
+Object {
+  "dirs": Array [
+    Object {
+      "name": "dir2",
+      "path": "dir1/dir2",
+      "sha": "483221c9d8371862bdb2c5d452130ab5ca0534a3",
+      "size": 0,
+      "type": "dir",
+    },
+  ],
+  "files": Array [
+    Object {
+      "content": "ZmlsZUEK",
+      "encoding": "base64",
+      "name": "fileA.txt",
+      "path": "dir1/fileA.txt",
+      "sha": "ab47708c98ac88bbdf3ca75f4730d86a84f702a2",
+      "size": 6,
+      "type": "file",
+    },
+  ],
+  "submodules": Array [],
+}
+`;
+
+exports[`Test content controller for path '/repos/github.com%2Ftest-repo-billy%2Fgit-api-tests/contents/dir1?recursive=true' 1`] = `
+Object {
+  "dirs": Array [
+    Object {
+      "name": "dir2",
+      "path": "dir1/dir2",
+      "sha": "483221c9d8371862bdb2c5d452130ab5ca0534a3",
+      "size": 0,
+      "type": "dir",
+    },
+  ],
+  "files": Array [
+    Object {
+      "content": "ZmlsZUEK",
+      "encoding": "base64",
+      "name": "fileA.txt",
+      "path": "dir1/fileA.txt",
+      "sha": "ab47708c98ac88bbdf3ca75f4730d86a84f702a2",
+      "size": 6,
+      "type": "file",
+    },
+    Object {
+      "content": "ZmlsZUIK",
+      "encoding": "base64",
+      "name": "fileB.txt",
+      "path": "dir1/dir2/fileB.txt",
+      "sha": "78ed112c991c8abeba325c039a398ba626c425ab",
+      "size": 6,
+      "type": "file",
+    },
+  ],
+  "submodules": Array [],
+}
+`;
+
+exports[`Test content controller for path '/repos/github.com%2Ftest-repo-billy%2Fgit-api-tests/contents?recursive=true' 1`] = `
+Object {
+  "dirs": Array [
+    Object {
+      "name": "dir1",
+      "path": "dir1",
+      "sha": "b638a8a4a9f44184a3a430988a9c5ef383bad364",
+      "size": 0,
+      "type": "dir",
+    },
+    Object {
+      "name": "dir2",
+      "path": "dir1/dir2",
+      "sha": "483221c9d8371862bdb2c5d452130ab5ca0534a3",
+      "size": 0,
+      "type": "dir",
+    },
+  ],
+  "files": Array [
+    Object {
+      "content": "IyBMb2dzCmxvZ3MKKi5sb2cKbnBtLWRlYnVnLmxvZyoKeWFybi1kZWJ1Zy5sb2cqCnlhcm4tZXJyb3IubG9nKgoKIyBSdW50aW1lIGRhdGEKcGlkcwoqLnBpZAoqLnNlZWQKKi5waWQubG9jawoKIyBEaXJlY3RvcnkgZm9yIGluc3RydW1lbnRlZCBsaWJzIGdlbmVyYXRlZCBieSBqc2NvdmVyYWdlL0pTQ292ZXIKbGliLWNvdgoKIyBDb3ZlcmFnZSBkaXJlY3RvcnkgdXNlZCBieSB0b29scyBsaWtlIGlzdGFuYnVsCmNvdmVyYWdlCgojIG55YyB0ZXN0IGNvdmVyYWdlCi5ueWNfb3V0cHV0CgojIEdydW50IGludGVybWVkaWF0ZSBzdG9yYWdlIChodHRwOi8vZ3J1bnRqcy5jb20vY3JlYXRpbmctcGx1Z2lucyNzdG9yaW5nLXRhc2stZmlsZXMpCi5ncnVudAoKIyBCb3dlciBkZXBlbmRlbmN5IGRpcmVjdG9yeSAoaHR0cHM6Ly9ib3dlci5pby8pCmJvd2VyX2NvbXBvbmVudHMKCiMgbm9kZS13YWYgY29uZmlndXJhdGlvbgoubG9jay13c2NyaXB0CgojIENvbXBpbGVkIGJpbmFyeSBhZGRvbnMgKGh0dHBzOi8vbm9kZWpzLm9yZy9hcGkvYWRkb25zLmh0bWwpCmJ1aWxkL1JlbGVhc2UKCiMgRGVwZW5kZW5jeSBkaXJlY3Rvcmllcwpub2RlX21vZHVsZXMvCmpzcG1fcGFja2FnZXMvCgojIFR5cGVTY3JpcHQgdjEgZGVjbGFyYXRpb24gZmlsZXMKdHlwaW5ncy8KCiMgT3B0aW9uYWwgbnBtIGNhY2hlIGRpcmVjdG9yeQoubnBtCgojIE9wdGlvbmFsIGVzbGludCBjYWNoZQouZXNsaW50Y2FjaGUKCiMgT3B0aW9uYWwgUkVQTCBoaXN0b3J5Ci5ub2RlX3JlcGxfaGlzdG9yeQoKIyBPdXRwdXQgb2YgJ25wbSBwYWNrJwoqLnRnegoKIyBZYXJuIEludGVncml0eSBmaWxlCi55YXJuLWludGVncml0eQoKIyBkb3RlbnYgZW52aXJvbm1lbnQgdmFyaWFibGVzIGZpbGUKLmVudgoKIyBuZXh0LmpzIGJ1aWxkIG91dHB1dAoubmV4dAo=",
+      "encoding": "base64",
+      "name": ".gitignore",
+      "path": ".gitignore",
+      "sha": "ad46b30886fa350c1f59761b100e5e4b01f9a7ec",
+      "size": 914,
+      "type": "file",
+    },
+    Object {
+      "content": "TUlUIExpY2Vuc2UKCkNvcHlyaWdodCAoYykgMjAxOSB0ZXN0LXJlcG8tYmlsbHkKClBlcm1pc3Npb24gaXMgaGVyZWJ5IGdyYW50ZWQsIGZyZWUgb2YgY2hhcmdlLCB0byBhbnkgcGVyc29uIG9idGFpbmluZyBhIGNvcHkKb2YgdGhpcyBzb2Z0d2FyZSBhbmQgYXNzb2NpYXRlZCBkb2N1bWVudGF0aW9uIGZpbGVzICh0aGUgIlNvZnR3YXJlIiksIHRvIGRlYWwKaW4gdGhlIFNvZnR3YXJlIHdpdGhvdXQgcmVzdHJpY3Rpb24sIGluY2x1ZGluZyB3aXRob3V0IGxpbWl0YXRpb24gdGhlIHJpZ2h0cwp0byB1c2UsIGNvcHksIG1vZGlmeSwgbWVyZ2UsIHB1Ymxpc2gsIGRpc3RyaWJ1dGUsIHN1YmxpY2Vuc2UsIGFuZC9vciBzZWxsCmNvcGllcyBvZiB0aGUgU29mdHdhcmUsIGFuZCB0byBwZXJtaXQgcGVyc29ucyB0byB3aG9tIHRoZSBTb2Z0d2FyZSBpcwpmdXJuaXNoZWQgdG8gZG8gc28sIHN1YmplY3QgdG8gdGhlIGZvbGxvd2luZyBjb25kaXRpb25zOgoKVGhlIGFib3ZlIGNvcHlyaWdodCBub3RpY2UgYW5kIHRoaXMgcGVybWlzc2lvbiBub3RpY2Ugc2hhbGwgYmUgaW5jbHVkZWQgaW4gYWxsCmNvcGllcyBvciBzdWJzdGFudGlhbCBwb3J0aW9ucyBvZiB0aGUgU29mdHdhcmUuCgpUSEUgU09GVFdBUkUgSVMgUFJPVklERUQgIkFTIElTIiwgV0lUSE9VVCBXQVJSQU5UWSBPRiBBTlkgS0lORCwgRVhQUkVTUyBPUgpJTVBMSUVELCBJTkNMVURJTkcgQlVUIE5PVCBMSU1JVEVEIFRPIFRIRSBXQVJSQU5USUVTIE9GIE1FUkNIQU5UQUJJTElUWSwKRklUTkVTUyBGT1IgQSBQQVJUSUNVTEFSIFBVUlBPU0UgQU5EIE5PTklORlJJTkdFTUVOVC4gSU4gTk8gRVZFTlQgU0hBTEwgVEhFCkFVVEhPUlMgT1IgQ09QWVJJR0hUIEhPTERFUlMgQkUgTElBQkxFIEZPUiBBTlkgQ0xBSU0sIERBTUFHRVMgT1IgT1RIRVIKTElBQklMSVRZLCBXSEVUSEVSIElOIEFOIEFDVElPTiBPRiBDT05UUkFDVCwgVE9SVCBPUiBPVEhFUldJU0UsIEFSSVNJTkcgRlJPTSwKT1VUIE9GIE9SIElOIENPTk5FQ1RJT04gV0lUSCBUSEUgU09GVFdBUkUgT1IgVEhFIFVTRSBPUiBPVEhFUiBERUFMSU5HUyBJTiBUSEUKU09GVFdBUkUuCg==",
+      "encoding": "base64",
+      "name": "LICENSE",
+      "path": "LICENSE",
+      "sha": "98023418cdb98210a5f71ea74ec557dbbd8f0e83",
+      "size": 1072,
+      "type": "file",
+    },
+    Object {
+      "content": "IyBnaXQtYXBpLXRlc3RzClJlcG8gdXNlZCBmb3IgaW50ZWdyYXRpb24gdGVzdGluZyBvZiB0aGUgZ2l0LXRlc3QtYXBpIHByb2plY3QK",
+      "encoding": "base64",
+      "name": "README.md",
+      "path": "README.md",
+      "sha": "b5fd37e731f1e7931da42484ae0290554cb42c0f",
+      "size": 78,
+      "type": "file",
+    },
+    Object {
+      "content": "ZmlsZUEK",
+      "encoding": "base64",
+      "name": "fileA.txt",
+      "path": "dir1/fileA.txt",
+      "sha": "ab47708c98ac88bbdf3ca75f4730d86a84f702a2",
+      "size": 6,
+      "type": "file",
+    },
+    Object {
+      "content": "ZmlsZUIK",
+      "encoding": "base64",
+      "name": "fileB.txt",
+      "path": "dir1/dir2/fileB.txt",
+      "sha": "78ed112c991c8abeba325c039a398ba626c425ab",
+      "size": 6,
+      "type": "file",
+    },
+  ],
+  "submodules": Array [],
+}
+`;

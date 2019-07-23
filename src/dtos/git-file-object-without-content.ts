@@ -2,15 +2,12 @@ import { ApiModelProperty } from "@nestjs/swagger";
 
 import { GitObjectContent } from "./git-object-content";
 
-export class GitFileObjectContent extends GitObjectContent {
-  @ApiModelProperty({ type: String })
-  public content: string;
+export class GitFileObjectWithoutContent extends GitObjectContent {
   @ApiModelProperty({ type: String })
   public encoding: string;
 
-  constructor(gitObjectContent: GitFileObjectContent) {
+  constructor(gitObjectContent: GitFileObjectWithoutContent) {
     super(gitObjectContent);
-    this.content = gitObjectContent.content;
     this.encoding = gitObjectContent.encoding;
   }
 }

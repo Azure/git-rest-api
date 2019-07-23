@@ -272,6 +272,18 @@
             "in": "path"
           },
           {
+            "name": "path",
+            "required": true,
+            "in": "path",
+            "type": "string"
+          },
+          {
+            "name": "recursive",
+            "required": false,
+            "in": "query",
+            "type": "string"
+          },
+          {
             "name": "ref",
             "required": false,
             "in": "query",
@@ -295,6 +307,64 @@
             "description": "",
             "schema": {
               "$ref": "#/definitions/GitContents"
+            }
+          },
+          "400": {
+            "description": "When the x-authorization header is malformed"
+          },
+          "404": {
+            "description": ""
+          }
+        },
+        "produces": [
+          "application/json"
+        ],
+        "consumes": [
+          "application/json"
+        ]
+      }
+    },
+    "/repos/{remote}/tree/{path}": {
+      "get": {
+        "summary": "Get tree",
+        "operationId": "tree_get",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "remote",
+            "required": true,
+            "in": "path"
+          },
+          {
+            "name": "path",
+            "required": true,
+            "in": "path",
+            "type": "string"
+          },
+          {
+            "name": "ref",
+            "required": false,
+            "in": "query",
+            "type": "string"
+          },
+          {
+            "name": "x-authorization",
+            "required": false,
+            "in": "header",
+            "type": "string"
+          },
+          {
+            "name": "x-github-token",
+            "required": false,
+            "in": "header",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/GitTree"
             }
           },
           "400": {
@@ -498,7 +568,7 @@
         "sha"
       ]
     },
-    "GitFileObjectContent": {
+    "GitFileObjectWithoutContent": {
       "type": "object",
       "properties": {
         "type": {
@@ -516,9 +586,6 @@
         "sha": {
           "type": "string"
         },
-        "content": {
-          "type": "string"
-        },
         "encoding": {
           "type": "string"
         }
@@ -529,7 +596,6 @@
         "name",
         "path",
         "sha",
-        "content",
         "encoding"
       ]
     },
@@ -572,7 +638,70 @@
         "files": {
           "type": "array",
           "items": {
-            "$ref": "#/definitions/GitFileObjectContent"
+            "$ref": "#/definitions/GitFileObjectWithoutContent"
+          }
+        },
+        "submodules": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/GitSubmoduleObjectContent"
+          }
+        }
+      },
+      "required": [
+        "dirs",
+        "files",
+        "submodules"
+      ]
+    },
+    "GitFileObjectWithContent": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "type": "string"
+        },
+        "size": {
+          "type": "number"
+        },
+        "name": {
+          "type": "string"
+        },
+        "path": {
+          "type": "string"
+        },
+        "sha": {
+          "type": "string"
+        },
+        "encoding": {
+          "type": "string"
+        },
+        "content": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "type",
+        "size",
+        "name",
+        "path",
+        "sha",
+        "encoding",
+        "content"
+      ]
+    },
+    "GitTree": {
+      "type": "object",
+      "properties": {
+        "dirs": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/GitDirObjectContent"
+          }
+        },
+        "files": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/GitFileObjectWithContent"
           }
         },
         "submodules": {
