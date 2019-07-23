@@ -273,8 +273,8 @@
           },
           {
             "name": "path",
-            "required": false,
-            "in": "query",
+            "required": true,
+            "in": "path",
             "type": "string"
           },
           {
@@ -337,8 +337,8 @@
           },
           {
             "name": "path",
-            "required": false,
-            "in": "query",
+            "required": true,
+            "in": "path",
             "type": "string"
           },
           {
