@@ -20,7 +20,7 @@ COPY . .
 RUN npm run build
 ARG SKIP_TEST
 RUN if [ -z "${SKIP_TEST}" ]; then npm run test; fi 
-# RUN npm prune --production 
+RUN npm prune --production 
 
 
 # Prod Stage
