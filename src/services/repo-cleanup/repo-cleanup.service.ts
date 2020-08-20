@@ -25,7 +25,7 @@ export class RepoCleanupService {
       .pipe(
         filter(x => {
           const freeRatio = x.available / x.total;
-          return freeRatio < 0.1;
+          return freeRatio < 0.5;
         }),
         exhaustMap(() => {
           const count = this.getNumberOfReposToRemove();
