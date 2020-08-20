@@ -50,8 +50,8 @@ describe("RepoCleanupService", () => {
     expect(indexServiceSpy.getLeastUsedRepos).not.toHaveBeenCalled();
     diskUsageService.dataDiskUsage.next({
       total: 10_000,
-      available: 4_000,
-      used: 4_000,
+      available: 8_000,
+      used: 2_000,
     });
     expect(indexServiceSpy.getLeastUsedRepos).not.toHaveBeenCalled();
   });
