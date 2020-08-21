@@ -1,20 +1,20 @@
 # Base Stage
-FROM alpine:3.11 as base
+FROM ubuntu:18.04 as base
 
 RUN mkdir /app
 WORKDIR /app
 
-ENV APK_ADD="nodejs-npm krb5-libs"
-ENV APK_ADD_BUILD="nodejs-npm python krb5-dev curl-dev build-base libssh2-dev"
-
-RUN apk update && apk upgrade && apk add --no-cache ${APK_ADD}
-
+ENV PKG_ADD="curl"
+ENV PKG_ADD_BUILD="libkrb5-dev krb5-config gcc g++ make"
+RUN apt update && apt upgrade -y && apt install $PKG_ADD -y
+RUN curl -sL https://deb.nodesource.com/setup_12.x | bash - && apt install nodejs -y
 
 # Build Stage
-FROM base as builder
-RUN apk add --no-cache ${APK_ADD_BUILD}
+FROM base AS builder
+RUN apt install $PKG_ADD_BUILD -y
+
 COPY package.json package-lock.json .prettierrc.yml ./
-RUN BUILD_ONLY=true JOBS=`nproc` npm ci
+RUN npm ci
 
 COPY . .
 RUN npm run build
