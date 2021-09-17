@@ -28,8 +28,8 @@ jobs:
           summaryFileLocation: "$(System.DefaultWorkingDirectory)/**/*coverage.xml"
           reportDirectory: "$(System.DefaultWorkingDirectory)/**/coverage"
 
-      - script: npm run -s sdk:gen
-        displayName: "SDK gen"
+      # - script: npm run -s sdk:gen
+      #   displayName: "SDK gen"
 
       - script: npm run -s lint
         displayName: "Lint"
@@ -49,7 +49,7 @@ jobs:
       - script: npm run -s build
         displayName: "Build"
 
-      - script: |
-          npm run -s start:prod &
-          npm run -s test:e2e
-        displayName: "Run integration tests"
+      # - script: |
+      #     npm run -s start:prod &
+      #     npm run -s test:e2e
+      #   displayName: "Run integration tests"
