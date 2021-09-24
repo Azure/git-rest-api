@@ -25,8 +25,8 @@ export class Mutex {
 
   private readonly sharedLocks = new Set<string>();
   private readonly exclusiveLocks = new Set<string>();
-  private readonly exclusiveQueue: Array<(lock: Lock) => void> = [];
-  private readonly sharedQueue: Array<(lock: Lock) => void> = [];
+  private readonly exclusiveQueue: ((lock: Lock) => void)[] = [];
+  private readonly sharedQueue: ((lock: Lock) => void)[] = [];
 
   public lock({ exclusive }: LockOptions = { exclusive: false }): Promise<Lock> {
     const promise = new Promise<Lock>(resolve =>
