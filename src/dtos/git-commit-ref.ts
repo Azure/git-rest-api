@@ -1,7 +1,7 @@
-import { ApiModelProperty } from "@nestjs/swagger";
+import { ApiProperty } from "@nestjs/swagger";
 
 export class GitCommitRef {
-  @ApiModelProperty({ type: String })
+  @ApiProperty({ type: String })
   public sha: string;
 
   constructor(commit: GitCommitRef) {

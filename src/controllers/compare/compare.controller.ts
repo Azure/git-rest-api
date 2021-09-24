@@ -13,7 +13,7 @@ export class CompareController {
   @ApiHasPassThruAuth()
   @ApiOkResponse({ type: GitDiff })
   @ApiNotFoundResponse({})
-  @ApiOperation({ title: "Compare two commits", operationId: "commits_compare" })
+  @ApiOperation({ summary: "Compare two commits", operationId: "commits_compare" })
   public async compare(
     @Param("remote") remote: string,
     @Param("base") base: string,

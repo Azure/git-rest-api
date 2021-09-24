@@ -1,5 +1,5 @@
 import { Controller, Get, HttpException, Param, Query } from "@nestjs/common";
-import { ApiImplicitParam, ApiImplicitQuery, ApiNotFoundResponse, ApiOkResponse, ApiOperation } from "@nestjs/swagger";
+import { ApiParam, ApiQuery, ApiNotFoundResponse, ApiOkResponse, ApiOperation } from "@nestjs/swagger";
 
 import { ApiHasPassThruAuth, Auth, RepoAuth } from "../../core";
 import { GitContents } from "../../dtos";
@@ -13,10 +13,10 @@ export class ContentController {
   @Get([":path([^/]*)", ""])
   @ApiHasPassThruAuth()
   @ApiOkResponse({ type: GitContents })
-  @ApiImplicitQuery({ name: "ref", required: false, type: "string" })
-  @ApiImplicitQuery({ name: "recursive", required: false, type: "string" })
-  @ApiImplicitParam({ name: "path", type: "string" })
-  @ApiOperation({ title: "Get content", operationId: "contents_get" })
+  @ApiQuery({ name: "ref", required: false, type: "string" })
+  @ApiQuery({ name: "recursive", required: false, type: "string" })
+  @ApiParam({ name: "path", type: "string" })
+  @ApiOperation({ summary: "Get content", operationId: "contents_get" })
   @ApiNotFoundResponse({})
   public async getContents(
     @Param("remote") remote: string,

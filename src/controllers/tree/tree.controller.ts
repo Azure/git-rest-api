@@ -1,5 +1,5 @@
 import { Controller, Get, HttpException, Param, Query } from "@nestjs/common";
-import { ApiImplicitParam, ApiImplicitQuery, ApiNotFoundResponse, ApiOkResponse, ApiOperation } from "@nestjs/swagger";
+import { ApiParam, ApiQuery, ApiNotFoundResponse, ApiOkResponse, ApiOperation } from "@nestjs/swagger";
 
 import { ApiHasPassThruAuth, Auth, RepoAuth } from "../../core";
 import { GitTree } from "../../dtos";
@@ -12,9 +12,9 @@ export class TreeController {
   @Get([":path([^/]*)", ""])
   @ApiHasPassThruAuth()
   @ApiOkResponse({ type: GitTree })
-  @ApiImplicitQuery({ name: "ref", required: false, type: "string" })
-  @ApiOperation({ title: "Get tree", operationId: "tree_get" })
-  @ApiImplicitParam({ name: "path", type: "string" })
+  @ApiQuery({ name: "ref", required: false, type: "string" })
+  @ApiOperation({ summary: "Get tree", operationId: "tree_get" })
+  @ApiParam({ name: "path", type: "string" })
   @ApiNotFoundResponse({})
   public async getTree(
     @Param("remote") remote: string,

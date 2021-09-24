@@ -1,15 +1,15 @@
-import { ApiModelProperty } from "@nestjs/swagger";
+import { ApiProperty } from "@nestjs/swagger";
 
 export class GitObjectContent {
-  @ApiModelProperty({ type: String })
+  @ApiProperty({ type: String })
   public type: string;
-  @ApiModelProperty({ type: Number })
+  @ApiProperty({ type: Number })
   public size: number;
-  @ApiModelProperty({ type: String })
+  @ApiProperty({ type: String })
   public name: string;
-  @ApiModelProperty({ type: String })
+  @ApiProperty({ type: String })
   public path: string;
-  @ApiModelProperty({ type: String })
+  @ApiProperty({ type: String })
   public sha: string;
 
   constructor(gitObjectContent: GitObjectContent) {

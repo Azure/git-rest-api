@@ -1,5 +1,5 @@
 import { createParamDecorator } from "@nestjs/common";
-import { ApiImplicitQuery, ApiResponse } from "@nestjs/swagger";
+import { ApiQuery, ApiResponse } from "@nestjs/swagger";
 import { Request } from "express";
 
 import { TOTAL_COUNT_HEADER } from "./paginated-response";
@@ -9,7 +9,7 @@ import { Pagination } from "./pagination";
  * Decorator to let swagger know about all the pagination properties available
  */
 export function ApiPaginated(type: any): MethodDecorator {
-  const implicitpage = ApiImplicitQuery({ name: "page", required: false, type: String });
+  const implicitpage = ApiQuery({ name: "page", required: false, type: String });
   const response = ApiResponse({ status: 200, headers: paginationHeaders, type, isArray: true });
   return (...args) => {
     implicitpage(...args);

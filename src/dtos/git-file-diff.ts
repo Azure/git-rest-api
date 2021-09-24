@@ -1,4 +1,4 @@
-import { ApiModelProperty, ApiModelPropertyOptional } from "@nestjs/swagger";
+import { ApiProperty, ApiPropertyOptional } from "@nestjs/swagger";
 
 import { ApiModelEnum } from "../core";
 
@@ -11,19 +11,19 @@ export enum PatchStatus {
 }
 
 export class GitFileDiff {
-  @ApiModelProperty()
+  @ApiProperty()
   public filename: string;
-  @ApiModelProperty()
+  @ApiProperty()
   public sha: string;
   @ApiModelEnum({ PatchStatus })
   public status: PatchStatus;
-  @ApiModelProperty()
+  @ApiProperty()
   public additions: number;
-  @ApiModelProperty()
+  @ApiProperty()
   public deletions: number;
-  @ApiModelProperty()
+  @ApiProperty()
   public changes: number;
-  @ApiModelPropertyOptional()
+  @ApiPropertyOptional()
   public previousFilename?: string;
 
   constructor(obj: GitFileDiff) {

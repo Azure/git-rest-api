@@ -1,5 +1,5 @@
 import { BadRequestException, createParamDecorator } from "@nestjs/common";
-import { ApiBadRequestResponse, ApiImplicitHeaders } from "@nestjs/swagger";
+import { ApiBadRequestResponse, ApiHeaders } from "@nestjs/swagger";
 
 import { AUTH_HEADERS, RepoAuth } from "./repo-auth";
 
@@ -21,7 +21,7 @@ export const Auth = createParamDecorator(
  * Helper to add on methods using the Auth parameter for the swagger specs to be generated correctly
  */
 export function ApiHasPassThruAuth(): MethodDecorator {
-  const implicitHeaders = ApiImplicitHeaders(
+  const implicitHeaders = ApiHeaders(
     Object.values(AUTH_HEADERS).map(header => {
       return {
         name: header,
