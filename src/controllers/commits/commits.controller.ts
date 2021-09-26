@@ -1,5 +1,5 @@
 import { Controller, Get, NotFoundException, Param, Query, Res } from "@nestjs/common";
-import { ApiImplicitQuery, ApiNotFoundResponse, ApiOkResponse, ApiOperation } from "@nestjs/swagger";
+import { ApiNotFoundResponse, ApiOkResponse, ApiOperation, ApiQuery } from "@nestjs/swagger";
 import { Response } from "express";
 
 import { ApiHasPassThruAuth, Auth, RepoAuth } from "../../core";
@@ -14,8 +14,8 @@ export class CommitsController {
   @Get()
   @ApiHasPassThruAuth()
   @ApiNotFoundResponse({})
-  @ApiOperation({ title: "List commits", operationId: "commits_list" })
-  @ApiImplicitQuery({
+  @ApiOperation({ summary: "List commits", operationId: "commits_list" })
+  @ApiQuery({
     name: "ref",
     required: false,
     description: "Reference to list the commits from. Can be a branch or a commit. Default to master",
@@ -40,7 +40,7 @@ export class CommitsController {
   @ApiHasPassThruAuth()
   @ApiOkResponse({ type: GitCommit })
   @ApiNotFoundResponse({})
-  @ApiOperation({ title: "Get a commit", operationId: "commits_get" })
+  @ApiOperation({ summary: "Get a commit", operationId: "commits_get" })
   public async get(@Param("remote") remote: string, @Param("commitSha") commitSha: string, @Auth() auth: RepoAuth) {
     const commit = await this.commitService.get(remote, commitSha, { auth });
 

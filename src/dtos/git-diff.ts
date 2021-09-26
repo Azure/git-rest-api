@@ -1,20 +1,20 @@
-import { ApiModelProperty } from "@nestjs/swagger";
+import { ApiProperty } from "@nestjs/swagger";
 
 import { GitCommit } from "./git-commit";
 import { GitFileDiff } from "./git-file-diff";
 
 export class GitDiff {
-  @ApiModelProperty()
+  @ApiProperty()
   public headCommit: GitCommit;
-  @ApiModelProperty()
+  @ApiProperty()
   public baseCommit: GitCommit;
-  @ApiModelProperty()
+  @ApiProperty()
   public mergeBaseCommit: GitCommit;
-  @ApiModelProperty()
+  @ApiProperty()
   public totalCommits: number;
-  @ApiModelProperty({ type: GitCommit, isArray: true })
+  @ApiProperty({ type: GitCommit, isArray: true })
   public commits: GitCommit[];
-  @ApiModelProperty({ type: GitFileDiff, isArray: true })
+  @ApiProperty({ type: GitFileDiff, isArray: true })
   public files: GitFileDiff[];
 
   constructor(obj: GitDiff) {

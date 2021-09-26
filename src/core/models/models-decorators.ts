@@ -1,4 +1,4 @@
-import { ApiModelProperty } from "@nestjs/swagger";
+import { ApiProperty } from "@nestjs/swagger";
 import { SwaggerEnumType } from "@nestjs/swagger/dist/types/swagger-enum.type";
 
 /**
@@ -9,7 +9,7 @@ export function ApiModelEnum(metadata: { [enumName: string]: SwaggerEnumType }):
   if (!enumName) {
     throw new Error("You must provide an enum to ApiModelEnum. `@ApiModelEnum({ Myenum })`");
   }
-  return ApiModelProperty({
+  return ApiProperty({
     enum: metadata[enumName],
     // Adding custom properties for auto rest
     "x-ms-enum": { name: enumName },

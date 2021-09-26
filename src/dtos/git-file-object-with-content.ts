@@ -1,9 +1,9 @@
-import { ApiModelProperty } from "@nestjs/swagger";
+import { ApiProperty } from "@nestjs/swagger";
 
 import { GitFileObjectWithoutContent } from "./git-file-object-without-content";
 
 export class GitFileObjectWithContent extends GitFileObjectWithoutContent {
-  @ApiModelProperty({ type: String })
+  @ApiProperty({ type: String })
   public content: string;
 
   constructor(gitObjectContent: GitFileObjectWithContent) {
