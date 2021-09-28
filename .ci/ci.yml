@@ -5,13 +5,13 @@ jobs:
   - job: test
     displayName: Tests
     pool:
-      vmImage: "Ubuntu-16.04"
+      vmImage: "ubuntu-latest"
     steps:
       - task: NodeTool@0
         inputs:
           versionSpec: "12.x"
 
-      - script: npm -s ci
+      - script: npm ci
         displayName: "Install dependencies"
 
       - script: npm run -s test:ci
@@ -31,22 +31,22 @@ jobs:
       # - script: npm run -s sdk:gen
       #   displayName: "SDK gen"
 
-      - script: npm run -s lint
+      - script: npm run lint
         displayName: "Lint"
 
   - job: build
     displayName: Build and integration tests
     pool:
-      vmImage: "Ubuntu-16.04"
+      vmImage: "ubuntu-latest"
     steps:
       - task: NodeTool@0
         inputs:
           versionSpec: "10.x"
 
-      - script: npm -s ci
+      - script: npm ci
         displayName: "Install dependencies"
 
-      - script: npm run -s build
+      - script: npm run build
         displayName: "Build"
 
       # - script: |
