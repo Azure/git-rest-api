@@ -37,13 +37,13 @@ stages:
     jobs:
       - job: build
         pool:
-          vmImage: "Ubuntu-16.04"
+          vmImage: "ubuntu-latest"
         steps:
-          - script: npm -s ci
+          - script: npm ci
             displayName: Install
-          - script: npm -s run sdk:gen
+          - script: npm run sdk:gen
             displayName: Generate SDKs
-          - script: npm -s pack
+          - script: npm pack
             workingDirectory: sdk/out/typescript
             displayName: Pack
           - task: CopyFiles@2
