@@ -7,7 +7,8 @@ import { AUTH_HEADERS, RepoAuth } from "./repo-auth";
  * Auth param decorator for controller to inject the repo auth object
  */
 export const Auth = createParamDecorator(
-  (_, req): RepoAuth => {
+  (_, ctx): RepoAuth => {
+    const req = ctx.switchToHttp().getRequest();
     const repoAuth = RepoAuth.fromHeaders(req.headers);
     if (repoAuth) {
       return repoAuth;
