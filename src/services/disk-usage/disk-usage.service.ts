@@ -50,7 +50,7 @@ export class DiskUsageService {
     try {
       return await diskusage.check(this.config.dataDir);
     } catch (error) {
-      this.logger.error("Failed to get disk usage", error);
+      this.logger.error("Failed to get disk usage", error as any);
       return undefined;
     }
   }

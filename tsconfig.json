@@ -26,6 +26,7 @@
 
     "incremental": true,
     "tsBuildInfoFile": "./buildcache/backend.tsbuildinfo",
+    "skipDefaultLibCheck": true,
 
     /* Additional Checks */
     "noUnusedLocals": true,
