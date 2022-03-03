@@ -9,7 +9,8 @@ stages:
   #     - job: Build_Docker
   #       displayName: Build and publish to hub.docker.com
   #       pool:
-  #         vmImage: "Ubuntu-16.04"
+  #         name: AzurePipelines-EO
+  #         vmImage: "AzurePipelinesUbuntu20.04compliant"
   #       variables:
   #         build_counter: $[counter('versioncounter', 1)]
   #       steps:
@@ -37,7 +38,8 @@ stages:
     jobs:
       - job: build
         pool:
-          vmImage: "ubuntu-latest"
+          name: AzurePipelines-EO
+          vmImage: "AzurePipelinesUbuntu20.04compliant"
         steps:
           - script: npm ci
             displayName: Install
