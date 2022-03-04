@@ -5,7 +5,8 @@ jobs:
   - job: test
     displayName: Tests
     pool:
-      vmImage: "ubuntu-latest"
+      name: AzurePipelines-EO
+      vmImage: "AzurePipelinesUbuntu20.04compliant"
     steps:
       - task: NodeTool@0
         inputs:
@@ -37,11 +38,12 @@ jobs:
   - job: build
     displayName: Build and integration tests
     pool:
-      vmImage: "ubuntu-latest"
+      name: AzurePipelines-EO
+      vmImage: "AzurePipelinesUbuntu20.04compliant"
     steps:
       - task: NodeTool@0
         inputs:
-          versionSpec: "10.x"
+          versionSpec: "12.x"
 
       - script: npm ci
         displayName: "Install dependencies"
