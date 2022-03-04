@@ -1,11 +1,14 @@
 trigger:
   - master
+  pr:
+    - master
 
 jobs:
   - job: test
     displayName: Tests
     pool:
-      vmImage: "ubuntu-latest"
+      name: AzurePipelines-EO
+      vmImage: "AzurePipelinesUbuntu20.04compliant"
     steps:
       - task: NodeTool@0
         inputs:
@@ -37,7 +40,8 @@ jobs:
   - job: build
     displayName: Build and integration tests
     pool:
-      vmImage: "ubuntu-latest"
+      name: AzurePipelines-EO
+      vmImage: "AzurePipelinesUbuntu20.04compliant"
     steps:
       - task: NodeTool@0
         inputs:
