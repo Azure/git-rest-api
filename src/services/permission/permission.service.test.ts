@@ -51,6 +51,7 @@ describe("PermissionService", () => {
         headers: {
           Authorization: auth.toAuthorizationHeader(),
         },
+        "method": "POST",
       });
     });
 
@@ -65,12 +66,14 @@ describe("PermissionService", () => {
         headers: {
           Authorization: auth.toAuthorizationHeader(),
         },
+        "method": "POST",
       });
 
       expect(httpSpy.fetch).toHaveBeenCalledWith("https://github.com/Azure/some-repo.git/git-upload-pack", {
         headers: {
           Authorization: auth.toAuthorizationHeader(),
         },
+        "method": "POST",
       });
     });
 
@@ -87,6 +90,7 @@ describe("PermissionService", () => {
           headers: {
             Authorization: auth.toAuthorizationHeader(),
           },
+          method: "POST",
         },
       );
 
@@ -96,6 +100,7 @@ describe("PermissionService", () => {
           headers: {
             Authorization: auth.toAuthorizationHeader(),
           },
+          method: "POST",
         },
       );
     });

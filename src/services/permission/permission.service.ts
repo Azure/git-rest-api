@@ -39,6 +39,7 @@ export class PermissionService {
   private async checkWritePermission(auth: RepoAuth, gitUrl: string): Promise<boolean> {
     const response = await this.http.fetch(`${gitUrl}/${GitServices.Push}`, {
       headers: this.getHeaders(auth),
+      method: "POST",
     });
     return response.status === 200;
   }
@@ -46,6 +47,7 @@ export class PermissionService {
   private async checkReadPermission(auth: RepoAuth, gitUrl: string): Promise<boolean> {
     const response = await this.http.fetch(`${gitUrl}/${GitServices.Pull}`, {
       headers: this.getHeaders(auth),
+      method: "POST",
     });
     return response.status === 200;
   }
