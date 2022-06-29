@@ -1,5 +1,5 @@
 # Base Stage
-FROM ubuntu:18.04 as base
+FROM mcr.microsoft.com/mirror/docker/library/ubuntu:18.04 as base
 
 RUN mkdir /app
 WORKDIR /app
