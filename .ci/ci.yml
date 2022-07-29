@@ -22,14 +22,6 @@ jobs:
           testRunner: JUnit
           testResultsFiles: ./test-results.xml
 
-      - task: ComponentGovernanceComponentDetection@0
-        displayName: "Dependencies Compliance Analysis"
-        inputs:
-          verbosity: Verbose
-          snapshotForceEnabled: true
-          useDefaultDetectors: false
-          detectorsToRun: Npm
-
       - task: PublishCodeCoverageResults@1
         inputs:
           codeCoverageTool: Cobertura
