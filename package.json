@@ -67,7 +67,7 @@
     "cls-hooked": "^4.2.2",
     "convict": "^6.2.3",
     "diskusage": "^1.1.2",
-    "express": "^4.17.1",
+    "express": "^4.17.3",
     "fast-safe-stringify": "^2.0.6",
     "helmet": "^5.0.2",
     "hot-shots": "^6.3.0",
