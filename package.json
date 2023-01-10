@@ -65,7 +65,7 @@
     "chalk": "^2.4.2",
     "class-validator": "^0.13.2",
     "cls-hooked": "^4.2.2",
-    "convict": "^6.2.3",
+    "convict": "^6.2.4",
     "diskusage": "^1.1.2",
     "express": "^4.17.1",
     "fast-safe-stringify": "^2.0.6",
